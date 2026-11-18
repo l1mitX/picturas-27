@@ -1,0 +1,151 @@
+{
+  "etiqueta": "base",
+  "commit": "0523102",
+  "N1": {
+    "efeitos_com_duas_implementacoes": 8,
+    "linhas_das_copias_no_video": 18,
+    "pares": [
+      {
+        "efeito": "brightness",
+        "video": "Tools/video/effects.py:11",
+        "imagem": "Tools/brightness/brightness.py"
+      },
+      {
+        "efeito": "contrast",
+        "video": "Tools/video/effects.py:15",
+        "imagem": "Tools/contrast/contrast.py"
+      },
+      {
+        "efeito": "saturation",
+        "video": "Tools/video/effects.py:19",
+        "imagem": "Tools/saturation/saturation.py"
+      },
+      {
+        "efeito": "rotate",
+        "video": "Tools/video/effects.py:23",
+        "imagem": "Tools/rotate/rotate.py"
+      },
+      {
+        "efeito": "resize",
+        "video": "Tools/video/effects.py:27",
+        "imagem": "Tools/resize/resize.py"
+      },
+      {
+        "efeito": "binarization",
+        "video": "Tools/video/effects.py:31",
+        "imagem": "Tools/binarization/binarization.py"
+      },
+      {
+        "efeito": "cut",
+        "video": "Tools/video/effects.py:37",
+        "imagem": "Tools/cut/cut.py"
+      },
+      {
+        "efeito": "border",
+        "video": "Tools/video/effects.py:41",
+        "imagem": "Tools/border/border.py"
+      }
+    ]
+  },
+  "N2": {
+    "C1_filtro_brightness": {
+      "ficheiros_a_alterar": [
+        "Tools/brightness/brightness.py",
+        "Tools/video/effects.py"
+      ],
+      "n_ficheiros": 2,
+      "servicos_a_reconstruir": [
+        "brightness_tool",
+        "video_tool"
+      ],
+      "n_servicos": 2,
+      "trabalhos_de_video_reimplantados": [
+        "edicao",
+        "extracao_fotogramas",
+        "legendagem"
+      ],
+      "n_trabalhos_de_video_reimplantados": 3
+    },
+    "C2_versao_whisper": {
+      "ficheiros_a_alterar": [
+        "Tools/video/requirements.txt",
+        "Tools/video/subtitles.py"
+      ],
+      "n_ficheiros": 2,
+      "servicos_a_reconstruir": [
+        "video_tool"
+      ],
+      "n_servicos": 1,
+      "trabalhos_de_video_reimplantados": [
+        "edicao",
+        "extracao_fotogramas",
+        "legendagem"
+      ],
+      "n_trabalhos_de_video_reimplantados": 3
+    },
+    "C3_amostragem_fotogramas": {
+      "ficheiros_a_alterar": [
+        "Tools/video/frame_extraction.py"
+      ],
+      "n_ficheiros": 1,
+      "servicos_a_reconstruir": [
+        "video_tool"
+      ],
+      "n_servicos": 1,
+      "trabalhos_de_video_reimplantados": [
+        "edicao",
+        "extracao_fotogramas",
+        "legendagem"
+      ],
+      "n_trabalhos_de_video_reimplantados": 3
+    }
+  },
+  "N4": {
+    "servicos_de_video": [
+      "video"
+    ],
+    "modulos_python_video": [
+      {
+        "ficheiro": "Tools/video/effects.py",
+        "sloc": 45,
+        "cc_max": 6,
+        "cc_media": 1.6,
+        "bloco_mais_complexo": "apply_frame_effects"
+      },
+      {
+        "ficheiro": "Tools/video/frame_extraction.py",
+        "sloc": 80,
+        "cc_max": 14,
+        "cc_media": 8.75,
+        "bloco_mais_complexo": "extract_frames"
+      },
+      {
+        "ficheiro": "Tools/video/subtitles.py",
+        "sloc": 64,
+        "cc_max": 7,
+        "cc_media": 3.25,
+        "bloco_mais_complexo": "write_captions"
+      },
+      {
+        "ficheiro": "Tools/video/video.py",
+        "sloc": 148,
+        "cc_max": 11,
+        "cc_media": 2.8,
+        "bloco_mais_complexo": "callback"
+      },
+      {
+        "ficheiro": "Tools/video/video_processor.py",
+        "sloc": 264,
+        "cc_max": 22,
+        "cc_media": 7.31,
+        "bloco_mais_complexo": "process_video"
+      }
+    ],
+    "sloc_total_video": 601,
+    "orquestrador": {
+      "ficheiro": "projects/routes/projects.js",
+      "linhas": 2733,
+      "linhas_com_ramificacao_imagem_video": 16
+    }
+  }
+}

@@ -1,0 +1,134 @@
+{
+  "V1_brilho": {
+    "entrada": "sample_10s_720p.mp4",
+    "pipeline": [
+      "brightness"
+    ],
+    "preview": false,
+    "video_md5": "94620b762cd46927ff337dd8d8a9d4e0",
+    "audio_md5": "7cbf91e5f90650e7b7569d79e67933dd",
+    "stream": {
+      "width": 1280,
+      "height": 720,
+      "nb_read_frames": "300"
+    }
+  },
+  "V1p_brilho_preview": {
+    "entrada": "sample_10s_720p.mp4",
+    "pipeline": [
+      "brightness"
+    ],
+    "preview": true,
+    "video_md5": "a52d1cd27b1577e80a466e0b85c6d706",
+    "audio_md5": "cc55425117512b8091ef6b35a4d86a0e",
+    "stream": {
+      "width": 1280,
+      "height": 720,
+      "nb_read_frames": "90"
+    }
+  },
+  "V2_contraste_rotacao_corte": {
+    "entrada": "sample_10s_720p.mp4",
+    "pipeline": [
+      "contrast",
+      "rotate",
+      "trim"
+    ],
+    "preview": false,
+    "video_md5": "471223381d0cf9c9b99eab2d9b81bdc9",
+    "audio_md5": "b469550425f421ec767666f3f2a61fbf",
+    "stream": {
+      "width": 720,
+      "height": 1280,
+      "nb_read_frames": "120"
+    }
+  },
+  "V3_velocidade": {
+    "entrada": "sample_6s.mov",
+    "pipeline": [
+      "speed"
+    ],
+    "preview": false,
+    "video_md5": "9ae00a78b4b5cc707dcff13ef2fa9b83",
+    "audio_md5": "eedbbc6bfef205a199bbccf449b653a5",
+    "stream": {
+      "width": 640,
+      "height": 480,
+      "nb_read_frames": "75"
+    }
+  },
+  "V4_recorte_moldura_redim": {
+    "entrada": "sample_10s_720p.mp4",
+    "pipeline": [
+      "cut",
+      "border",
+      "resize"
+    ],
+    "preview": false,
+    "video_md5": "b466865bf315fb9f52931399f495dc0c",
+    "audio_md5": "7cbf91e5f90650e7b7569d79e67933dd",
+    "stream": {
+      "width": 320,
+      "height": 180,
+      "nb_read_frames": "300"
+    }
+  },
+  "V5_binarizacao_saturacao": {
+    "entrada": "sample_6s.mov",
+    "pipeline": [
+      "saturation",
+      "binarization"
+    ],
+    "preview": false,
+    "video_md5": "90de1b168a8e939b9dce9aa67cba0544",
+    "audio_md5": "98419216650b48cddc65e1ba72e4ae5b",
+    "stream": {
+      "width": 640,
+      "height": 480,
+      "nb_read_frames": "150"
+    }
+  },
+  "V6_extracao_sozinha": {
+    "entrada": "sample_10s_720p.mp4",
+    "pipeline": [
+      "extract_frames"
+    ],
+    "preview": false,
+    "fotogramas": {
+      "frame-0001-000000000ms.png": "6d40e6717cc7e57e7a09992b60b57cdbf4ee981ac2e3b9b1c5142d1ef01f5c2b",
+      "frame-0002-000002500ms.png": "ff8726dd4fab09fd1d71a4958b0af1b49c7f721e93c8b1ac3a877cd5dd365f56",
+      "frame-0003-000005000ms.png": "8757c542c5de1a4be37dd78fdd48c85359b55d0c457e8203b03dda1c5ee82638",
+      "frame-0004-000007500ms.png": "924e7720f48cfcd18cdfce402dcb329fae7d0f8911752007c47db10edf982b1d"
+    }
+  },
+  "V7_brilho_e_extracao": {
+    "entrada": "sample_10s_720p.mp4",
+    "pipeline": [
+      "brightness",
+      "extract_frames"
+    ],
+    "preview": false,
+    "fotogramas": {
+      "frame-0001-000000000ms.png": "673506a683a2d5568abb260fe01da796436f4884133b751003add0fda1458608",
+      "frame-0002-000002000ms.png": "9f0942c4956b20306761299676ff773d9e7ca7e849d0e4fa8fe9365c7267dc94",
+      "frame-0003-000004000ms.png": "7bc80ead0ef5a8a82e7915407eabb9d0115a9c1d7cd9cb6a1981b4ac4a49bd86",
+      "frame-0004-000006000ms.png": "bc2525e60d4d3449b474a43182d6f260ca1bbef54bc627bd01c135f7f21d03f9",
+      "frame-0005-000008000ms.png": "e3967b918f96c5c02f1b11f0e6df0e123698ffa119b9f1a41ab347b111f2f34a"
+    }
+  },
+  "V8_corte_e_legendas": {
+    "entrada": "speech_mandela_177s_1080p.webm",
+    "pipeline": [
+      "trim",
+      "subtitles"
+    ],
+    "preview": false,
+    "video_md5": "7faef8d4a5eb063be9aecc0efc9cffc8",
+    "audio_md5": "355c60f965ba9c1a33d377479638d573",
+    "stream": {
+      "width": 1920,
+      "height": 1080,
+      "nb_read_frames": "375"
+    }
+  }
+}
