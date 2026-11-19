@@ -1,0 +1,2 @@
+cenario,n,repeticao,trabalho,papel,media,pipeline,t_submit_rel_s,estado,latencia_s,t_fim_rel_s,makespan_ronda_s
+isolado,1,1,B,curto,sample_10s_720p.mp4,brightness,0.0,ok,13.785,13.785,13.785

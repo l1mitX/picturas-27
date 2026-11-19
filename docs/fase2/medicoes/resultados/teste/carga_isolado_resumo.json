@@ -1,0 +1,23 @@
+{
+  "etiqueta": "teste",
+  "cenario": "isolado",
+  "data": "2026-11-18T17:49:43.238957+00:00",
+  "replicas_video": [
+    "picturas-video_tool-1"
+  ],
+  "repeticoes": 1,
+  "falhas": [],
+  "curto_latencia_s": {
+    "n": 1,
+    "p50": 13.785,
+    "p95": 13.785,
+    "media": 13.785
+  },
+  "recursos_video": {
+    "picturas-video_tool-1": {
+      "mem_mib_max": 498.1,
+      "cpu_pct_media": 183.9,
+      "cpu_pct_max": 247.55
+    }
+  }
+}
