@@ -12,6 +12,9 @@ Cenários (parâmetros fixados pela equipa a 2026-11-18, ver docs/fase2/RNF1-EDI
            Mede-se o tempo de B (M1). 10 repetições.
   m2       N trabalhos submetidos ao mesmo tempo: 1 legendagem + (N-1) edições de brilho. N em {1, 4, 8}.
            Mede-se o débito (vídeos/min, M2) e o p95 do tempo de cada trabalho (M3). 5 repetições por N.
+  paralelo N edições curtas (brilho em sample_10s_720p.mp4) submetidas ao mesmo tempo, sem legendagem.
+           Mede-se o p95 do tempo de cada trabalho e o débito (M6). É o cenário que as réplicas melhoram;
+           o M1 e o M2 são dominados pela legendagem (acrescentado a 2026-11-18, antes do refactoring).
 
 Em paralelo amostra CPU e memória dos contentores de vídeo (`docker stats`).
 
@@ -23,6 +26,7 @@ Exemplos:
     python docs/fase2/medicoes/carga_rnf1.py base isolado --reps 10
     python docs/fase2/medicoes/carga_rnf1.py base m1 --reps 10
     python docs/fase2/medicoes/carga_rnf1.py base m2 --reps 5 --n 1,4,8
+    python docs/fase2/medicoes/carga_rnf1.py base paralelo --reps 5 --n 4
 
 Escreve em docs/fase2/medicoes/resultados/<etiqueta>/: carga_<cenario>.csv (uma linha por trabalho),
 carga_<cenario>_recursos.csv (amostras do docker stats) e carga_<cenario>_resumo.json.
@@ -231,21 +235,23 @@ def pct(values, p):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("etiqueta")
-    ap.add_argument("cenario", choices=["isolado", "m1", "m2"])
+    ap.add_argument("cenario", choices=["isolado", "m1", "m2", "paralelo"])
     ap.add_argument("--reps", type=int, default=None)
     ap.add_argument("--n", default="1,4,8")
     ap.add_argument("--timeout", type=int, default=1800)
     a = ap.parse_args()
-    reps = a.reps or {"isolado": 10, "m1": 10, "m2": 5}[a.cenario]
+    reps = a.reps or {"isolado": 10, "m1": 10, "m2": 5, "paralelo": 5}[a.cenario]
 
     rows, res_rows = [], []
-    rounds = [(n, r) for n in ([int(x) for x in a.n.split(",")] if a.cenario == "m2" else [None])
+    rounds = [(n, r) for n in ([int(x) for x in a.n.split(",")] if a.cenario in ("m2", "paralelo") else [None])
               for r in range(1, reps + 1)]
     for n, rep in rounds:
         if a.cenario == "isolado":
             spec = [("B", "curto", SHORT_JOB, 0)]
         elif a.cenario == "m1":
             spec = [("A", "legendagem", LONG_JOB, 0), ("B", "curto", SHORT_JOB, M1_DELAY_S)]
+        elif a.cenario == "paralelo":
+            spec = [(f"J{i}", "curto", SHORT_JOB, 0) for i in range(1, n + 1)]
         else:
             spec = [("J1", "legendagem", LONG_JOB, 0)] + [(f"J{i}", "curto", SHORT_JOB, 0) for i in range(2, n + 1)]
         results, samples = run_round(spec, a.timeout)

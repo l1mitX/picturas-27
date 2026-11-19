@@ -1,0 +1,26 @@
+{
+  "etiqueta": "base",
+  "cenario": "m2",
+  "data": "2026-11-18T23:12:50.051814+00:00",
+  "replicas_video": [
+    "picturas-video_tool-1"
+  ],
+  "repeticoes": 3,
+  "falhas": [],
+  "por_n": {
+    "4": {
+      "debito_videos_min_media": 0.699,
+      "makespan_s_p50": 326.74,
+      "latencia_s_p50": 28.963,
+      "latencia_s_p95": 353.466,
+      "latencia_curtos_s_p95": 35.261
+    }
+  },
+  "recursos_video": {
+    "picturas-video_tool-1": {
+      "mem_mib_max": 2532.4,
+      "cpu_pct_media": 316.6,
+      "cpu_pct_max": 832.94
+    }
+  }
+}

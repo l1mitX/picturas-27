@@ -1,0 +1,23 @@
+{
+  "etiqueta": "base",
+  "cenario": "isolado",
+  "data": "2026-11-18T22:29:00.528801+00:00",
+  "replicas_video": [
+    "picturas-video_tool-1"
+  ],
+  "repeticoes": 5,
+  "falhas": [],
+  "curto_latencia_s": {
+    "n": 5,
+    "p50": 14.844,
+    "p95": 17.803,
+    "media": 15.229
+  },
+  "recursos_video": {
+    "picturas-video_tool-1": {
+      "mem_mib_max": 604.5,
+      "cpu_pct_media": 218.6,
+      "cpu_pct_max": 391.43
+    }
+  }
+}

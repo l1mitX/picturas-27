@@ -60,32 +60,42 @@ disso, os filtros de vídeo são uma **cópia** dos filtros das ferramentas de i
 
 ## 2. Quantificação
 
-### 2.1 Requisito reformulado (verificável)
+> Formato das diretrizes da Fase 2 ("O que se espera para cada requisito não funcional", ponto 2): escala, método
+> de medição, valor medido na base, valor-alvo e valor mínimo aceitável, com origem identificável. O alvo e o
+> mínimo fixam-se depois da medição inicial.
 
-**[PROPOSTA]** Redação nova, segundo o padrão do Exercício 2.
+### 2.1 Requisito
 
-> O sistema deve permitir alterar, reconstruir e reimplantar cada tipo de processamento de vídeo (edição,
-> legendagem, extração de fotogramas) sem alterar nem reimplantar os restantes, e cada efeito comum a imagem e
-> vídeo deve ter uma única implementação.
+| Campo | RNF2 |
+|---|---|
+| **Requisito** | Manutenibilidade › Modularidade (ISO/IEC 25010): dividir o processamento de vídeo em serviços independentes (REQ-VID-EDIT-013 e EDIT-014, PL1-G4; ideia das diretrizes) |
+| **Escala** | Nº de tipos de trabalho de vídeo (edição, legendagem, extração de fotogramas) que têm de ser reconstruídos e reimplantados para atualizar a legendagem (cenário C2) |
+| **Método** | `docs/fase2/medicoes/rnf2_estaticas.py` (N2, cenário C2): encontra os ficheiros a alterar pelo conteúdo e os serviços a reconstruir pelos Dockerfiles do `docker-compose.yaml` |
+| **Valor na base** | **3** (os 3 tipos de trabalho estão no mesmo serviço `video_tool`), medido a 2026-11-18 |
+| **Valor-alvo** | {a decidir} |
+| **Mínimo aceitável** | {a decidir} |
+| **Medições complementares** | N1 (efeitos com duas implementações; base 8), N2 C1 e C3, N3, N4, e N5 (desempenho não pode piorar) — ver 2.2 e 2.4 |
 
 ### 2.2 Métricas
 
 > Origem: as notas da equipa já indicavam "métricas estáticas + custo de mudança" e "nº de ficheiros e
-> serviços" (`recomendacoes-requisitos-fase2.md`, `analise-requisitos-fase2-v2.md`). As métricas concretas e
-> as ferramentas abaixo são **[PROPOSTA]**.
+> serviços" (`recomendacoes-requisitos-fase2.md`, `analise-requisitos-fase2-v2.md`). As métricas concretas
+> foram propostas no rascunho e aceites pela equipa ao usá-las na baseline (2026-11-18). N1, N2 e N4 são
+> calculadas por `docs/fase2/medicoes/rnf2_estaticas.py`.
 
 | # | Métrica (escala) | Unidade | Instrumento |
 |---|---|---|---|
-| N1 | Código duplicado entre efeitos de imagem e de vídeo | linhas duplicadas (e nº de efeitos com duas implementações) | `jscpd` sobre `Tools/`, e contagem manual dos efeitos |
-| N2 | Impacto de mudança, em cenários fixos (2.3) | nº de ficheiros alterados; nº de serviços reconstruídos e reimplantados | `git diff --stat`; `docker compose build` |
-| N3 | Independência de implantação | tempo de build e tamanho da imagem Docker de cada serviço de vídeo | `docker compose build --no-cache`; `docker image ls` |
-| N4 | Tamanho e complexidade por módulo | linhas e complexidade ciclomática (máx. e média) de `Tools/video*` e do orquestrador | `radon cc`, `radon raw`; `wc -l` para o `projects` |
-| N5 | Desempenho não pode piorar (efeito colateral) | M1 e M2 do RNF1 | Script de medição do RNF1 |
+| N1 | Efeitos com duas implementações (imagem e vídeo) | nº de efeitos; linhas das cópias no vídeo | `rnf2_estaticas.py`: funções dos módulos de vídeo com o mesmo nome de uma ferramenta de imagem `Tools/<efeito>/<efeito>.py` |
+| N2 | Impacto de mudança, em cenários fixos (2.3) | nº de ficheiros a alterar; serviços a reconstruir; tipos de trabalho de vídeo reimplantados | `rnf2_estaticas.py`: encontra os ficheiros pelo conteúdo e os serviços pelas instruções `COPY` dos Dockerfiles do `docker-compose.yaml` |
+| N3 | Independência de implantação | tempo de build e tamanho da imagem Docker de cada serviço de vídeo | `docker compose build --no-cache`; `docker image inspect` |
+| N4 | Tamanho e complexidade por módulo | SLOC e complexidade ciclomática (máx. e média) de `Tools/video*`; linhas do orquestrador | `rnf2_estaticas.py` (`radon` 6.0.1) |
+| N5 | Desempenho não pode piorar (efeito colateral) | isolado, M1 e M2 do RNF1 | `carga_rnf1.py` |
 
 ### 2.3 Cenários de mudança para N2
 
-> **[PROPOSTA]** Os cenários são aplicados num ramo de experiência, **não entregue**, na base e no fim; servem
-> só para medir o custo da mudança e não acrescentam funcionalidades ao produto.
+> Os cenários não são aplicados ao código: o script determina, a partir do código e dos Dockerfiles, que
+> ficheiros e que serviços uma mudança desse tipo obrigaria a alterar e reconstruir. Não acrescentam
+> funcionalidades ao produto.
 
 | Cenário | Mudança simulada |
 |---|---|
@@ -100,11 +110,15 @@ Assim, o ganho do RNF2 (modularidade) e o do RNF1 (capacidade) avaliam-se cada u
 
 | Métrica | Base | Após RNF2 | Alvo | Mínimo aceitável | Origem do alvo |
 |---|---|---|---|---|---|
-| N1 | {a medir} | {a medir} | {a fixar} | {a fixar} | {e.g., 0 efeitos com duas implementações} |
-| N2 (C1, C2, C3) | {a medir} | {a medir} | {a fixar} | {a fixar} | {e.g., C2 só reconstrói o serviço de legendas} |
-| N3 | {a medir} | {a medir} | {a fixar} | {a fixar} | {…} |
-| N4 | {a medir} | {a medir} | {a fixar} | {a fixar} | {…} |
-| N5 | (baseline do RNF1) | {a medir} | Não piorar | {a fixar} | Diretrizes: avaliar se a melhoria de um RNF degrada outro |
+| N1 | **8** efeitos; 18 linhas copiadas em `Tools/video/effects.py` | {a medir} | {a fixar} | {a fixar} | {e.g., 0 efeitos com duas implementações} |
+| N2 — C1 (filtro de brilho) | 2 ficheiros; `brightness_tool` + `video_tool`; **3** tipos de trabalho de vídeo reimplantados | {a medir} | {a fixar} | {a fixar} | {…} |
+| N2 — C2 (Faster-Whisper) | 2 ficheiros; `video_tool`; **3** tipos de trabalho reimplantados | {a medir} | {a fixar} | {a fixar} | {e.g., só a legendagem é reimplantada} |
+| N2 — C3 (amostragem de fotogramas) | 1 ficheiro; `video_tool`; **3** tipos de trabalho reimplantados | {a medir} | {a fixar} | {a fixar} | {…} |
+| N3 | 1 imagem de 1,69 GB (ffmpeg + fontes 597 MB; `faster-whisper` 457 MB); build sem cache 240 s | {a medir} | {a fixar} | {a fixar} | {e.g., imagem da edição sem `faster-whisper`} |
+| N4 | 1 serviço; 601 SLOC; CC máx. 22 (`process_video`); orquestrador 2733 linhas, 16 com ramificação imagem/vídeo | {a medir} | {a fixar} | {a fixar} | {…} |
+| N5 | isolado p50 14,8 s; M1 p95 322,6 s; M2 0,70 vídeos/min (baseline do RNF1) | {a medir} | Não piorar | {a fixar} | Diretrizes: avaliar se a melhoria de um RNF degrada outro |
+
+> Valores da base: `docs/fase2/medicoes/resultados/base/` e `docs/fase2/medicoes/README.md`.
 
 ---
 
@@ -158,8 +172,9 @@ Decisões e restrições dentro de B2:
 
 ## 4. Tarefas do refactoring
 
-- [ ] T1. Medir N1–N4 na base e correr C1–C3 num ramo de experiência; correr a baseline do RNF1 (dá N5).
-- [ ] T2. Guardar a referência de regressão: testes existentes e *hash* das saídas (imagem e vídeo).
+- [x] T1. Medir N1–N4 (com C1–C3) na base; correr a baseline do RNF1 (dá N5) — 2026-11-18.
+- [x] T2. Guardar a referência de regressão: testes existentes (8 + 74 passam) e *hash* das saídas (imagem e
+      vídeo, determinismo confirmado) — 2026-11-18.
 - [ ] T3. Extrair os efeitos PIL para o módulo partilhado e pôr as ferramentas de imagem e o vídeo a usá-lo.
 - [ ] T4. Criar os serviços de edição, legendagem e extração (Dockerfiles e `requirements` próprios), com filas
       próprias em `rabbitMQ/definitions.json` e entradas no `docker-compose.yaml`.
@@ -188,4 +203,6 @@ Decisões e restrições dentro de B2:
 |---|---|---|---|
 | 2026-11-18 | Claude Code (Claude Opus 5.5) | Rascunho deste documento a partir das notas da equipa, das diretrizes e da leitura do código (evidências E1–E7 verificadas no commit `0523102`) | {quem reviu; o que foi alterado} |
 | 2026-11-18 | — (decisão da equipa) | Validação das propostas do rascunho | Aprovadas: divisão B2 por tipo de trabalho; encadeamento pelo `projects` (opção a); módulo de efeitos partilhado. Marcas [PROPOSTA] retiradas destes pontos |
+| 2026-11-18 | Claude Code (Claude Opus 5.5) + equipa | Arrumação depois da baseline | Métricas N1–N5 e cenários C1–C3 aceites (usados na baseline); descrição dos instrumentos alinhada com os scripts usados; valores da base preenchidos. Continuam [PROPOSTA], à espera de revisão: impacto nos stakeholders (1.3) e requisito reformulado (2.1) |
+| 2026-11-18 | Claude Code (Claude Opus 5.5) + equipa | Formato do requisito (2.1) | A frase "O sistema deve…" foi substituída, a pedido da equipa, pelo formato das diretrizes da Fase 2 (escala, método, base, alvo, mínimo). Só o impacto nos stakeholders (1.3) continua [PROPOSTA] |
 | {…} | {…} | {…} | {…} |

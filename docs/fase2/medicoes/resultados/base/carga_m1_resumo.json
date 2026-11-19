@@ -1,0 +1,27 @@
+{
+  "etiqueta": "base",
+  "cenario": "m1",
+  "data": "2026-11-18T22:55:14.045360+00:00",
+  "replicas_video": [
+    "picturas-video_tool-1"
+  ],
+  "repeticoes": 5,
+  "falhas": [],
+  "curto_latencia_s": {
+    "n": 5,
+    "p50": 307.551,
+    "p95": 322.646,
+    "media": 304.384
+  },
+  "legendagem_latencia_s": {
+    "p50": 302.269,
+    "p95": 316.382
+  },
+  "recursos_video": {
+    "picturas-video_tool-1": {
+      "mem_mib_max": 2505.7,
+      "cpu_pct_media": 331.0,
+      "cpu_pct_max": 840.59
+    }
+  }
+}
