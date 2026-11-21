@@ -16,3 +16,6 @@ backups/
 __pycache__/
 *.py[cod]
 .venv/
+
+# PDF gerado ao compilar o relatório (pré-visualização)
+docs/fase2/relatorio/main.pdf
