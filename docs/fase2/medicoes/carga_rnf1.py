@@ -5,28 +5,34 @@ vídeo, define o pipeline e carrega em *Apply* (POST .../process). Mede o tempo 
 ficarem disponíveis para o utilizador (GET .../process/url devolve resultados, o que só acontece depois do commit
 da execução no `projects`). Consulta a cada 0,5 s.
 
-Cenários (parâmetros fixados pela equipa a 2026-11-18, ver docs/fase2/RNF1-EDIT-011.md, secção 2.3):
+Cenários (parâmetros do plano mínimo, fixados pela equipa a 2026-11-18 e usados na baseline; ver
+docs/fase2/RNF1-EDIT-011.md, secção 2.3). Usar sempre os mesmos valores em todos os momentos de medição
+(base, após o RNF2, após o RNF1), para os resultados serem comparáveis:
 
   isolado  Trabalho curto sozinho (brilho em sample_10s_720p.mp4). Referência "sem carga" para o M1.
+           5 repetições.
   m1       A legenda speech_mandela_177s_1080p.webm; 5 s depois, B aplica brilho a sample_10s_720p.mp4.
-           Mede-se o tempo de B (M1). 10 repetições.
-  m2       N trabalhos submetidos ao mesmo tempo: 1 legendagem + (N-1) edições de brilho. N em {1, 4, 8}.
-           Mede-se o débito (vídeos/min, M2) e o p95 do tempo de cada trabalho (M3). 5 repetições por N.
+           Mede-se o tempo de B (M1). 5 repetições.
+  m2       N trabalhos submetidos ao mesmo tempo: 1 legendagem + (N-1) edições de brilho. Só N = 4.
+           Mede-se o débito (vídeos/min, M2) e o p95 do tempo de cada trabalho (M3). 3 repetições.
   paralelo N edições curtas (brilho em sample_10s_720p.mp4) submetidas ao mesmo tempo, sem legendagem.
            Mede-se o p95 do tempo de cada trabalho e o débito (M6). É o cenário que as réplicas melhoram;
            o M1 e o M2 são dominados pela legendagem (acrescentado a 2026-11-18, antes do refactoring).
+           N = 4, 5 repetições.
 
 Em paralelo amostra CPU e memória dos contentores de vídeo (`docker stats`).
 
 Uso (na raiz do repositório, com a aplicação a correr em https://localhost:8080):
 
-    python docs/fase2/medicoes/carga_rnf1.py <etiqueta> <cenario> [--reps R] [--n 1,4,8] [--timeout S]
+    python docs/fase2/medicoes/carga_rnf1.py <etiqueta> <cenario> [--reps R] [--n 4] [--timeout S]
 
-Exemplos:
-    python docs/fase2/medicoes/carga_rnf1.py base isolado --reps 10
-    python docs/fase2/medicoes/carga_rnf1.py base m1 --reps 10
-    python docs/fase2/medicoes/carga_rnf1.py base m2 --reps 5 --n 1,4,8
+Comandos usados na baseline (sem --reps nem --n, o script usa estes mesmos valores):
+    python docs/fase2/medicoes/carga_rnf1.py base isolado --reps 5
+    python docs/fase2/medicoes/carga_rnf1.py base m1 --reps 5
+    python docs/fase2/medicoes/carga_rnf1.py base m2 --reps 3 --n 4
     python docs/fase2/medicoes/carga_rnf1.py base paralelo --reps 5 --n 4
+
+Nos momentos seguintes muda só a etiqueta (e.g., apos-rnf2, apos-rnf1).
 
 Escreve em docs/fase2/medicoes/resultados/<etiqueta>/: carga_<cenario>.csv (uma linha por trabalho),
 carga_<cenario>_recursos.csv (amostras do docker stats) e carga_<cenario>_resumo.json.
@@ -237,10 +243,10 @@ def main():
     ap.add_argument("etiqueta")
     ap.add_argument("cenario", choices=["isolado", "m1", "m2", "paralelo"])
     ap.add_argument("--reps", type=int, default=None)
-    ap.add_argument("--n", default="1,4,8")
+    ap.add_argument("--n", default="4")
     ap.add_argument("--timeout", type=int, default=1800)
     a = ap.parse_args()
-    reps = a.reps or {"isolado": 10, "m1": 10, "m2": 5, "paralelo": 5}[a.cenario]
+    reps = a.reps or {"isolado": 5, "m1": 5, "m2": 3, "paralelo": 5}[a.cenario]
 
     rows, res_rows = [], []
     rounds = [(n, r) for n in ([int(x) for x in a.n.split(",")] if a.cenario in ("m2", "paralelo") else [None])

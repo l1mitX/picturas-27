@@ -63,17 +63,23 @@ Evidência usada pela primeira vez neste capítulo:
     colunas: (1.6cm, 5.2cm, 5.2cm, 1.8cm),
     tamanho: 8.5pt,
     [ID], [Importância para os stakeholders], [Dificuldade / risco técnico], [Prioridade],
-    [QS-01], [Alta — o utilizador espera mais de 5 min por um efeito que demora 15 s (EV-18); o REQ-VID-EDIT-011 pede, no MVP, pelo menos 2 vídeos em paralelo], [Alta — réplicas, filas por tipo de trabalho e ajuste automático; hipóteses H-01 a H-05], [1],
+    [QS-01], [Alta — o utilizador espera mais de 5 min por um efeito que demora 15 s (EV-18); o REQ-VID-EDIT-011 pede, no MVP, pelo menos 2 vídeos em paralelo], [Média — resolvido sobretudo pela divisão em serviços por tipo de trabalho do QS-02 (pré-requisito, Tabela 15): a legendagem passa a ter a sua fila e deixa de bloquear a edição, sem tática própria], [3],
     [QS-02], [Média-alta — para a equipa, cada mudança nas legendas reconstrói uma imagem de 1,69 GB e reimplanta todo o vídeo (EV-14, EV-17); REQ-VID-EDIT-013], [Média — divisão do serviço; o cancelamento passa a atravessar vários serviços (H-08)], [2],
-    [QS-03], [Alta — é o caso mais comum (vários utilizadores a editar ao mesmo tempo): com 4 edições curtas em simultâneo, o p95 passa de 17,8 s para 44,0 s (EV-26)], [Alta — mas é resolvido pela mesma tática do QS-01], [3],
+    [QS-03], [Alta — é o caso mais comum (vários utilizadores a editar ao mesmo tempo): com 4 edições curtas em simultâneo, o p95 passa de 17,8 s para 44,0 s (EV-26)], [Alta — réplicas por serviço de vídeo e ajuste automático pelo tamanho da fila; hipóteses H-01 a H-05], [1],
     [QS-04], [Média — risco de imagem e vídeo divergirem (regra sem requisito explícito, hoje garantida por cópia) e REQ-VID-EDIT-013 (acrescentar um efeito sem alterar os existentes)], [Média — extrair um módulo comum mexe também nas 8 ferramentas de imagem (regressão por _hash_, H-07); se o módulo ficar em `Tools/utils`, passa a reconstruir 15 serviços (EV-28)], [4],
     [QS-05], [Média — só afeta carregamentos grandes e simultâneos: cada ficheiro, até 1100 MB, fica inteiro em memória em cada salto (EV-01), e o Docker da máquina de medição tem 7,7 GiB], [Alta — mexe no carregamento de imagens e vídeos, em três serviços; risco de regressão alto], [5],
   ),
 )
 
+O QS-01 é o cenário com a fragilidade mais grave para o utilizador, mas não fica no topo da priorização porque não
+precisa de uma tática própria: a divisão em serviços por tipo de trabalho, exigida pelo QS-02, dá à legendagem a sua
+fila e deixa de a pôr à frente das edições curtas (Tabela 15). Por isso, os dois cenários que dão origem aos candidatos
+do capítulo 6 são o *QS-03* (capacidade: vários pedidos curtos em simultâneo, que só as réplicas resolvem) e o *QS-02*
+(modularidade). O QS-01 continua a ser medido, como efeito da divisão do QS-02.
+
 == Atributos de qualidade por ordem de prioridade
 
-+ *Eficiência de desempenho → capacidade* — QS-01 e QS-03: a fragilidade é visível para todos os utilizadores e é o requisito de vídeo que a base não cumpre (EV-18, EV-26).
++ *Eficiência de desempenho → capacidade* — QS-03 e QS-01: a fragilidade é visível para todos os utilizadores e é o requisito de vídeo que a base não cumpre (EV-18, EV-26).
 + *Manutenibilidade → modularidade e modificabilidade* — QS-02 e QS-04: afeta a equipa em cada mudança, e é condição para resolver a capacidade por tipo de trabalho (secção 5.3).
 + *Eficiência de desempenho → utilização de recursos* — QS-05: risco real, mas localizado nos carregamentos grandes e fora do caminho de processamento do vídeo.
 
@@ -84,12 +90,12 @@ Evidência usada pela primeira vez neste capítulo:
     colunas: (2.8cm, 2.8cm, 3.4cm, 1fr),
     tamanho: 8.5pt,
     [Atributo A], [Atributo B], [Efeito (pré-requisito, sinergia ou conflito)], [Razão / evidência],
-    [Modularidade (QS-02)], [Capacidade (QS-01)], [Pré-requisito], [Só com serviços e filas por tipo de trabalho é possível escalar a edição sem que uma legendagem ocupe a réplica de uma edição curta (EV-03, EV-10). Com o serviço único, as réplicas (ALT-3) melhoram o QS-03 mas pouco o QS-01.],
+    [Modularidade (QS-02)], [Capacidade (QS-03, QS-01)], [Pré-requisito], [Só com serviços e filas por tipo de trabalho é possível escalar a edição sem que uma legendagem ocupe a réplica de uma edição curta (EV-03, EV-10). A divisão sozinha resolve a maior parte do QS-01; as réplicas por serviço resolvem o QS-03. Com o serviço único, as réplicas (ALT-3) melhoram o QS-03 mas pouco o QS-01.],
     [Modularidade (QS-02)], [Capacidade / elasticidade], [Sinergia], [Imagens mais pequenas para a edição (sem `faster-whisper`, EV-14) arrancam réplicas mais depressa.],
     [Modularidade (QS-02)], [Comportamento temporal], [Conflito potencial], [Mais um salto entre serviços e um MP4 intermédio por estágio podem aumentar o tempo de cada vídeo (H-06). Vigia-se com o tempo isolado em cada medição.],
-    [Capacidade (QS-01)], [Utilização de recursos], [Conflito], [Durante uma legendagem, o `video_tool` (uma só instância) chegou a 2 506 MiB (≈ 2,4 GiB) de memória na medição do QS-01 (EV-18); com N réplicas de legendagem a memória cresce na mesma proporção, e a máquina de medição tem 7,7 GiB para o Docker.],
-    [Capacidade (QS-01)], [Segurança], [Conflito], [O ajuste automático de réplicas precisa de acesso à API do Docker, que dá controlo sobre todos os contentores.],
-    [Capacidade (QS-01)], [Fiabilidade → disponibilidade], [Sinergia], [Com várias réplicas e `ack` manual (EV-10), a queda de uma instância não para o processamento de vídeo. Ainda não testado: a base nunca correu com réplicas (H-01).],
+    [Capacidade (QS-03)], [Utilização de recursos], [Conflito], [Durante uma legendagem, o `video_tool` (uma só instância) chegou a 2 506 MiB (≈ 2,4 GiB) de memória na medição do QS-01 (EV-18); com N réplicas de legendagem a memória cresce na mesma proporção, e a máquina de medição tem 7,7 GiB para o Docker.],
+    [Capacidade (QS-03)], [Segurança], [Conflito], [O ajuste automático de réplicas precisa de acesso à API do Docker, que dá controlo sobre todos os contentores.],
+    [Capacidade (QS-03)], [Fiabilidade → disponibilidade], [Sinergia], [Com várias réplicas e `ack` manual (EV-10), a queda de uma instância não para o processamento de vídeo. Ainda não testado: a base nunca correu com réplicas (H-01).],
   ),
 )
 

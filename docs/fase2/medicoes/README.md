@@ -1,7 +1,37 @@
 # Medições da Fase 2
 
-> **Estado (2026-11-18, 23:50):** baseline completa (RNF2 e RNF1, plano mínimo, mais o cenário M6). Próximo
-> passo: a equipa decide a escala principal do RNF1 e os alvos; depois, refactoring do RNF2. A pasta `resultados/teste/` é só de teste do script: não é baseline.
+> **Estado (2026-11-22):** baseline completa (RNF2 e RNF1, plano mínimo, mais o cenário M6). Escala principal do
+> RNF1 e alvos decididos (relatório, capítulo 6). Próximo passo: refactoring do RNF2 e medição "após RNF2". A pasta
+> `resultados/teste/` é só de teste do script: não é baseline.
+
+## Antes de medir: decisões a respeitar (equipa e IA)
+
+> Ler esta secção antes de correr qualquer script. Vale para quem medir e para assistentes de IA que ajudem a medir.
+
+1. **Três momentos de medição, sempre com o mesmo método** (decisão da equipa, 2026-11-22; relatório, secções 5.1 e 6.2):
+
+   | Momento | Quando | Etiqueta (pasta em `resultados/`) |
+   |---|---|---|
+   | Base | Antes de qualquer alteração (código igual a `0523102`) | `base` (feito a 2026-11-18) |
+   | Após RNF2 | Depois de partir o `video_tool` em serviços (edição, legendagem, extração), ainda sem réplicas | `apos-rnf2` |
+   | Após RNF1 | Depois das réplicas com ajuste automático | `apos-rnf1` |
+
+2. **Atribuição do ganho:** o que muda entre `base` e `apos-rnf2` conta para o RNF2 (CAND-2); o que muda entre
+   `apos-rnf2` e `apos-rnf1` conta para o RNF1 (CAND-1). **Não comparar só `base` com `apos-rnf1`**: o M1 melhora
+   quase todo com a divisão do RNF2, e esse ganho não é das réplicas; o M6 deve melhorar sobretudo com as réplicas.
+3. **Escala principal do RNF1 = M6** (cenário `paralelo`, QS-03): é o que mede o efeito das réplicas. O **M1**
+   (cenário `m1`, QS-01) é complementar, mas mede-se sempre: o seu ganho vem sobretudo da divisão do RNF2. A outra
+   opção (M1 principal) foi escolhida e revista no mesmo dia; ver `RNF1-EDIT-011.md`, secção 2.1. No relatório, o
+   QS-03 passou a prioridade 1 e o QS-01 a prioridade 3 (capítulo 5).
+4. **A medição `apos-rnf2` é obrigatória**, mesmo que só interesse o resultado final: dá o N5 do RNF2 (o desempenho
+   não pode piorar) e separa os ganhos dos dois RNF.
+5. **Mesmos parâmetros da base:** isolado ×5, M1 ×5, M2 só N = 4 ×3, M6 N = 4 ×5. Desde 2026-11-22 são os valores
+   por omissão do `carga_rnf1.py`, por isso basta mudar a etiqueta, e.g. `python docs/fase2/medicoes/carga_rnf1.py
+   apos-rnf2 m1`. Mesma máquina e mesmos recursos do Docker (ver "Ambiente da baseline").
+6. **Arrancar sempre com `docker compose up -d --build`** (ver a nota sobre o arranque, mais abaixo).
+7. **N3 (tamanho das imagens):** o `apt-get` não fixa versões, por isso comparar só imagens construídas no mesmo dia.
+8. Valores-alvo e mínimos: estão no relatório (`docs/fase2/relatorio/capitulos/06-candidatos-rnf.typ`, Tabela 18).
+   Não os mudar depois de ver os resultados.
 
 Scripts e resultados das medições dos dois RNF. Os scripts são os mesmos em todos os momentos de medição
 (base, após RNF2, após RNF1); só muda a etiqueta da pasta de resultados.

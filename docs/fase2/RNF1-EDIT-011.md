@@ -8,7 +8,7 @@
 | **Alvos do PL1-G4** | Produção: "escalável" (sem número) · MVP: ≥ 2 vídeos em paralelo |
 | **Commit de partida** | `0523102` (`upstream/main` de `picturas-um/picturas-27`) |
 | **Relação com o RNF2** | Depende do RNF2 (`RNF2-modularidade-video.md`), que divide o `video_tool` em serviços por tipo de trabalho, cada um com a sua fila. Este RNF faz-se **depois** e trata só da capacidade: réplicas e ajuste automático de cada serviço à sua fila |
-| **Estado deste documento** | Rascunho. Valores de baseline, alvo e mínimo **por medir** |
+| **Estado deste documento** | Plano. Base medida (2026-11-18); alvos e mínimos fixados a 2026-11-22 (relatório, Tabela 18); medições após o refactoring por fazer |
 
 > Este ficheiro junta o requisito, a decisão, as tarefas e o registo de IA deste RNF. O relatório da Fase 2
 > cita-o. Atualizar sempre que uma decisão mudar ou uma medição for feita.
@@ -74,29 +74,40 @@ pela mesma fila e são processados em série. Uma legendagem longa (Whisper em C
 | Campo | RNF1 |
 |---|---|
 | **Requisito** | Eficiência de desempenho › Capacidade (ISO/IEC 25010): processar vários vídeos em paralelo (REQ-VID-EDIT-011, PL1-G4) |
-| **Escala** | Segundos que um vídeo curto demora, do *Apply* até ao resultado, quando há uma legendagem de outro utilizador a decorrer (p95) |
-| **Método** | `docs/fase2/medicoes/carga_rnf1.py`, cenário M1: legendagem de `speech_mandela_177s_1080p.webm` (3 min) e, 5 s depois, brilho em `sample_10s_720p.mp4` (10 s); 5 repetições; mesma máquina e mesmos recursos do Docker (12 CPUs, 7,7 GiB) |
-| **Valor na base** | **322,6 s** (p95; p50 307,6 s), medido a 2026-11-18. Referência: o mesmo vídeo sozinho demora 14,8 s (p50) |
-| **Valor-alvo** | {a decidir} |
-| **Mínimo aceitável** | {a decidir} |
-| **Medições complementares** | M6 (4 edições curtas ao mesmo tempo, sem legendagem; base p95 44,0 s), M2 (débito com 4 vídeos ao mesmo tempo; base 0,70 vídeos/min), M3 e M4 — ver 2.2 e 2.4 |
+| **Escala** | M6: segundos que cada um de 4 vídeos curtos, submetidos ao mesmo tempo, demora do *Apply* até ao resultado (p95), e débito (vídeos/min) |
+| **Método** | `docs/fase2/medicoes/carga_rnf1.py`, cenário `paralelo` (M6): 4 utilizadores aplicam brilho a `sample_10s_720p.mp4` (10 s) ao mesmo tempo, sem legendagem; 5 repetições; mesma máquina e mesmos recursos do Docker (12 CPUs, 7,7 GiB) |
+| **Valor na base** | **44,0 s** (p95; p50 28,8 s) e 5,54 vídeos/min, medido a 2026-11-18. Referência: o mesmo vídeo sozinho demora 17,8 s (p95) |
+| **Valor-alvo** | M6 p95 ≤ 30 s — ver 2.4 |
+| **Mínimo aceitável** | M6: pelo menos 2 trabalhos em simultâneo (REQ-VID-EDIT-011 no MVP) — ver 2.4 |
+| **Medições complementares** | M1 (vídeo curto durante uma legendagem; base p95 322,6 s; ganho atribuído sobretudo ao RNF2), M2 (débito com 4 vídeos ao mesmo tempo; base 0,70 vídeos/min), M3 e M4 — ver 2.2 e 2.4 |
 
-> **[PROPOSTA] Rever a escala principal.** Depois do RNF2, a legendagem corre num serviço próprio e deixa de
-> bloquear a edição. Por isso o M1 melhora quase todo **com o RNF2**, antes das réplicas. O M2 também quase não
-> pode subir: a legendagem sozinha demora cerca de 300 s, e isso limita o débito a cerca de 0,79 vídeos/min
-> (+13 %), seja qual for o número de réplicas. A métrica que mede o ganho das réplicas e do ajuste automático é o
-> **M6**. Proposta: usar o M6 como escala principal deste RNF e deixar o M1 como medição complementar (o seu
-> ganho fica atribuído ao RNF2). A equipa tem de decidir.
+> **Decisão sobre a escala principal (equipa, 2026-11-22).** Problema: depois do RNF2, a legendagem corre num
+> serviço próprio e deixa de bloquear a edição, por isso o M1 melhora quase todo **com o RNF2**, antes das réplicas.
+> Se o M1 fosse a escala principal deste RNF, o seu ganho quase não mudaria com as réplicas, e este RNF não seria
+> avaliado pelo que ele próprio faz. (O M2 também quase não pode subir: a legendagem sozinha demora cerca de 300 s,
+> o que limita o débito a cerca de 0,79 vídeos/min, seja qual for o número de réplicas.) Foram consideradas duas
+> soluções:
+>
+> - **(a) Manter o M1 como escala principal e medir em três momentos** (base, após RNF2, após RNF1). O ganho
+>   atribuído a este RNF é só o que muda entre "Após RNF2" e "Após RNF1".
+> - **(b) Trocar para o M6** (4 edições curtas em paralelo), que mede diretamente o efeito das réplicas, e deixar
+>   o M1 como complementar.
+>
+> **Escolhida: (b).** É a mais correta: a escala principal mede o efeito das táticas deste RNF (réplicas e ajuste
+> automático). Implicou mudar a priorização dos cenários no relatório (capítulo 5): o QS-03 (M6) passou a
+> prioridade 1 e o QS-01 (M1) a prioridade 3, por ser resolvido sobretudo pela divisão do RNF2. Os três momentos de
+> medição mantêm-se, para separar os ganhos dos dois RNF. Registado no relatório, secções 5.1 e 6.2, e em
+> `medicoes/README.md` ("Antes de medir"). A opção (a) chegou a ser escolhida no mesmo dia e foi revista.
 
 ### 2.2 Métricas
 
 | # | Métrica (escala) | Unidade | Papel |
 |---|---|---|---|
-| M1 | Tempo até à conclusão de um trabalho curto submetido durante uma legendagem (p50 e p95) | s | **Principal**: é o cenário de qualidade do Exercício 6 |
+| M1 | Tempo até à conclusão de um trabalho curto submetido durante uma legendagem (p50 e p95) | s | Complementar (decisão de 2026-11-22, ver 2.1): cenário QS-01; o ganho vem sobretudo do RNF2 |
 | M2 | Débito com N trabalhos em simultâneo (carga mista) | vídeos concluídos / min | Principal (capacidade) |
 | M3 | Tempo até à conclusão por trabalho com carga mista (p95) | s | Secundária |
 | M4 | Tempo até o sistema acrescentar capacidade quando a fila passa o limiar, e até a retirar quando esvazia | s | Elasticidade (só depois do refactoring; na base não há ajuste: "n/a") |
-| M6 | Tempo até à conclusão de N = 4 edições curtas submetidas ao mesmo tempo, sem legendagem (p50 e p95), e débito | s; vídeos concluídos / min | Capacidade do próprio serviço de edição: é o que as réplicas melhoram |
+| M6 | Tempo até à conclusão de N = 4 edições curtas submetidas ao mesmo tempo, sem legendagem (p50 e p95), e débito | s; vídeos concluídos / min | **Principal** (decisão de 2026-11-22, ver 2.1): cenário QS-03; é o que mostra o efeito das réplicas |
 
 > Origem: M1, M2 e M3 vêm das notas da equipa (`analise-requisitos-fase2-v2.md`, "A melhor medição de
 > todos") e do cenário de exemplo do Bloco 2 do Exercício 6. M4 foi proposta no rascunho e aceite pela equipa.
@@ -139,11 +150,12 @@ edição); o ganho atribuído a este RNF é o que se mede **entre "Após RNF2" e
 
 | Métrica | Baseline (base, 1 réplica) | Após RNF2 | Após RNF1 | Alvo | Mínimo aceitável | Origem do alvo |
 |---|---|---|---|---|---|---|
-| M1 p95 | **322,6 s** (p50 307,6 s; isolado: p50 14,8 s, p95 17,8 s) | {a medir} | {a medir} | {a fixar} | {a fixar} | {e.g., ≤ tempo do mesmo trabalho sem carga + X %} |
+| M1 p95 | **322,6 s** (p50 307,6 s; isolado: p50 14,8 s, p95 17,8 s) | {a medir} | {a medir} | ≤ 36 s | ≤ 50 s | Alvo: 2× o trabalho isolado (necessidade do utilizador). Mínimo: REQ-VID-EDIT-010 no MVP (5× a duração de 10 s). Relatório, Tabela 18 |
 | M2 (N=4) | **0,70 vídeos/min** | {a medir} | {a medir} | {a fixar} | ≥ 2 vídeos em paralelo (critério MVP do PL1-G4) | PL1-G4 Tabela 30 |
 | M3 p95 | 353,5 s (todos); 35,3 s (só curtos) | {a medir} | {a medir} | {a fixar} | {a fixar} | {…} |
-| M4 | n/a | n/a | {a medir} | {a fixar} | {a fixar} | {…} |
-| M6 (N=4) | **p95 44,0 s** (p50 28,8 s); 5,54 vídeos/min | {a medir} | {a medir} | {a fixar} | {a fixar} | {e.g., p95 perto do trabalho isolado: os 4 em paralelo} |
+| M4 | n/a | n/a | {a medir} | ≤ 30 s | ≤ 60 s | Período de consulta do ajuste + arranque do contentor. Relatório, Tabela 18 |
+| M6 (N=4) | **p95 44,0 s** (p50 28,8 s); 5,54 vídeos/min | {a medir} | {a medir} | p95 ≤ 30 s | ≥ 2 trabalhos em simultâneo | Alvo: estimativa da equipa (4 em paralelo, perto dos 17,8 s de um isolado). Mínimo: REQ-VID-EDIT-011 no MVP. Relatório, Tabela 18 |
+| Isolado p95 (efeito colateral) | 17,8 s | {a medir} | {a medir} | ≤ 17,8 s (não piorar) | ≤ 19,6 s (base + 10 %) | Relatório, Tabela 18 |
 
 > Sem a medição de referência com `--scale 2`, o relatório separa o ganho de cada RNF pelos três momentos de
 > medição: o que muda entre a base e "Após RNF2" vem da divisão em serviços; o que muda entre "Após RNF2" e
@@ -228,4 +240,5 @@ Pontos dentro de A2:
 | 2026-11-18 | Claude Code (Claude Opus 5.5) + equipa | Arrumação depois da baseline | Plano mínimo registado; M4 aceite; M5 e a referência `--scale 2` retiradas; método (2.3) alinhado com o script usado; valores da base preenchidos. Continuam [PROPOSTA], à espera de revisão: impacto nos stakeholders (1.3) e requisito reformulado (2.1) |
 | 2026-11-18 | Claude Code (Claude Opus 5.5) + equipa | Formato do requisito (2.1) | A frase "O sistema deve…" foi substituída, a pedido da equipa, pelo formato das diretrizes da Fase 2 (escala, método, base, alvo, mínimo). Só o impacto nos stakeholders (1.3) continua [PROPOSTA] |
 | 2026-11-18 | Claude Code (Claude Opus 5.5) + equipa | Revisão do plano face às diretrizes; novo cenário M6 | A revisão mostrou que o M1 é resolvido sobretudo pelo RNF2 e que o M2 está limitado pela duração da legendagem. A equipa pediu o cenário M6: acrescentado ao `carga_rnf1.py` (`paralelo`) e medido na base (código igual a `0523102`). Fica [PROPOSTA]: usar o M6 como escala principal (2.1) |
+| 2026-11-22 | Claude Code (Claude Opus 5.5) + equipa | Revisão do relatório (caps. 2–6) e decisão sobre a escala principal | A equipa escolheu primeiro a opção (a) da secção 2.1 e, no mesmo dia, reviu-a para a (b): M6 principal, M1 complementar, três momentos de medição. Prioridades do capítulo 5 do relatório ajustadas (QS-03 → 1, QS-01 → 3). Marca [PROPOSTA] do M6 retirada. Alvos e mínimos copiados do relatório (Tabela 18). Cabeçalho e valores por omissão do `carga_rnf1.py` alinhados com o plano mínimo da baseline |
 | {…} | {…} | {…} | {…} |

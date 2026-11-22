@@ -8,7 +8,7 @@
 | **Ideia dos docentes** | Diretrizes da Fase 2: "Dividir o processamento de vídeo em vários microserviços, à semelhança do que já acontece com as ferramentas de imagem" |
 | **Commit de partida** | `0523102` |
 | **Relação com o RNF1** | Este RNF faz-se **primeiro** e é pré-requisito do RNF1 (`RNF1-EDIT-011.md`): o RNF1 escala cada serviço criado aqui. Cada um é medido por si (ver 2.4) |
-| **Estado deste documento** | Rascunho. Valores de baseline, alvo e mínimo **por medir** |
+| **Estado deste documento** | Plano. Base medida (2026-11-18); alvos e mínimos fixados a 2026-11-22 (relatório, Tabela 18); medições após o refactoring por fazer |
 
 > **Legenda:** as partes marcadas com **[PROPOSTA]** foram sugeridas no rascunho assistido por IA e não têm
 > fonte nos enunciados, nas notas da equipa ou no relatório do PL1-G4. Têm de ser validadas pela equipa;
@@ -72,8 +72,8 @@ disso, os filtros de vídeo são uma **cópia** dos filtros das ferramentas de i
 | **Escala** | Nº de tipos de trabalho de vídeo (edição, legendagem, extração de fotogramas) que têm de ser reconstruídos e reimplantados para atualizar a legendagem (cenário C2) |
 | **Método** | `docs/fase2/medicoes/rnf2_estaticas.py` (N2, cenário C2): encontra os ficheiros a alterar pelo conteúdo e os serviços a reconstruir pelos Dockerfiles do `docker-compose.yaml` |
 | **Valor na base** | **3** (os 3 tipos de trabalho estão no mesmo serviço `video_tool`), medido a 2026-11-18 |
-| **Valor-alvo** | {a decidir} |
-| **Mínimo aceitável** | {a decidir} |
+| **Valor-alvo** | C2 reimplanta 1 tipo de trabalho (só a legendagem) — ver 2.4 |
+| **Mínimo aceitável** | C2 reimplanta 1 tipo de trabalho (sem isto o QS-02 não é cumprido) — ver 2.4 |
 | **Medições complementares** | N1 (efeitos com duas implementações; base 8), N2 C1 e C3, N3, N4, e N5 (desempenho não pode piorar) — ver 2.2 e 2.4 |
 
 ### 2.2 Métricas
@@ -110,12 +110,12 @@ Assim, o ganho do RNF2 (modularidade) e o do RNF1 (capacidade) avaliam-se cada u
 
 | Métrica | Base | Após RNF2 | Alvo | Mínimo aceitável | Origem do alvo |
 |---|---|---|---|---|---|
-| N1 | **8** efeitos; 18 linhas copiadas em `Tools/video/effects.py` | {a medir} | {a fixar} | {a fixar} | {e.g., 0 efeitos com duas implementações} |
-| N2 — C1 (filtro de brilho) | 2 ficheiros; `brightness_tool` + `video_tool`; **3** tipos de trabalho de vídeo reimplantados | {a medir} | {a fixar} | {a fixar} | {…} |
-| N2 — C2 (Faster-Whisper) | 2 ficheiros; `video_tool`; **3** tipos de trabalho reimplantados | {a medir} | {a fixar} | {a fixar} | {e.g., só a legendagem é reimplantada} |
-| N2 — C3 (amostragem de fotogramas) | 1 ficheiro; `video_tool`; **3** tipos de trabalho reimplantados | {a medir} | {a fixar} | {a fixar} | {…} |
-| N3 | 1 imagem de 1,69 GB (ffmpeg + fontes 597 MB; `faster-whisper` 457 MB); build sem cache 240 s | {a medir} | {a fixar} | {a fixar} | {e.g., imagem da edição sem `faster-whisper`} |
-| N4 | 1 serviço; 601 SLOC; CC máx. 22 (`process_video`); orquestrador 2733 linhas, 16 com ramificação imagem/vídeo | {a medir} | {a fixar} | {a fixar} | {…} |
+| N1 | **8** efeitos; 18 linhas copiadas em `Tools/video/effects.py` | {a medir} | 0 efeitos com duas implementações | 0 | Objetivo do QS-04; relatório, Tabela 18 |
+| N2 — C1 (filtro de brilho) | 2 ficheiros; `brightness_tool` + `video_tool`; **3** tipos de trabalho de vídeo reimplantados | {a medir} | Reimplanta 1 tipo de vídeo (a edição) e a ferramenta de imagem | — | Relatório, Tabela 18; exige o módulo de efeitos fora de `Tools/utils` (EV-28) |
+| N2 — C2 (Faster-Whisper) | 2 ficheiros; `video_tool`; **3** tipos de trabalho reimplantados | {a medir} | Reimplanta 1 tipo de trabalho (só a legendagem) | 1 tipo de trabalho | Objetivo do QS-02; relatório, Tabela 18 |
+| N2 — C3 (amostragem de fotogramas) | 1 ficheiro; `video_tool`; **3** tipos de trabalho reimplantados | {a medir} | Reimplanta 1 tipo de trabalho (só a extração) | — | Relatório, Tabela 18 |
+| N3 | 1 imagem de 1,69 GB (ffmpeg + fontes 597 MB; `faster-whisper` 457 MB); build sem cache 240 s | {a medir} | Imagem da edição ≤ 1,23 GB (1,69 GB sem os 457 MB do `faster-whisper`) | Imagem da edição menor que a atual, construída no mesmo dia | Relatório, Tabela 18; o `apt-get` não fixa versões |
+| N4 | 1 serviço; 601 SLOC; CC máx. 22 (`process_video`); orquestrador 2733 linhas, 16 com ramificação imagem/vídeo | {a medir} | — | Orquestrador ≤ 2733 + 10 % linhas (H9) | Relatório, Tabela 18 |
 | N5 | isolado p50 14,8 s; M1 p95 322,6 s; M2 0,70 vídeos/min (baseline do RNF1) | {a medir} | Não piorar | {a fixar} | Diretrizes: avaliar se a melhoria de um RNF degrada outro |
 
 > Valores da base: `docs/fase2/medicoes/resultados/base/` e `docs/fase2/medicoes/README.md`.
