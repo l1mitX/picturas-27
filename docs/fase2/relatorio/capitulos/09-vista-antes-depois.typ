@@ -13,20 +13,33 @@
   diferença se perceba a olho. A legenda e as notas explicam o que mudou entre elas e porquê.
 ]
 
+// Fontes: images/vista_antes.puml e images/vista_depois.puml (estilo comum em images/_estilo.iuml).
+// Gerar com PlantUML ≥ 1.2023: java -jar plantuml.jar -charset UTF-8 -tsvg vista_antes.puml vista_depois.puml
+Diagramas de componentes em PlantUML, com a mesma notação e os mesmos elementos de contexto nas duas vistas: as filas de
+trabalho em cima, os _workers_ no meio e as filas de resposta em baixo.
+
 == Antes
 
-#figure(kind: image,
-  figura-pendente[vista arquitetural antes das decisões (`images/vista_antes.png`)],
+#figure(
+  image("../images/vista_antes.svg", width: 85%),
   caption: [Vista arquitetural antes das decisões DA-1 e DA-2],
 )
 
 == Depois
 
-#figure(kind: image,
-  figura-pendente[vista arquitetural depois das decisões, com os elementos alterados destacados (`images/vista_depois.png`)],
+#figure(
+  image("../images/vista_depois.svg", width: 100%),
   caption: [Vista arquitetural depois das decisões DA-1 e DA-2],
 )
 
 == Legenda e notas
 
-#preencher[Legenda dos destaques (cores, estereótipos) e notas sobre o que mudou entre as duas vistas.]
+- *Laranja (antes):* os elementos que as decisões vão alterar: a `video_queue` única e o `video_tool` com os três tipos de trabalho e os efeitos copiados.
+- *Verde (depois):* os elementos novos ou alterados, marcados com o estereótipo da tática que os realiza:
+  - três filas e três serviços de vídeo, com N réplicas cada («tática: dividir o módulo», DA-2; «replicar computação», DA-1);
+  - `Tools/effects/`, usado pelo `video_edit` e pelas ferramentas de imagem («tática: abstrair serviços comuns», DA-2);
+  - o `projects` a encadear os estágios do vídeo («tática: intermediário», DA-2);
+  - o `video_autoscaler`, que lê o tamanho das filas e ajusta as réplicas pela API do Docker («aumentar recursos (elástico)», DA-1);
+  - nos _workers_ de vídeo, a paragem ordenada e o _heartbeat_ numa _thread_ separada («tática: reintrodução ordenada + heartbeat», DA-1, TAT-13).
+- *Cinzento:* o que se mantém: ferramentas de imagem, `project_queue`, `ws_queue` e o volume `image_data`.
+- A vista «depois» descreve o que se decidiu. Depois de implementada, tem de ser revista para corresponder ao código entregue.
