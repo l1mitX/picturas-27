@@ -132,10 +132,17 @@ desde que esta não tenha sido cancelada entretanto.
   *hipótese* (`H-nn`) e indiquem como a confirmar ou refutar.
 ]
 
-// [PROPOSTA] Diagrama de sequência ainda por produzir (PlantUML), com os mesmos 6 passos da tabela.
-#figure(kind: image,
-  figura-pendente[diagrama de sequência do processamento em lote de um projeto com vídeos (`images/sequencia_pedido.png`)],
-  caption: [Sequência do processamento em lote de um projeto com vídeos],
+// Diagrama de sequência em PlantUML, com os mesmos 6 passos da tabela (verificados no commit 0523102).
+// Fonte: images/sequencia_pedido.puml. Dividido em duas partes (newpage) para ficar legível em A4; para regenerar:
+// java -jar plantuml.jar -charset UTF-8 -tsvg images/sequencia_pedido.puml  (gera sequencia_pedido.svg e _001.svg)
+#figure(
+  image("../images/sequencia_pedido.svg", width: 100%),
+  caption: [Sequência do processamento em lote de um projeto com vídeos (1/2: carregamento, _pipeline_ e _Apply_)],
+)
+
+#figure(
+  image("../images/sequencia_pedido_001.svg", height: 21cm, fit: "contain"),
+  caption: [Sequência do processamento em lote de um projeto com vídeos (2/2: processamento, progresso e resultado)],
 )
 
 #tab([Passos do pedido completo],

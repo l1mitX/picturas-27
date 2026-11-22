@@ -1,0 +1,96 @@
+@startuml
+' Sequência do processamento em lote de um projeto com vídeos (commit 0523102).
+' Os 6 blocos correspondem aos passos da Tabela 6 do relatório (EV-01 a EV-06).
+' Para regenerar: java -jar plantuml.jar -charset UTF-8 -tsvg images/sequencia_pedido.puml
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 11
+skinparam ArrowColor #4B5563
+skinparam SequenceLifeLineBorderColor #9AA0A6
+skinparam SequenceGroupBorderColor #9AA0A6
+skinparam SequenceDividerBackgroundColor #FDE7D3
+skinparam SequenceDividerBorderColor #C2410C
+skinparam ParticipantBorderColor #9AA0A6
+skinparam ParticipantBackgroundColor #F4F5F7
+skinparam QueueBorderColor #B45309
+skinparam QueueBackgroundColor #FFFBEB
+skinparam DatabaseBorderColor #9AA0A6
+skinparam DatabaseBackgroundColor #FFFBEB
+skinparam maxMessageSize 115
+skinparam responseMessageBelowArrow true
+
+title Processamento em lote de um projeto com vídeos (commit 0523102)
+
+participant "Browser" as B #E8F1F1
+participant "nginx +\nAPI Gateway" as G
+participant "WS\nGateway" as WS
+participant "projects" as P #FFFFFF
+participant "users" as U
+database "img_storage\n+ S3" as S
+queue "RabbitMQ" as Q
+participant "video_tool" as V #FDE7D3
+database "volume\nimage_data" as VOL #EEF2FF
+
+== 1. Carregamento do vídeo (EV-01) ==
+B -> G : POST …/video (multipart, até 1100 MB)
+G -> P : reencaminha (buffer em memória)
+P -> S : guarda o original (src)
+P --> B : 201
+
+== 2. Definição do pipeline (EV-02) ==
+B -> G : POST …/tool (um por efeito)
+G -> P : reencaminha
+P -> P : valida o efeito (VIDEO_TOOLS)
+P --> B : 201
+
+== 3. Apply (EV-03) ==
+B -> G : POST …/process
+G -> P : reencaminha
+P -> U : consome a quota (1 operação por efeito em vídeo)
+P -> VOL : descarrega o original (de S3) para src/
+P -> P : regista o lote todo (Process) antes de enviar
+P -> Q : video_queue: 1 msg por vídeo {procedure: "video", tools: [...]}
+P --> B : 201
+
+newpage Processamento em lote de um projeto com vídeos — continuação
+
+== 4. Processamento (EV-04) ==
+Q -> V : entrega (prefetch = 1, ack manual)
+V -> VOL : lê o original
+V -> V : ffprobe; descodifica 1×; efeitos PIL por fotograma; codifica 1× (MP4)
+
+== 5. Progresso (EV-05) ==
+loop enquanto processa
+  V -> Q : ws_queue: video-progress (%)
+  Q -> WS : entrega
+  WS -> B : Socket.IO: video-progress
+end
+
+== 6. Resultado (EV-06) ==
+alt sucesso
+  V -> VOL : escreve o MP4 final (out/)
+  V -> Q : project_queue: sucesso + caminho do ficheiro
+  V -> Q : ack (só no fim)
+  Q -> P : entrega
+  P -> P : confirma que o activeToken não mudou (não cancelado)
+  P -> VOL : lê o MP4 final
+  P -> S : guarda o resultado (out) e cria o Result
+  P -> Q : ws_queue: process-update
+  Q -> WS : entrega
+  WS -> B : Socket.IO: process-update
+  B -> G : GET …/process/url
+  G -> P : reencaminha
+  P -> S : pede o link público de cada resultado
+  P --> B : links dos resultados
+  B -> S : GET /s3/… (via nginx): descarrega o vídeo
+else erro (códigos 2000–2005; sem saída parcial)
+  V -> Q : project_queue: erro
+  V -> Q : ack (só no fim)
+  Q -> P : entrega
+  P -> Q : ws_queue: process-error
+  Q -> WS : entrega
+  WS -> B : Socket.IO: process-error
+end
+@enduml
