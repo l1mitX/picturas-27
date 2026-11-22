@@ -31,6 +31,12 @@ Foi ainda considerada, e afastada logo à partida, uma alternativa com um _job_ 
 orquestrador de _workflows_ (e.g., Kubernetes Jobs). Daria isolamento total e elasticidade natural, mas exige outra
 plataforma de execução, o que está fora do âmbito de um _refactoring_ e do prazo da fase.
 
+Evidências usadas pela primeira vez neste capítulo:
+
+- *EV-29*: `doc-ext-requisitos-2627.pdf`, secção 8.2, Tabela 37, DA-01 — o PL1-G4 rejeitou espalhar cada fotograma pelas filas de imagem (volume de mensagens, reordenação, sem lugar para o som nem para a recodificação) e optou por um _worker_ que descodifica e recodifica uma só vez, «reutilizando os filtros como biblioteca», com «o paralelismo entre vídeos garantido por réplicas do worker».
+- *EV-30*: `apiGateway/auth/auth.js:12` — o API Gateway valida o JWT (`jwt.verify`) antes de reencaminhar os pedidos.
+- *EV-31*: `apiGateway/routes/projects.js:18`, `users.js:10`, `subscriptions.js:13` — `rejectUnauthorized: false`: as ligações HTTPS internas não validam os certificados.
+
 == Análise de cada alternativa
 
 #orientacao[
@@ -45,7 +51,7 @@ plataforma de execução, o que está fora do âmbito de um _refactoring_ e do p
   [Coerência com o padrão global], [Total: o vídeo passa a seguir o mesmo desenho das imagens (EV-03).],
   [Efeito nos atributos de qualidade], [Modularidade ↑ (cada efeito muda sozinho). Comportamento temporal ↓↓: cada serviço descodifica e recodifica o vídeo inteiro. Capacidade ↑ (cada efeito escala sozinho).],
   [Vantagens potenciais], [Uniformidade; os efeitos podem ser os mesmos serviços das imagens, o que elimina a duplicação de EV-12.],
-  [Desvantagens ou riscos], [Um _pipeline_ de 3 filtros passa de 1 para 3 codificações: mais tempo e perda de qualidade (é a razão pela qual o PL1-G4 rejeitou este desenho). Muitos MP4 intermédios em `image_data` (EV-08).],
+  [Desvantagens ou riscos], [Um _pipeline_ de 3 filtros passa de 1 para 3 codificações: mais tempo e perda de qualidade (hoje há uma só, EV-27). Pelo mesmo motivo, o PL1-G4 rejeitou uma variante ainda mais fina, a de espalhar cada fotograma pelas filas de imagem (EV-29). Muitos MP4 intermédios em `image_data` (EV-08).],
   [Custo e risco de migração (a funcionalidade existente tem de ser preservada)], [Alto: o encadeamento passa todo para o `projects` (cresce o orquestrador, H-09); as saídas deixam de ser iguais bit a bit (mais codificações), o que torna a regressão por _hash_ (H-07) impossível.],
 )
 
@@ -54,8 +60,8 @@ plataforma de execução, o que está fora do âmbito de um _refactoring_ e do p
 #tabela-campos(
   [Coerência com o padrão global], [Alta: serviços com filas próprias e encadeamento pelo `projects`. Usa o _Competing Consumers_, que o padrão global permite mas não usa.],
   [Efeito nos atributos de qualidade], [Capacidade ↑↑ (cada tipo de trabalho tem a sua fila e as suas réplicas; a legendagem deixa de bloquear a edição). Modularidade ↑↑ (dependências separadas; efeitos num só módulo). Comportamento temporal ≈ (corta só nos estágios que já produzem um MP4 intermédio, EV-15; H-06).],
-  [Vantagens potenciais], [Imagens Docker mais pequenas para a edição e a extração (sem `faster-whisper`, EV-14). A mudança do motor de legendas só reimplanta a legendagem.],
-  [Desvantagens ou riscos], [Mais serviços e filas para operar; o ajuste automático de réplicas é uma peça nova. O cancelamento passa a atravessar vários serviços (H-05, H-08). O orquestrador pode crescer (H-09).],
+  [Vantagens potenciais], [Imagens Docker mais pequenas para a edição e a extração (sem `faster-whisper`, EV-14). A mudança do motor de legendas só reimplanta a legendagem. Concretiza duas intenções da DA-01 do PL1-G4 que o código não seguiu: filtros reutilizados como biblioteca e paralelismo entre vídeos por réplicas (EV-29).],
+  [Desvantagens ou riscos], [Mais serviços e filas para operar; o ajuste automático de réplicas é uma peça nova. O cancelamento passa a atravessar vários serviços (H-05, H-08). O orquestrador pode crescer (H-09). Se o módulo de efeitos partilhado ficar em `Tools/utils`, uma mudança num efeito reconstrói 15 serviços (EV-28), o que piora o cenário de mudança C1: a localização do módulo tem de evitar este acoplamento.],
   [Custo e risco de migração], [Médio: o código de cada tipo de trabalho já está em ficheiros separados (EV-11); o maior risco está no encadeamento e no cancelamento, cobertos pelos testes existentes (`Tools/video/tests`, `projects/tests`) e por testes novos para H-05 e H-08.],
 )
 
@@ -66,7 +72,7 @@ plataforma de execução, o que está fora do âmbito de um _refactoring_ e do p
   [Efeito nos atributos de qualidade], [Capacidade ↑ (N trabalhos em paralelo), mas fixa e partilhada: uma legendagem ocupa sempre uma réplica inteira. Modularidade ↑ apenas no código; a implantação continua única.],
   [Vantagens potenciais], [Barata e com pouco risco: quase só configuração (`--scale`) e reorganização interna.],
   [Desvantagens ou riscos], [Não resolve EV-14 (imagem única de 1,69 GB) nem os cenários de mudança (EV-17: os 3 tipos são reimplantados). Réplicas fixas gastam recursos sem carga e não chegam em pico. Depende de H-01 a H-03.],
-  [Custo e risco de migração], [Baixo.],
+  [Custo e risco de migração], [Baixo: quase só configuração (`--scale video_tool=N`) e reorganização interna do código, que já está repartido por ficheiros (EV-11). O risco está na concorrência entre réplicas no volume partilhado e na _cache_ do Whisper (H-01 a H-03).],
 )
 
 == Matriz de comparação de padrões
@@ -88,12 +94,12 @@ plataforma de execução, o que está fora do âmbito de um _refactoring_ e do p
     tamanho: 8pt,
     [Atributo de qualidade (ISO/IEC 25010)], [Padrão global atual (referência)], [Padrão atual do vídeo], [ALT-1 (serviço por efeito)], [ALT-2 (serviço por tipo de trabalho + _Competing Consumers_)], [ALT-3 (monólito modular + réplicas fixas)],
     [Relação com o padrão global], [—], [Afasta-se], [Mantém], [Mantém], [Afasta-se],
-    [Eficiência de desempenho: comportamento temporal], [Alto — passos curtos de imagem, sem bloqueio no _Apply_ (EV-03)], [Alto — uma codificação por _pipeline_ (EV-10)], [Baixo — uma recodificação por efeito], [Alto — corta nos estágios existentes (EV-15, H-06)], [Alto — igual ao atual],
-    [Eficiência de desempenho: capacidade / elasticidade], [Médio — um consumidor por fila, mas trabalhos curtos (EV-07)], [Baixo — um _worker_, `prefetch=1`, M1 p95 322,6 s (EV-04, EV-18)], [Médio — cada efeito escala, mas mais trabalho por vídeo], [Alto — réplicas por tipo de trabalho, ajustadas à fila], [Médio — N réplicas fixas; a legendagem ocupa uma (H-01)],
-    [Fiabilidade: tolerância a falhas / recuperabilidade], [Baixo — `auto_ack=True` perde mensagens (EV-09)], [Médio — `ack` manual no fim (EV-10)], [Médio — mais saltos, cada um com `ack`], [Médio — `ack` manual; com réplicas, outra instância continua (H-05)], [Médio — igual ao atual, com réplicas],
-    [Manutenibilidade: modularidade / modificabilidade], [Alto — um serviço por ferramenta (EV-03)], [Baixo — 8 efeitos duplicados; uma mudança reimplanta 3 tipos (EV-12, EV-17)], [Alto — mas o orquestrador cresce (H-09)], [Alto — dependências separadas; efeitos num módulo (EV-14)], [Médio — módulos internos, uma só implantação],
-    [Segurança], [Médio — sem alteração], [Médio — sem alteração], [Médio — sem alteração], [Médio — o ajuste automático precisa de acesso à API do Docker], [Médio — sem alteração],
-    [Usabilidade: operabilidade], [Alto — progresso por WebSocket (EV-05)], [Médio — espera longa sem explicação (EV-18)], [Médio — mais lento por vídeo], [Alto — espera curta mesmo com legendagens em curso], [Médio — depende do número de réplicas],
+    [Eficiência de desempenho: comportamento temporal], [Alto — passos curtos de imagem; o _Apply_ responde sem esperar pelo processamento (EV-03)], [Alto — uma descodificação e uma codificação por _pipeline_ (EV-27)], [Baixo — cada serviço descodifica e recodifica o vídeo inteiro: N codificações em vez de 1 (EV-27)], [Alto — corta só nos estágios que já geram um MP4 intermédio (EV-15, H-06)], [Alto — o mesmo código de processamento de hoje (EV-27)],
+    [Eficiência de desempenho: capacidade / elasticidade], [Médio — um consumidor por fila, mas os trabalhos de imagem são curtos (EV-07, EV-22)], [Baixo — um _worker_, `prefetch=1`, M1 p95 322,6 s (EV-04, EV-18)], [Médio — cada efeito escala sozinho, mas cada vídeo passa por N serviços e N codificações (EV-27)], [Alto — réplicas por tipo de trabalho, ajustadas à fila; a legendagem deixa de bloquear a edição (EV-18, H-01)], [Médio — N réplicas fixas; cada legendagem ocupa uma réplica inteira (EV-18, H-01)],
+    [Fiabilidade: tolerância a falhas / recuperabilidade], [Baixo — `auto_ack=True` perde mensagens (EV-09)], [Médio — `ack` manual no fim, mas sem réplicas uma falha para a fila toda (EV-07, EV-10)], [Médio — `ack` manual em cada serviço, mas mais saltos e mais MP4 intermédios que podem falhar (EV-08, EV-10)], [Médio — `ack` manual; com réplicas, outra instância retoma a mensagem (EV-10, H-01); cancelamento entre serviços por confirmar (H-08)], [Médio — igual ao atual, com réplicas (EV-10, H-01)],
+    [Manutenibilidade: modularidade / modificabilidade], [Alto — um serviço e uma fila por ferramenta (EV-08, EV-22), exceto mudanças em `Tools/utils` (EV-28)], [Baixo — 8 efeitos duplicados; uma mudança reimplanta 3 tipos (EV-12, EV-17)], [Alto — cada efeito muda sozinho, mas o orquestrador passa a encadear todos os passos do vídeo (EV-17, H-09)], [Alto — dependências separadas por tipo de trabalho (EV-14); efeitos num só módulo (EV-12), com o cuidado de EV-28], [Médio — módulos internos, mas uma só imagem e uma só implantação (EV-14, EV-17)],
+    [Segurança], [Médio — o API Gateway valida o JWT (EV-30), mas as ligações internas não validam certificados (EV-31)], [Médio — herda o global; o `video_tool` só fala com o RabbitMQ e com o volume (EV-08, EV-30)], [Médio — igual ao global, com mais serviços a aceder ao volume (EV-08, EV-31)], [Médio — igual ao global (EV-30, EV-31); o ajuste automático precisa de acesso à API do Docker, um risco novo a mitigar], [Médio — igual ao atual (EV-30, EV-31)],
+    [Usabilidade: operabilidade], [Alto — progresso por WebSocket (EV-05)], [Médio — percentagem em tempo real (EV-05), mas um trabalho curto pode esperar 5 min sem explicação (EV-18)], [Médio — mais lento por vídeo (N codificações, EV-27)], [Alto — a edição deixa de esperar pela legendagem (EV-18, H-01)], [Médio — depende do número de réplicas livres quando há legendagens em curso (EV-18, H-01)],
   ),
 )
 ]
