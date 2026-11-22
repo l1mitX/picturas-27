@@ -84,12 +84,18 @@ desde que esta não tenha sido cancelada entretanto.
   consistente com o que foi observado na solução em execução, não apenas com a documentação.
 ]
 
-// [PROPOSTA] Usar o arquitetura_global_plantuml.svg dado pelos docentes com o Ex. 6 (copiar para images/arquitetura_global.svg), com 3 acrescentos:
-// (1) caminho de volta ws_gateway → browser (progresso); (2) nota «a pré-visualização também usa a video_queue»; (3) commit 0523102 no título.
-#figure(kind: image,
-  figura-pendente[vista da arquitetura global com o caminho do vídeo destacado (`images/arquitetura_global.svg`)],
+// Diagrama dado pelos docentes com o Ex. 6 (arquitetura_global_plantuml.svg). Fonte em images/arquitetura_global.puml;
+// para regenerar: java -jar plantuml.jar -charset UTF-8 -tsvg images/arquitetura_global.puml
+// Acrescentos face ao original (verificados no commit 0523102): (1) seta ws_gateway → browser (progresso por
+// Socket.IO, wsGateway/index.js); (2) nota: a pré-visualização também usa a video_queue (projects/routes/projects.js,
+// procedure "video" com preview: true); (3) commit no título; (4) 17 filas de imagem (rabbitMQ/definitions.json), não 16.
+// Página na horizontal para o diagrama ficar legível impresso.
+#paisagem[
+#figure(
+  image("../images/arquitetura_global.svg", width: 100%, height: 15.5cm, fit: "contain"),
   caption: [Vista da arquitetura global com o caminho do vídeo destacado],
 )
+]
 
 *Ferramenta / notação:* PlantUML, diagrama de componentes.
 
@@ -97,7 +103,7 @@ desde que esta não tenha sido cancelada entretanto.
   tabela(
     colunas: (5cm, 1fr),
     [Elemento (cor, forma ou estilo)], [Significado],
-    [#preencher[cor do destaque]], [Caminho do vídeo: `projects` → `video_queue` → `video_tool` → `project_queue` / `ws_queue`],
+    [Seta laranja grossa], [Interações do processamento de vídeo: ficheiros (_upload_, escrita no volume, S3), mensagens (`projects` → `video_queue` → `video_tool` → `project_queue`) e avisos (`ws_queue` → `ws_gateway` → browser). As setas mostram quem comunica com quem, não o percurso do ficheiro de vídeo],
     [Componente], [Contentor Docker (um serviço do `docker-compose.yaml`)],
     [Fila], [Fila do RabbitMQ (17 filas de ferramentas de imagem, `video_queue`, `project_queue`, `ws_queue`)],
     [Base de dados / armazenamento], [MongoDB por serviço; SeaweedFS (_bucket_ único `users/<id>/`); volume partilhado `image_data`],
