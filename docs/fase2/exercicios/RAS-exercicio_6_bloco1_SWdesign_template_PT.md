@@ -5,7 +5,7 @@
 **Elementos:** pg63924 Beatriz Miranda · pg63944 Diogo Machado · pg63990 José Cação · pg63975 Inês Ribeiro · pg64020 Pedro Braz  
 **Commit de partida:** `0523102` (`picturas-um/picturas-27`, ramo `main`)  
 **Data da análise:** 2026-11-21  
-**Versão deste documento:** v1.0  
+**Versão deste documento:** v1.1 (revista a 2026-11-22)  
 **Versões usadas:** enunciado 1.1 · template 1.1
 
 ---
@@ -225,13 +225,14 @@ tipos de trabalho (EV-11, EV-12, EV-14).
 | EV-32 | Documento | `doc-ext-requisitos-2627.pdf`, secção 8.2, Tabela 37, DA-06 | O PL1-G4 replicou os filtros de imagem em `effects.py` porque cada ferramenta é um processo ligado ao RabbitMQ, sem uma função pura reutilizável; extrair uma biblioteca partilhada «mexia em todos os microsserviços de imagem e saía do âmbito de um MVP», e a duplicação ficou registada como «candidata a refactoring na Fase 2» |
 | EV-33 | Código | `Tools/video/video.py:57-64` | A ligação ao RabbitMQ é aberta com `heartbeat=0`: o vídeo é processado na mesma *thread* que atende a ligação, e com *heartbeat* o broker fecharia a ligação a meio de um vídeo longo |
 | EV-34 | Documento | `doc-ext-requisitos-2627.pdf`, secção 8.2, Tabela 37, DA-08 | O PL1-G4 desligou o *heartbeat* por isso mesmo; a alternativa correta, processar numa *thread* separada, «foi adiada», em troca de «o broker demorar mais a detetar um worker» com problemas |
+| EV-35 | Código | `projects/utils/video.js:42-43` | Os vídeos Premium têm duração máxima de 600 s (`VIDEO_PREMIUM_MAX_DURATION_S`, por omissão); os Free, 60 s |
 
 | **ID** | **Hipótese** | **Como confirmar ou refutar** | **Estado** |
 |--------|--------------|-------------------------------|------------|
 | H-01 | Com `docker compose up --scale video_tool=2`, a solução funciona sem erros (não há `container_name`; o `ack` é manual) | Repetir a medição de base com 2 réplicas manuais | Por confirmar |
 | H-02 | Réplicas a escrever no mesmo `image_data` (EV-08) não colidem nos ficheiros temporários | Ler `video_processor.py`; dois trabalhos do mesmo projeto em simultâneo | Por confirmar |
 | H-03 | Duas réplicas a descarregar o modelo Whisper ao mesmo tempo corrompem a *cache* `whisper_models` | Arrancar 2 réplicas com o volume vazio | Por confirmar |
-| H-04 | Uma legendagem de mais de 30 min ultrapassa o `consumer_timeout` (EV-19) e é reentregue em ciclo | Vídeo Premium longo com legendagem; observar os *logs* do RabbitMQ | Por confirmar |
+| H-04 | Uma legendagem longa ultrapassa o `consumer_timeout` (EV-19, 30 min por omissão) e é reentregue em ciclo | Medir a legendagem do vídeo Premium mais longo permitido (600 s, EV-35), sozinha e com 2 em paralelo, e comparar com o `consumer_timeout` | Por confirmar — pouco provável com a configuração atual: os vídeos Premium têm no máximo 600 s (EV-35) e, pelo M1, 177 s de vídeo levam ~300 s a legendar (EV-18), o que dá ~17 min para 600 s |
 | H-05 | O cancelamento (`activeToken`) continua correto com vários *workers* | Cancelar a meio com 2 réplicas ativas | Por confirmar |
 | H-06 | Partir o pipeline nos limites dos estágios atuais (EV-15) não acrescenta recodificações | Contar as codificações nos *logs* do ffmpeg, antes e depois | Por confirmar |
 | H-07 | Os efeitos partilhados entre imagem e vídeo dão o mesmo resultado que hoje | *Hash* das saídas antes e depois (`regressao_hashes.py`) | Por confirmar |

@@ -5,9 +5,9 @@
 **Elementos:** pg63924 Beatriz Miranda · pg63944 Diogo Machado · pg63990 José Cação · pg63975 Inês Ribeiro · pg64020 Pedro Braz  
 **Commit de partida:** `0523102` (o mesmo do Bloco 1)  
 **Data da análise:** 2026-11-21  
-**Versão deste documento:** v1.0  
+**Versão deste documento:** v1.1 (revista a 2026-11-22)  
 **Versões usadas:** enunciado 1.1 · template 1.1  
-**Versão do Bloco 1 usada como entrada:** v1.0 (`RAS-exercicio_6_bloco1_SWdesign_template_PT.md`)
+**Versão do Bloco 1 usada como entrada:** v1.1 (`RAS-exercicio_6_bloco1_SWdesign_template_PT.md`)
 
 ---
 
