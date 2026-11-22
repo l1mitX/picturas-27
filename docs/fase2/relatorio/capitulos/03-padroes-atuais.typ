@@ -143,7 +143,7 @@ fragilidades. A primeira é de *capacidade*: um trabalho longo ocupa o único _w
 EV-10). A segunda é de *modularidade*: os efeitos estão duplicados e qualquer mudança reconstrói e reimplanta os três
 tipos de trabalho (EV-11, EV-12, EV-14). São estas duas fragilidades que alimentam os cenários do capítulo 5.
 
-*Hipóteses levantadas na análise* (a confirmar ou refutar durante o _refactoring_). Evidência nova usada nas hipóteses: *EV-19*: `rabbitMQ/Dockerfile:2`, `rabbitMQ/rabbitmq.conf` — RabbitMQ 4.0.5 sem `consumer_timeout` configurado (o valor por omissão é 30 min).
+*Hipóteses levantadas na análise* (a confirmar ou refutar durante o _refactoring_). Evidência nova usada nas hipóteses: *EV-19*: `rabbitMQ/Dockerfile:2`, `rabbitMQ/rabbitmq.conf` — RabbitMQ 4.0.5 sem `consumer_timeout` configurado (o valor por omissão é 30 min). Também: *EV-33*: `Tools/video/video.py:57-64` — a ligação ao RabbitMQ é aberta com `heartbeat=0`: o vídeo é processado na mesma _thread_ que atende a ligação, e com _heartbeat_ o broker fecharia a ligação a meio de um vídeo longo; *EV-34*: `doc-ext-requisitos-2627.pdf`, secção 8.2, Tabela 37, DA-08 — o PL1-G4 desligou o _heartbeat_ por isso mesmo; a alternativa correta, processar numa _thread_ separada, «foi adiada», em troca de «o broker demorar mais a detetar um worker» com problemas.
 
 #tabela(
   colunas: (1.4cm, 1fr, 1fr),
@@ -158,4 +158,5 @@ tipos de trabalho (EV-11, EV-12, EV-14). São estas duas fragilidades que alimen
   [H-07], [Os efeitos partilhados entre imagem e vídeo dão o mesmo resultado que hoje.], [_Hash_ das saídas antes e depois (`regressao_hashes.py`).],
   [H-08], [O cancelamento e a devolução de quota funcionam com um _pipeline_ que passa por vários serviços.], [Cancelar a meio de um _pipeline_ legendas + filtro + extração.],
   [H-09], [A divisão do vídeo faz crescer o orquestrador.], [Medir N4 no `projects` antes e depois (EV-17).],
+  [H-10], [Retirar uma réplica a meio de um trabalho (e.g., quando o ajuste automático reduz réplicas com a fila vazia) faz o vídeo recomeçar do zero noutra réplica: o `ack` manual devolve a mensagem à fila (EV-10), sem perda mas com o tempo já gasto desperdiçado. Sem _heartbeat_ (EV-33, EV-34), uma réplica bloqueada sem morrer também retém a mensagem até ao `consumer_timeout` (EV-19).], [Com 2 réplicas, parar uma (`docker stop`) a meio de um vídeo e verificar nos _logs_ se o vídeo recomeça noutra réplica e quanto tempo se perde; suspender uma réplica (`docker pause`) e medir quando a mensagem volta à fila.],
 )
