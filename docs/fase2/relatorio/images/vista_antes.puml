@@ -1,0 +1,44 @@
+@startuml
+' Vista ANTES das decisões DA-1 e DA-2 (Ex. 7, secção 4; relatório, cap. 9).
+' Mesma notação e elementos de contexto que vista_depois.puml. Gerar (PlantUML ≥ 1.2023): java -jar plantuml.jar -charset UTF-8 -tsvg vista_antes.puml
+!include _estilo.iuml
+top to bottom direction
+title Antes: processamento de vídeo na base (commit 0523102)
+
+component "projects (orquestrador)" as projects
+
+package "RabbitMQ: filas de trabalho" {
+  queue "video_queue\ntodo o vídeo + pré-visualização" as vq #FDE7D3
+  queue "17 filas de\nferramentas de imagem" as iq
+}
+
+package "Workers de vídeo" {
+  component "video_tool  × 1\nedição + legendagem + extração\nffmpeg · PIL · Faster-Whisper\neffects.py: 8 efeitos copiados\nimagem única de 1,69 GB" as vt #FDE7D3
+}
+
+package "Workers de imagem" {
+  component "16 ferramentas de imagem\n(1 contentor cada)\ncódigo próprio de cada efeito" as it
+}
+
+
+package "RabbitMQ: respostas" {
+  queue "project_queue (resultados)\nws_queue (progresso)" as rq
+}
+
+projects --> vq : "1 mensagem por vídeo\n(todas as ferramentas)"
+projects --> iq : "1 mensagem\npor passo"
+vq --> vt : "prefetch=1"
+iq --> it
+vt --> rq
+it --> rq
+rq ..> projects : "resultado"
+
+note bottom of vt
+  Todos os workers partilham o volume image_data (EV-08).
+end note
+legend right
+  | Cor | Significado |
+  |<#FDE7D3>| elemento que a DA-1 e a DA-2 vão alterar |
+  |<#F4F5F7>| elemento que se mantém |
+endlegend
+@enduml

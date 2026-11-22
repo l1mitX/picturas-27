@@ -1,0 +1,66 @@
+@startuml
+' Vista DEPOIS das decisões DA-1 e DA-2 (Ex. 7, secção 4; relatório, cap. 9).
+' Mesma notação e elementos de contexto que vista_antes.puml. Atualizar se a implementação tiver desvios.
+' Gerar (PlantUML ≥ 1.2023): java -jar plantuml.jar -charset UTF-8 -tsvg vista_depois.puml
+!include _estilo.iuml
+top to bottom direction
+title Depois: serviços por tipo de trabalho (DA-2) com réplicas ajustadas à fila (DA-1)
+
+component "projects (orquestrador)\n«tática: intermediário» (DA-2)\nencadeia os estágios do vídeo" as projects #DCFCE7
+
+package "RabbitMQ: filas de trabalho" {
+  queue "video_edit_queue" as eq #DCFCE7
+  queue "video_subtitles_queue" as sq #DCFCE7
+  queue "video_frames_queue" as fq #DCFCE7
+  queue "17 filas de\nferramentas de imagem" as iq
+}
+
+package "Workers de vídeo  «tática: dividir o módulo» (DA-2)" {
+  component "video_edit  × N\nefeitos, corte, velocidade\nsem Faster-Whisper" as ve #DCFCE7
+  component "video_subtitles  × N\nFaster-Whisper + fontes" as vs #DCFCE7
+  component "video_frames  × N\nextração de fotogramas" as vf #DCFCE7
+}
+
+package "Workers de imagem" {
+  component "16 ferramentas de imagem\n(1 contentor cada)" as it
+}
+
+component "Tools/effects/\num ficheiro por efeito\n«tática: abstrair serviços comuns» (DA-2)" as fx #DCFCE7
+
+component "video_autoscaler\n«tática: replicar computação +\naumentar recursos (elástico)» (DA-1)" as asc #DCFCE7
+
+
+package "RabbitMQ: respostas" {
+  queue "project_queue (resultados)\nws_queue (progresso)" as rq
+}
+
+projects --> eq : "estágio"
+projects --> sq : "estágio"
+projects --> fq : "estágio"
+projects --> iq : "1 mensagem\npor passo"
+eq --> ve : "réplicas\nconcorrentes"
+sq --> vs : "réplicas\nconcorrentes"
+fq --> vf : "réplicas\nconcorrentes"
+iq --> it
+ve --> rq
+vs --> rq
+vf --> rq
+it --> rq
+rq ..> projects : "resultado"
+ve ..> fx : "usa os 8"
+it ..> fx : "cada uma usa o seu"
+asc ..> eq : "lê o tamanho\ndas filas"
+asc --> ve : "acrescenta / retira réplicas\n(API do Docker)"
+
+note bottom of ve
+  O video_autoscaler ajusta as três filas e os três serviços; só retira
+  réplicas sem trabalho, e cada worker mantém o heartbeat numa thread
+  separada («tática: reintrodução ordenada e heartbeat», DA-1, TAT-13).
+  Todos os workers partilham o volume image_data (EV-08).
+end note
+legend right
+  | Cor | Significado |
+  |<#DCFCE7>| elemento novo ou alterado (estereótipo «tática: …») |
+  |<#F4F5F7>| elemento que se mantém |
+endlegend
+@enduml
