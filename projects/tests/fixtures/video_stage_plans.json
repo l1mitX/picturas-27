@@ -1,0 +1,1732 @@
+{
+  "_formato": {
+    "descricao": "Planos de estágios esperados para cada pipeline de vídeo (RNF2, research R1/R2). Gerados a partir do process_video da base (commit 0523102), com ffmpeg, Whisper e extração substituídos por funções que só registam as chamadas.",
+    "usado_por": [
+      "projects/tests/videoStages.test.js (planStages, pessoa A)",
+      "Tools/video_common/local_pipeline.py (testes Python e regressao_hashes.py, pessoa B)"
+    ],
+    "campos": {
+      "nome": "identificador único do caso",
+      "origem": "de onde vem o pipeline: regressao_hashes, um ficheiro de Tools/video/tests ou casos-limite da spec",
+      "tools": "lista de ferramentas de entrada, por ordem, como o projects a envia hoje",
+      "preview": "true se for uma pré-visualização",
+      "estagios": "plano esperado: service (video_edit | video_subtitles | video_frames), tools do estágio, preview do estágio e progressRange [início, fim] em percentagem, igual à base nos extremos",
+      "erroNaBase": "null, ou a exceção que a base levanta antes de processar (pipeline inválido): nesse caso o plano é um único estágio de edição com todas as ferramentas, para o serviço de edição falhar com o mesmo erro"
+    },
+    "notas": [
+      "O plano depende só das procedures e de preview, não dos valores dos params: o local_pipeline pode procurar o caso pela sequência de procedures + preview e usar os params do teste.",
+      "O último estágio envia 100 % no fim (na base, o último estágio com legendas acaba em 99 e o 100 chega no fim).",
+      "Os valores intermédios do progresso são interpolados dentro da faixa de cada estágio."
+    ]
+  },
+  "casos": [
+    {
+      "nome": "V1_brilho",
+      "origem": "regressao_hashes",
+      "preview": false,
+      "tools": [
+        {
+          "procedure": "brightness",
+          "params": {
+            "brightness": 1.5
+          }
+        }
+      ],
+      "estagios": [
+        {
+          "service": "video_edit",
+          "tools": [
+            {
+              "procedure": "brightness",
+              "params": {
+                "brightness": 1.5
+              }
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            0,
+            100
+          ]
+        }
+      ],
+      "erroNaBase": null
+    },
+    {
+      "nome": "V1p_brilho_preview",
+      "origem": "regressao_hashes",
+      "preview": true,
+      "tools": [
+        {
+          "procedure": "brightness",
+          "params": {
+            "brightness": 1.5
+          }
+        }
+      ],
+      "estagios": [
+        {
+          "service": "video_edit",
+          "tools": [
+            {
+              "procedure": "brightness",
+              "params": {
+                "brightness": 1.5
+              }
+            }
+          ],
+          "preview": true,
+          "progressRange": [
+            0,
+            100
+          ]
+        }
+      ],
+      "erroNaBase": null
+    },
+    {
+      "nome": "V2_contraste_rotacao_corte",
+      "origem": "regressao_hashes",
+      "preview": false,
+      "tools": [
+        {
+          "procedure": "contrast",
+          "params": {
+            "contrastFactor": 1.3
+          }
+        },
+        {
+          "procedure": "rotate",
+          "params": {
+            "degrees": 90
+          }
+        },
+        {
+          "procedure": "trim",
+          "params": {
+            "start": 2,
+            "end": 6
+          }
+        }
+      ],
+      "estagios": [
+        {
+          "service": "video_edit",
+          "tools": [
+            {
+              "procedure": "contrast",
+              "params": {
+                "contrastFactor": 1.3
+              }
+            },
+            {
+              "procedure": "rotate",
+              "params": {
+                "degrees": 90
+              }
+            },
+            {
+              "procedure": "trim",
+              "params": {
+                "start": 2,
+                "end": 6
+              }
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            0,
+            100
+          ]
+        }
+      ],
+      "erroNaBase": null
+    },
+    {
+      "nome": "V3_velocidade",
+      "origem": "regressao_hashes",
+      "preview": false,
+      "tools": [
+        {
+          "procedure": "speed",
+          "params": {
+            "factor": 2.0
+          }
+        }
+      ],
+      "estagios": [
+        {
+          "service": "video_edit",
+          "tools": [
+            {
+              "procedure": "speed",
+              "params": {
+                "factor": 2.0
+              }
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            0,
+            100
+          ]
+        }
+      ],
+      "erroNaBase": null
+    },
+    {
+      "nome": "V4_recorte_moldura_redim",
+      "origem": "regressao_hashes",
+      "preview": false,
+      "tools": [
+        {
+          "procedure": "cut",
+          "params": {
+            "left": 100,
+            "top": 50,
+            "right": 500,
+            "bottom": 350
+          }
+        },
+        {
+          "procedure": "border",
+          "params": {
+            "borderWidth": 10,
+            "r": 255,
+            "g": 0,
+            "b": 0
+          }
+        },
+        {
+          "procedure": "resize",
+          "params": {
+            "width": 320,
+            "height": 180
+          }
+        }
+      ],
+      "estagios": [
+        {
+          "service": "video_edit",
+          "tools": [
+            {
+              "procedure": "cut",
+              "params": {
+                "left": 100,
+                "top": 50,
+                "right": 500,
+                "bottom": 350
+              }
+            },
+            {
+              "procedure": "border",
+              "params": {
+                "borderWidth": 10,
+                "r": 255,
+                "g": 0,
+                "b": 0
+              }
+            },
+            {
+              "procedure": "resize",
+              "params": {
+                "width": 320,
+                "height": 180
+              }
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            0,
+            100
+          ]
+        }
+      ],
+      "erroNaBase": null
+    },
+    {
+      "nome": "V5_binarizacao_saturacao",
+      "origem": "regressao_hashes",
+      "preview": false,
+      "tools": [
+        {
+          "procedure": "saturation",
+          "params": {
+            "saturationFactor": 0.5
+          }
+        },
+        {
+          "procedure": "binarization",
+          "params": {
+            "threshold": 128
+          }
+        }
+      ],
+      "estagios": [
+        {
+          "service": "video_edit",
+          "tools": [
+            {
+              "procedure": "saturation",
+              "params": {
+                "saturationFactor": 0.5
+              }
+            },
+            {
+              "procedure": "binarization",
+              "params": {
+                "threshold": 128
+              }
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            0,
+            100
+          ]
+        }
+      ],
+      "erroNaBase": null
+    },
+    {
+      "nome": "V6_extracao_sozinha",
+      "origem": "regressao_hashes",
+      "preview": false,
+      "tools": [
+        {
+          "procedure": "extract_frames",
+          "params": {
+            "mode": "count",
+            "count": 4,
+            "format": "png"
+          }
+        }
+      ],
+      "estagios": [
+        {
+          "service": "video_frames",
+          "tools": [
+            {
+              "procedure": "extract_frames",
+              "params": {
+                "mode": "count",
+                "count": 4,
+                "format": "png"
+              }
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            0,
+            100
+          ]
+        }
+      ],
+      "erroNaBase": null
+    },
+    {
+      "nome": "V7_brilho_e_extracao",
+      "origem": "regressao_hashes",
+      "preview": false,
+      "tools": [
+        {
+          "procedure": "brightness",
+          "params": {
+            "brightness": 1.2
+          }
+        },
+        {
+          "procedure": "extract_frames",
+          "params": {
+            "mode": "interval",
+            "interval": 2,
+            "format": "png"
+          }
+        }
+      ],
+      "estagios": [
+        {
+          "service": "video_edit",
+          "tools": [
+            {
+              "procedure": "brightness",
+              "params": {
+                "brightness": 1.2
+              }
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            0,
+            70
+          ]
+        },
+        {
+          "service": "video_frames",
+          "tools": [
+            {
+              "procedure": "extract_frames",
+              "params": {
+                "mode": "interval",
+                "interval": 2,
+                "format": "png"
+              }
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            70,
+            100
+          ]
+        }
+      ],
+      "erroNaBase": null
+    },
+    {
+      "nome": "V8_corte_e_legendas",
+      "origem": "regressao_hashes",
+      "preview": false,
+      "tools": [
+        {
+          "procedure": "trim",
+          "params": {
+            "start": 0,
+            "end": 15
+          }
+        },
+        {
+          "procedure": "subtitles",
+          "params": {}
+        }
+      ],
+      "estagios": [
+        {
+          "service": "video_edit",
+          "tools": [
+            {
+              "procedure": "trim",
+              "params": {
+                "start": 0,
+                "end": 15
+              }
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            0,
+            50
+          ]
+        },
+        {
+          "service": "video_subtitles",
+          "tools": [
+            {
+              "procedure": "subtitles",
+              "params": {}
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            50,
+            99
+          ]
+        }
+      ],
+      "erroNaBase": null
+    },
+    {
+      "nome": "so_legendas",
+      "origem": "test_subtitles.py",
+      "preview": false,
+      "tools": [
+        {
+          "procedure": "subtitles",
+          "params": {}
+        }
+      ],
+      "estagios": [
+        {
+          "service": "video_edit",
+          "tools": [],
+          "preview": false,
+          "progressRange": [
+            0,
+            50
+          ]
+        },
+        {
+          "service": "video_subtitles",
+          "tools": [
+            {
+              "procedure": "subtitles",
+              "params": {}
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            50,
+            99
+          ]
+        }
+      ],
+      "erroNaBase": null
+    },
+    {
+      "nome": "so_legendas_preview",
+      "origem": "test_subtitles.py",
+      "preview": true,
+      "tools": [
+        {
+          "procedure": "subtitles",
+          "params": {}
+        }
+      ],
+      "estagios": [
+        {
+          "service": "video_edit",
+          "tools": [],
+          "preview": true,
+          "progressRange": [
+            0,
+            50
+          ]
+        },
+        {
+          "service": "video_subtitles",
+          "tools": [
+            {
+              "procedure": "subtitles",
+              "params": {}
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            50,
+            99
+          ]
+        }
+      ],
+      "erroNaBase": null
+    },
+    {
+      "nome": "corte_legendas_velocidade",
+      "origem": "test_subtitles.py",
+      "preview": false,
+      "tools": [
+        {
+          "procedure": "trim",
+          "params": {
+            "start": 0,
+            "end": 2
+          }
+        },
+        {
+          "procedure": "subtitles",
+          "params": {}
+        },
+        {
+          "procedure": "speed",
+          "params": {
+            "factor": 2
+          }
+        }
+      ],
+      "estagios": [
+        {
+          "service": "video_edit",
+          "tools": [
+            {
+              "procedure": "trim",
+              "params": {
+                "start": 0,
+                "end": 2
+              }
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            0,
+            33
+          ]
+        },
+        {
+          "service": "video_subtitles",
+          "tools": [
+            {
+              "procedure": "subtitles",
+              "params": {}
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            33,
+            66
+          ]
+        },
+        {
+          "service": "video_edit",
+          "tools": [
+            {
+              "procedure": "speed",
+              "params": {
+                "factor": 2
+              }
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            66,
+            99
+          ]
+        }
+      ],
+      "erroNaBase": null
+    },
+    {
+      "nome": "legendas_corte_legendas_preview",
+      "origem": "test_subtitles.py",
+      "preview": true,
+      "tools": [
+        {
+          "procedure": "subtitles",
+          "params": {}
+        },
+        {
+          "procedure": "trim",
+          "params": {
+            "start": 3,
+            "end": 4
+          }
+        },
+        {
+          "procedure": "subtitles",
+          "params": {}
+        }
+      ],
+      "estagios": [
+        {
+          "service": "video_edit",
+          "tools": [],
+          "preview": false,
+          "progressRange": [
+            0,
+            25
+          ]
+        },
+        {
+          "service": "video_subtitles",
+          "tools": [
+            {
+              "procedure": "subtitles",
+              "params": {}
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            25,
+            50
+          ]
+        },
+        {
+          "service": "video_edit",
+          "tools": [
+            {
+              "procedure": "trim",
+              "params": {
+                "start": 3,
+                "end": 4
+              }
+            }
+          ],
+          "preview": true,
+          "progressRange": [
+            50,
+            75
+          ]
+        },
+        {
+          "service": "video_subtitles",
+          "tools": [
+            {
+              "procedure": "subtitles",
+              "params": {}
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            75,
+            99
+          ]
+        }
+      ],
+      "erroNaBase": null
+    },
+    {
+      "nome": "legendas_velocidade_legendas_preview",
+      "origem": "test_subtitles.py",
+      "preview": true,
+      "tools": [
+        {
+          "procedure": "subtitles",
+          "params": {}
+        },
+        {
+          "procedure": "speed",
+          "params": {
+            "factor": 0.5
+          }
+        },
+        {
+          "procedure": "subtitles",
+          "params": {}
+        }
+      ],
+      "estagios": [
+        {
+          "service": "video_edit",
+          "tools": [],
+          "preview": false,
+          "progressRange": [
+            0,
+            25
+          ]
+        },
+        {
+          "service": "video_subtitles",
+          "tools": [
+            {
+              "procedure": "subtitles",
+              "params": {}
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            25,
+            50
+          ]
+        },
+        {
+          "service": "video_edit",
+          "tools": [
+            {
+              "procedure": "speed",
+              "params": {
+                "factor": 0.5
+              }
+            }
+          ],
+          "preview": true,
+          "progressRange": [
+            50,
+            75
+          ]
+        },
+        {
+          "service": "video_subtitles",
+          "tools": [
+            {
+              "procedure": "subtitles",
+              "params": {}
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            75,
+            99
+          ]
+        }
+      ],
+      "erroNaBase": null
+    },
+    {
+      "nome": "legendas_e_extracao",
+      "origem": "test_frame_extraction.py",
+      "preview": false,
+      "tools": [
+        {
+          "procedure": "subtitles",
+          "params": {}
+        },
+        {
+          "procedure": "extract_frames",
+          "params": {
+            "mode": "count",
+            "count": 2,
+            "format": "png"
+          }
+        }
+      ],
+      "estagios": [
+        {
+          "service": "video_edit",
+          "tools": [],
+          "preview": false,
+          "progressRange": [
+            0,
+            35
+          ]
+        },
+        {
+          "service": "video_subtitles",
+          "tools": [
+            {
+              "procedure": "subtitles",
+              "params": {}
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            35,
+            69
+          ]
+        },
+        {
+          "service": "video_frames",
+          "tools": [
+            {
+              "procedure": "extract_frames",
+              "params": {
+                "mode": "count",
+                "count": 2,
+                "format": "png"
+              }
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            70,
+            100
+          ]
+        }
+      ],
+      "erroNaBase": null
+    },
+    {
+      "nome": "velocidade_e_extracao_preview",
+      "origem": "test_frame_extraction.py",
+      "preview": true,
+      "tools": [
+        {
+          "procedure": "speed",
+          "params": {
+            "factor": 0.5
+          }
+        },
+        {
+          "procedure": "extract_frames",
+          "params": {
+            "mode": "count",
+            "count": 12,
+            "format": "png"
+          }
+        }
+      ],
+      "estagios": [
+        {
+          "service": "video_edit",
+          "tools": [
+            {
+              "procedure": "speed",
+              "params": {
+                "factor": 0.5
+              }
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            0,
+            70
+          ]
+        },
+        {
+          "service": "video_frames",
+          "tools": [
+            {
+              "procedure": "extract_frames",
+              "params": {
+                "mode": "count",
+                "count": 12,
+                "format": "png"
+              }
+            }
+          ],
+          "preview": true,
+          "progressRange": [
+            70,
+            100
+          ]
+        }
+      ],
+      "erroNaBase": null
+    },
+    {
+      "nome": "corte_redim_extracao",
+      "origem": "test_frame_extraction.py",
+      "preview": false,
+      "tools": [
+        {
+          "procedure": "trim",
+          "params": {
+            "start": 1,
+            "end": 3
+          }
+        },
+        {
+          "procedure": "resize",
+          "params": {
+            "width": 80,
+            "height": 60
+          }
+        },
+        {
+          "procedure": "extract_frames",
+          "params": {
+            "mode": "count",
+            "count": 2,
+            "format": "png"
+          }
+        }
+      ],
+      "estagios": [
+        {
+          "service": "video_edit",
+          "tools": [
+            {
+              "procedure": "trim",
+              "params": {
+                "start": 1,
+                "end": 3
+              }
+            },
+            {
+              "procedure": "resize",
+              "params": {
+                "width": 80,
+                "height": 60
+              }
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            0,
+            70
+          ]
+        },
+        {
+          "service": "video_frames",
+          "tools": [
+            {
+              "procedure": "extract_frames",
+              "params": {
+                "mode": "count",
+                "count": 2,
+                "format": "png"
+              }
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            70,
+            100
+          ]
+        }
+      ],
+      "erroNaBase": null
+    },
+    {
+      "nome": "extracao_sozinha_preview",
+      "origem": "casos-limite",
+      "preview": true,
+      "tools": [
+        {
+          "procedure": "extract_frames",
+          "params": {
+            "mode": "count",
+            "count": 4,
+            "format": "png"
+          }
+        }
+      ],
+      "estagios": [
+        {
+          "service": "video_frames",
+          "tools": [
+            {
+              "procedure": "extract_frames",
+              "params": {
+                "mode": "count",
+                "count": 4,
+                "format": "png"
+              }
+            }
+          ],
+          "preview": true,
+          "progressRange": [
+            0,
+            100
+          ]
+        }
+      ],
+      "erroNaBase": null
+    },
+    {
+      "nome": "rotacao_redim",
+      "origem": "test_video_processor.py",
+      "preview": false,
+      "tools": [
+        {
+          "procedure": "rotate",
+          "params": {
+            "degrees": 90
+          }
+        },
+        {
+          "procedure": "resize",
+          "params": {
+            "width": 200,
+            "height": 100
+          }
+        }
+      ],
+      "estagios": [
+        {
+          "service": "video_edit",
+          "tools": [
+            {
+              "procedure": "rotate",
+              "params": {
+                "degrees": 90
+              }
+            },
+            {
+              "procedure": "resize",
+              "params": {
+                "width": 200,
+                "height": 100
+              }
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            0,
+            100
+          ]
+        }
+      ],
+      "erroNaBase": null
+    },
+    {
+      "nome": "corte_velocidade",
+      "origem": "test_video_processor.py",
+      "preview": false,
+      "tools": [
+        {
+          "procedure": "trim",
+          "params": {
+            "start": 0,
+            "end": 4
+          }
+        },
+        {
+          "procedure": "speed",
+          "params": {
+            "factor": 2
+          }
+        }
+      ],
+      "estagios": [
+        {
+          "service": "video_edit",
+          "tools": [
+            {
+              "procedure": "trim",
+              "params": {
+                "start": 0,
+                "end": 4
+              }
+            },
+            {
+              "procedure": "speed",
+              "params": {
+                "factor": 2
+              }
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            0,
+            100
+          ]
+        }
+      ],
+      "erroNaBase": null
+    },
+    {
+      "nome": "rotacao_preview",
+      "origem": "test_video_processor.py",
+      "preview": true,
+      "tools": [
+        {
+          "procedure": "rotate",
+          "params": {
+            "degrees": 180
+          }
+        }
+      ],
+      "estagios": [
+        {
+          "service": "video_edit",
+          "tools": [
+            {
+              "procedure": "rotate",
+              "params": {
+                "degrees": 180
+              }
+            }
+          ],
+          "preview": true,
+          "progressRange": [
+            0,
+            100
+          ]
+        }
+      ],
+      "erroNaBase": null
+    },
+    {
+      "nome": "vazio",
+      "origem": "casos-limite",
+      "preview": false,
+      "tools": [],
+      "estagios": [
+        {
+          "service": "video_edit",
+          "tools": [],
+          "preview": false,
+          "progressRange": [
+            0,
+            100
+          ]
+        }
+      ],
+      "erroNaBase": null
+    },
+    {
+      "nome": "brilho_legendas_contraste",
+      "origem": "casos-limite",
+      "preview": false,
+      "tools": [
+        {
+          "procedure": "brightness",
+          "params": {
+            "brightness": 1.5
+          }
+        },
+        {
+          "procedure": "subtitles",
+          "params": {}
+        },
+        {
+          "procedure": "contrast",
+          "params": {
+            "contrastFactor": 1.3
+          }
+        }
+      ],
+      "estagios": [
+        {
+          "service": "video_edit",
+          "tools": [
+            {
+              "procedure": "brightness",
+              "params": {
+                "brightness": 1.5
+              }
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            0,
+            33
+          ]
+        },
+        {
+          "service": "video_subtitles",
+          "tools": [
+            {
+              "procedure": "subtitles",
+              "params": {}
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            33,
+            66
+          ]
+        },
+        {
+          "service": "video_edit",
+          "tools": [
+            {
+              "procedure": "contrast",
+              "params": {
+                "contrastFactor": 1.3
+              }
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            66,
+            99
+          ]
+        }
+      ],
+      "erroNaBase": null
+    },
+    {
+      "nome": "legendas_legendas",
+      "origem": "casos-limite",
+      "preview": false,
+      "tools": [
+        {
+          "procedure": "subtitles",
+          "params": {}
+        },
+        {
+          "procedure": "subtitles",
+          "params": {}
+        }
+      ],
+      "estagios": [
+        {
+          "service": "video_edit",
+          "tools": [],
+          "preview": false,
+          "progressRange": [
+            0,
+            33
+          ]
+        },
+        {
+          "service": "video_subtitles",
+          "tools": [
+            {
+              "procedure": "subtitles",
+              "params": {}
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            33,
+            66
+          ]
+        },
+        {
+          "service": "video_subtitles",
+          "tools": [
+            {
+              "procedure": "subtitles",
+              "params": {}
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            66,
+            99
+          ]
+        }
+      ],
+      "erroNaBase": null
+    },
+    {
+      "nome": "brilho_legendas_extracao",
+      "origem": "casos-limite",
+      "preview": false,
+      "tools": [
+        {
+          "procedure": "brightness",
+          "params": {
+            "brightness": 1.5
+          }
+        },
+        {
+          "procedure": "subtitles",
+          "params": {}
+        },
+        {
+          "procedure": "extract_frames",
+          "params": {
+            "mode": "count",
+            "count": 4,
+            "format": "png"
+          }
+        }
+      ],
+      "estagios": [
+        {
+          "service": "video_edit",
+          "tools": [
+            {
+              "procedure": "brightness",
+              "params": {
+                "brightness": 1.5
+              }
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            0,
+            35
+          ]
+        },
+        {
+          "service": "video_subtitles",
+          "tools": [
+            {
+              "procedure": "subtitles",
+              "params": {}
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            35,
+            69
+          ]
+        },
+        {
+          "service": "video_frames",
+          "tools": [
+            {
+              "procedure": "extract_frames",
+              "params": {
+                "mode": "count",
+                "count": 4,
+                "format": "png"
+              }
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            70,
+            100
+          ]
+        }
+      ],
+      "erroNaBase": null
+    },
+    {
+      "nome": "brilho_legendas_extracao_preview",
+      "origem": "casos-limite",
+      "preview": true,
+      "tools": [
+        {
+          "procedure": "brightness",
+          "params": {
+            "brightness": 1.5
+          }
+        },
+        {
+          "procedure": "subtitles",
+          "params": {}
+        },
+        {
+          "procedure": "extract_frames",
+          "params": {
+            "mode": "count",
+            "count": 4,
+            "format": "png"
+          }
+        }
+      ],
+      "estagios": [
+        {
+          "service": "video_edit",
+          "tools": [
+            {
+              "procedure": "brightness",
+              "params": {
+                "brightness": 1.5
+              }
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            0,
+            35
+          ]
+        },
+        {
+          "service": "video_subtitles",
+          "tools": [
+            {
+              "procedure": "subtitles",
+              "params": {}
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            35,
+            69
+          ]
+        },
+        {
+          "service": "video_frames",
+          "tools": [
+            {
+              "procedure": "extract_frames",
+              "params": {
+                "mode": "count",
+                "count": 4,
+                "format": "png"
+              }
+            }
+          ],
+          "preview": true,
+          "progressRange": [
+            70,
+            100
+          ]
+        }
+      ],
+      "erroNaBase": null
+    },
+    {
+      "nome": "corte_legendas_brilho_extracao_preview",
+      "origem": "casos-limite",
+      "preview": true,
+      "tools": [
+        {
+          "procedure": "trim",
+          "params": {
+            "start": 0,
+            "end": 4
+          }
+        },
+        {
+          "procedure": "subtitles",
+          "params": {}
+        },
+        {
+          "procedure": "brightness",
+          "params": {
+            "brightness": 1.5
+          }
+        },
+        {
+          "procedure": "extract_frames",
+          "params": {
+            "mode": "count",
+            "count": 4,
+            "format": "png"
+          }
+        }
+      ],
+      "estagios": [
+        {
+          "service": "video_edit",
+          "tools": [
+            {
+              "procedure": "trim",
+              "params": {
+                "start": 0,
+                "end": 4
+              }
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            0,
+            23
+          ]
+        },
+        {
+          "service": "video_subtitles",
+          "tools": [
+            {
+              "procedure": "subtitles",
+              "params": {}
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            23,
+            46
+          ]
+        },
+        {
+          "service": "video_edit",
+          "tools": [
+            {
+              "procedure": "brightness",
+              "params": {
+                "brightness": 1.5
+              }
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            46,
+            69
+          ]
+        },
+        {
+          "service": "video_frames",
+          "tools": [
+            {
+              "procedure": "extract_frames",
+              "params": {
+                "mode": "count",
+                "count": 4,
+                "format": "png"
+              }
+            }
+          ],
+          "preview": true,
+          "progressRange": [
+            70,
+            100
+          ]
+        }
+      ],
+      "erroNaBase": null
+    },
+    {
+      "nome": "brilho_legendas_corte_preview",
+      "origem": "casos-limite",
+      "preview": true,
+      "tools": [
+        {
+          "procedure": "brightness",
+          "params": {
+            "brightness": 1.5
+          }
+        },
+        {
+          "procedure": "subtitles",
+          "params": {}
+        },
+        {
+          "procedure": "trim",
+          "params": {
+            "start": 1,
+            "end": 3
+          }
+        }
+      ],
+      "estagios": [
+        {
+          "service": "video_edit",
+          "tools": [
+            {
+              "procedure": "brightness",
+              "params": {
+                "brightness": 1.5
+              }
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            0,
+            33
+          ]
+        },
+        {
+          "service": "video_subtitles",
+          "tools": [
+            {
+              "procedure": "subtitles",
+              "params": {}
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            33,
+            66
+          ]
+        },
+        {
+          "service": "video_edit",
+          "tools": [
+            {
+              "procedure": "trim",
+              "params": {
+                "start": 1,
+                "end": 3
+              }
+            }
+          ],
+          "preview": true,
+          "progressRange": [
+            66,
+            99
+          ]
+        }
+      ],
+      "erroNaBase": null
+    },
+    {
+      "nome": "invalido_extracao_nao_final",
+      "origem": "test_frame_extraction.py",
+      "preview": false,
+      "tools": [
+        {
+          "procedure": "extract_frames",
+          "params": {
+            "mode": "count",
+            "count": 4,
+            "format": "png"
+          }
+        },
+        {
+          "procedure": "rotate",
+          "params": {
+            "degrees": 90
+          }
+        }
+      ],
+      "estagios": [
+        {
+          "service": "video_edit",
+          "tools": [
+            {
+              "procedure": "extract_frames",
+              "params": {
+                "mode": "count",
+                "count": 4,
+                "format": "png"
+              }
+            },
+            {
+              "procedure": "rotate",
+              "params": {
+                "degrees": 90
+              }
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            0,
+            100
+          ]
+        }
+      ],
+      "erroNaBase": "InvalidExtraction"
+    },
+    {
+      "nome": "invalido_duas_extracoes",
+      "origem": "test_frame_extraction.py",
+      "preview": false,
+      "tools": [
+        {
+          "procedure": "extract_frames",
+          "params": {
+            "mode": "count",
+            "count": 4,
+            "format": "png"
+          }
+        },
+        {
+          "procedure": "extract_frames",
+          "params": {
+            "mode": "count",
+            "count": 4,
+            "format": "png"
+          }
+        }
+      ],
+      "estagios": [
+        {
+          "service": "video_edit",
+          "tools": [
+            {
+              "procedure": "extract_frames",
+              "params": {
+                "mode": "count",
+                "count": 4,
+                "format": "png"
+              }
+            },
+            {
+              "procedure": "extract_frames",
+              "params": {
+                "mode": "count",
+                "count": 4,
+                "format": "png"
+              }
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            0,
+            100
+          ]
+        }
+      ],
+      "erroNaBase": "InvalidExtraction"
+    },
+    {
+      "nome": "invalido_efeito_nao_suportado",
+      "origem": "test_video_processor.py",
+      "preview": false,
+      "tools": [
+        {
+          "procedure": "obj_ai",
+          "params": {}
+        }
+      ],
+      "estagios": [
+        {
+          "service": "video_edit",
+          "tools": [
+            {
+              "procedure": "obj_ai",
+              "params": {}
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            0,
+            100
+          ]
+        }
+      ],
+      "erroNaBase": "UnsupportedEffect"
+    },
+    {
+      "nome": "invalido_legendas_e_nao_suportado",
+      "origem": "casos-limite",
+      "preview": false,
+      "tools": [
+        {
+          "procedure": "subtitles",
+          "params": {}
+        },
+        {
+          "procedure": "obj_ai",
+          "params": {}
+        }
+      ],
+      "estagios": [
+        {
+          "service": "video_edit",
+          "tools": [
+            {
+              "procedure": "subtitles",
+              "params": {}
+            },
+            {
+              "procedure": "obj_ai",
+              "params": {}
+            }
+          ],
+          "preview": false,
+          "progressRange": [
+            0,
+            100
+          ]
+        }
+      ],
+      "erroNaBase": "UnsupportedEffect"
+    }
+  ]
+}
