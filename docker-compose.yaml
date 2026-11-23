@@ -252,14 +252,29 @@ services:
     volumes:
       - image_data:/app/images
 
-  # Video worker (ffmpeg isolated in the container)
-  video_tool:
+  # Video workers, one per kind of work (ffmpeg isolated in each container).
+  # projects splits each video pipeline into stages and sends each stage to one of them.
+  video_edit:
     build:
       context: ./Tools
-      dockerfile: video/Dockerfile
+      dockerfile: video_edit/Dockerfile
     restart: on-failure
     environment:
       VIDEO_PREVIEW_SECONDS: 3
+    networks:
+      - elk
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - image_data:/app/images
+
+  video_subtitles:
+    build:
+      context: ./Tools
+      dockerfile: video_subtitles/Dockerfile
+    restart: on-failure
+    environment:
       WHISPER_MODEL: small
       WHISPER_CACHE_DIR: /models/whisper
       WHISPER_CPU_THREADS: 2
@@ -271,6 +286,21 @@ services:
     volumes:
       - image_data:/app/images
       - whisper_models:/models/whisper
+
+  video_frames:
+    build:
+      context: ./Tools
+      dockerfile: video_frames/Dockerfile
+    restart: on-failure
+    environment:
+      VIDEO_PREVIEW_SECONDS: 3
+    networks:
+      - elk
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - image_data:/app/images
 
   border_tool:
     build:
