@@ -12,6 +12,8 @@ var processSchema = new mongoose.Schema({
   cache_key: { type: String, required: false },
   cancelToken: { type: Number, required: false },
   token: { type: Number, required: true },
+  // RNF2 T024: plano de estágios de um vídeo (planStages); vazio nas imagens. Sem este campo, o Mongoose descartava-o.
+  stages: { type: [mongoose.Schema.Types.Mixed], required: false, default: undefined },
 }, { timestamps: true });
 
 module.exports = mongoose.model("process", processSchema);
