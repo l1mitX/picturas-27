@@ -4,6 +4,8 @@ WORKDIR /app
 
 COPY ./border .
 
+COPY ./effects/border.py ./effects/border.py
+
 COPY ./utils ./utils
 RUN pip install --no-cache-dir -r ./utils/requirements.txt
 

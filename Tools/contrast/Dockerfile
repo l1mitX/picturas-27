@@ -4,6 +4,8 @@ WORKDIR /app
 
 COPY ./contrast .
 
+COPY ./effects/contrast.py ./effects/contrast.py
+
 COPY ./utils ./utils
 RUN pip install --no-cache-dir -r ./utils/requirements.txt
 

@@ -3,11 +3,10 @@ import json
 import datetime
 import pytz
 
-from PIL import Image, ImageEnhance
-
 from utils.img_handler import Img_Handler
 from utils.tool_msg import ToolMSG
 import utils.env as env
+from effects.saturation import saturation as apply_saturation
 
 class Saturation:
     def __init__(self):
@@ -32,9 +31,7 @@ class Saturation:
         if img.mode == 'P':
             img = img.convert('RGB')
         
-        # apply saturation
-        enhancer = ImageEnhance.Color(img)
-        new_img = enhancer.enhance(saturation_factor)
+        new_img = apply_saturation(img, saturation_factor, coerce=False)
         
         # store image
         self._img_handler.store_img(new_img, store_img_path)

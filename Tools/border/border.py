@@ -1,4 +1,3 @@
-from PIL import Image, ImageOps
 import sys
 import json
 import datetime
@@ -6,6 +5,7 @@ import pytz
 from utils.img_handler import Img_Handler
 from utils.tool_msg import ToolMSG
 import utils.env as env
+from effects.border import border as apply_border
 
 class Border:
     def __init__(self):
@@ -23,8 +23,9 @@ class Border:
         # get image
         img = self._img_handler.get_img(img_path)
         
-        # add border
-        image_with_border = ImageOps.expand(img, border=border_width, fill=border_color)
+        image_with_border = apply_border(
+            img, border_width, *border_color, coerce=False
+        )
         
         # save image
         self._img_handler.store_img(image_with_border, output_path)

@@ -4,11 +4,10 @@ import datetime
 
 import pytz
 
-from PIL import Image, ImageOps
-
 from utils.img_handler import Img_Handler
 from utils.tool_msg import ToolMSG
 import utils.env as env
+from effects.binarization import binarization as apply_binarization
 
 class Binarization:
     def __init__(self):
@@ -29,9 +28,9 @@ class Binarization:
         # load image
         img = self._img_handler.get_img(img_path)
 
-        # add binarization
-        new_img = ImageOps.grayscale(img)
-        new_img = new_img.point(lambda x: 0 if x < threshold else 255)
+        new_img = apply_binarization(
+            img, threshold, output_mode="L", coerce=False
+        )
 
         # save image
         self._img_handler.store_img(new_img, output_path)

@@ -104,15 +104,15 @@ deixa de esperar pela legendagem.
 
 ### Testes primeiro
 
-- [ ] T029 [US2] Comparar, efeito a efeito, o código inline de cada ferramenta de imagem com a cópia em `Tools/video/effects.py:11-41`; se algum diferir, registar a diferença em `specs/001-rnf2-modularidade/research.md` (R8, «Cuidado») antes de unificar (H-07)
+- [X] T029 [US2] Comparar, efeito a efeito, o código inline de cada ferramenta de imagem com a cópia em `Tools/video/effects.py:11-41`; se algum diferir, registar a diferença em `specs/001-rnf2-modularidade/research.md` (R8, «Cuidado») antes de unificar (H-07)
 
 ### Implementação
 
-- [ ] T030 [P] [US2] Criar `Tools/effects/brightness.py`, `contrast.py`, `saturation.py`, `rotate.py`, `resize.py`, `binarization.py`, `cut.py`, `border.py`, cada um com a função PIL de `Tools/video/effects.py` correspondente, com os mesmos nomes de parâmetros
-- [ ] T031 [P] [US2] `Tools/brightness/brightness.py` (`adjust_brightness`) e `Tools/brightness/Dockerfile` (`COPY ./effects/brightness.py ./effects/brightness.py`): usar `effects.brightness` em vez do código inline
-- [ ] T032 [P] [US2] Idem para `Tools/contrast/` (`contrast_image`) e `Tools/saturation/` (`saturation_image`), cada Dockerfile a copiar só o seu ficheiro de efeito
-- [ ] T033 [P] [US2] Idem para `Tools/rotate/` (`rotate_image`), `Tools/resize/` (`resize_image`) e `Tools/cut/` (`cut_image`)
-- [ ] T034 [P] [US2] Idem para `Tools/binarization/` (`add_binarization`) e `Tools/border/` (`add_border`)
+- [X] T030 [P] [US2] Criar `Tools/effects/brightness.py`, `contrast.py`, `saturation.py`, `rotate.py`, `resize.py`, `binarization.py`, `cut.py`, `border.py`, cada um com a função PIL de `Tools/video/effects.py` correspondente, com os mesmos nomes de parâmetros
+- [X] T031 [P] [US2] `Tools/brightness/brightness.py` (`adjust_brightness`) e `Tools/brightness/Dockerfile` (`COPY ./effects/brightness.py ./effects/brightness.py`): usar `effects.brightness` em vez do código inline
+- [X] T032 [P] [US2] Idem para `Tools/contrast/` (`contrast_image`) e `Tools/saturation/` (`saturation_image`), cada Dockerfile a copiar só o seu ficheiro de efeito
+- [X] T033 [P] [US2] Idem para `Tools/rotate/` (`rotate_image`), `Tools/resize/` (`resize_image`) e `Tools/cut/` (`cut_image`)
+- [X] T034 [P] [US2] Idem para `Tools/binarization/` (`add_binarization`) e `Tools/border/` (`add_border`)
 - [ ] T035 [US2] Em `Tools/video_edit/`, apagar `effects.py`, criar o registo `apply_frame_effects` (com `FRAME_EFFECTS`, `TIME_EFFECTS`, `SUPPORTED`) a importar de `Tools/effects/`, e fazer o `Dockerfile` copiar `./effects` inteira (depende de T017)
 - [ ] T036 [US2] Correr `regressao_hashes.py imagem apos-rnf2` e `regressao_hashes.py video apos-rnf2` (adaptado em T021) e confirmar *hashes* iguais aos de `resultados/base/` (SC-007)
 

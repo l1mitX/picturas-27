@@ -4,6 +4,8 @@ WORKDIR /app
 
 COPY ./saturation .
 
+COPY ./effects/saturation.py ./effects/saturation.py
+
 COPY ./utils ./utils
 RUN pip install --no-cache-dir -r ./utils/requirements.txt
 
