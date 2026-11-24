@@ -25,7 +25,7 @@ prova-o com os cenários de falha.
 ## Fase 1: Preparação
 
 - [ ] T001 Confirmar o ponto de partida: RNF2 concluído, testes verdes e `docs/fase2/medicoes/resultados/apos-rnf2/` completo; registar em `specs/002-rnf1-capacidade/quickstart.md` («Registo»)
-- [ ] T002 Criar a pasta `Tools/video_autoscaler/tests/`
+- [x] T002 Criar a pasta `Tools/video_autoscaler/tests/`
 - [ ] T003 Decidir em equipa os parâmetros da política de réplicas e os limites de memória (`research.md`, R3 e R9, **[PROPOSTA]**) e registá-los em `docs/fase2/medicoes/README.md` antes de qualquer medição `apos-rnf1` (constituição, princípio IV)
 
 ---
@@ -81,13 +81,13 @@ simultâneo e p95 abaixo de `apos-rnf2`.
 
 ### Testes primeiro
 
-- [ ] T016 [P] [US2] Testes em `Tools/video_autoscaler/tests/test_policy.py` para `target_replicas(pending, current, policy, below_since, now)`: sobe logo até ao máximo; nunca abaixo do mínimo; só desce depois de `cooldown_s` com o alvo abaixo do atual; `per_replica` respeitado (R3, `data-model.md`, «Política de réplicas»: `min ≥ 1`, `max ≥ min`, `per_replica ≥ 1`)
+- [x] T016 [P] [US2] Testes em `Tools/video_autoscaler/tests/test_policy.py` para `target_replicas(pending, current, policy, below_since, now)`: sobe logo até ao máximo; nunca abaixo do mínimo; só desce depois de `cooldown_s` com o alvo abaixo do atual; `per_replica` respeitado (R3, `data-model.md`, «Política de réplicas»: `min ≥ 1`, `max ≥ min`, `per_replica ≥ 1`)
 
 ### Implementação
 
-- [ ] T017 [US2] Implementar a política em `Tools/video_autoscaler/policy.py` (função pura, sem Docker nem RabbitMQ). T016 passa
+- [x] T017 [US2] Implementar a política em `Tools/video_autoscaler/policy.py` (função pura, sem Docker nem RabbitMQ). T016 passa
 - [ ] T018 [US2] Implementar `Tools/video_autoscaler/autoscaler.py`: ler a configuração das variáveis de ambiente (`contracts/autoscaler-e-workers.md`); a cada `POLL_SECONDS`, ler `messages_ready + messages_unacknowledged` de cada fila (`GET /api/queues/%2F/<fila>`, R2), contar as réplicas atuais, aplicar `policy.py` e, quando muda, correr `docker compose -p $COMPOSE_PROJECT_NAME up -d --no-build --no-recreate --scale <serviço>=<N> <serviço>` (R1); correr o comando de cada serviço em segundo plano, no máximo um em curso por serviço, sem bloquear a consulta das outras filas (R1, cuidado 2); registar cada decisão numa linha JSON (`data-model.md`, «Evento»); em falha da API do RabbitMQ ou do Docker, não mudar nada e tentar de novo
-- [ ] T019 [P] [US2] Criar `Tools/video_autoscaler/Dockerfile` (Python 3.11, cliente Docker e *plugin* Compose) e `Tools/video_autoscaler/requirements.txt` (`requests`)
+- [x] T019 [P] [US2] Criar `Tools/video_autoscaler/Dockerfile` (Python 3.11, cliente Docker e *plugin* Compose) e `Tools/video_autoscaler/requirements.txt` (`requests`)
 - [ ] T020 [US2] Acrescentar o serviço `video_autoscaler` ao `docker-compose.yaml`: *socket* do Docker e `docker-compose.yaml` montados (este só para leitura; se algum serviço de vídeo vier a ter caminhos relativos, montar o repositório no mesmo caminho absoluto do anfitrião e usar `--project-directory`, R1, cuidado 3), variáveis de ambiente com os parâmetros de T003, `COMPOSE_PROJECT_NAME=picturas`, dependência do `rabbitmq`
 - [ ] T021 [US2] Criar `docs/fase2/medicoes/elasticidade_m4.py` (R10): lança o cenário `paralelo` com as réplicas no mínimo, junta os registos do `video_autoscaler` e dos *workers* e calcula o tempo até haver réplicas novas a consumir e até voltarem ao mínimo; 5 repetições; resultado em `resultados/<etiqueta>/elasticidade_m4.json`
 
