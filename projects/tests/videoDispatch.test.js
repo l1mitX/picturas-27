@@ -19,8 +19,9 @@ function processFor(stages, curPos, finalUri = FINAL) {
 
 test('os ficheiros intermédios ficam em stages/<token>/ na pasta do projeto', () => {
   assert.equal(stagePath(FINAL, 7, 'i1', 0), './images/users/u1/projects/p1/stages/7/i1-0.mp4');
+  // a pré-visualização usa o mesmo token da execução em curso: tem uma pasta à parte (RNF2, analyze R1)
   assert.equal(stagePath('./images/users/u1/projects/p1/preview/video.mp4', 7, 'i1', 2),
-    './images/users/u1/projects/p1/stages/7/i1-2.mp4');
+    './images/users/u1/projects/p1/stages/preview-7/i1-2.mp4');
 });
 
 test('um pipeline de um só estágio escreve logo no destino final', () => {

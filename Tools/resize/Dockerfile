@@ -4,6 +4,8 @@ WORKDIR /app
 
 COPY ./resize .
 
+COPY ./effects/resize.py ./effects/resize.py
+
 COPY ./utils ./utils
 RUN pip install --no-cache-dir -r ./utils/requirements.txt
 

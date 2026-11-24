@@ -28,8 +28,8 @@ novos; os testes de cada fase escrevem-se antes da implementação e devem falha
 
 **Objetivo**: pastas novas e ponto de partida conhecido.
 
-- [ ] T001 Criar as pastas `Tools/effects/`, `Tools/video_common/`, `Tools/video_edit/tests/`, `Tools/video_subtitles/tests/` e `Tools/video_frames/tests/` (estrutura do `plan.md`)
-- [ ] T002 Confirmar que a base está verde antes de mexer: `projects/tests` (8) e `Tools/video/tests` (74) a passar, e `docs/fase2/medicoes/resultados/base/regressao_*.json` presentes; registar o resultado em `specs/001-rnf2-modularidade/quickstart.md` (secção «Registo»)
+- [x] T001 Criar as pastas `Tools/effects/`, `Tools/video_common/`, `Tools/video_edit/tests/`, `Tools/video_subtitles/tests/` e `Tools/video_frames/tests/` (estrutura do `plan.md`)
+- [x] T002 Confirmar que a base está verde antes de mexer: `projects/tests` (8) e `Tools/video/tests` (74) a passar, e `docs/fase2/medicoes/resultados/base/regressao_*.json` presentes; registar o resultado em `specs/001-rnf2-modularidade/quickstart.md` (secção «Registo»)
 
 ---
 
@@ -42,12 +42,12 @@ antes de se partir o `video_tool`.
 
 ### Testes primeiro
 
-- [ ] T003 Criar `projects/tests/fixtures/video_stage_plans.json` (R2) com uma entrada por pipeline, identificada por um nome, com `tools`, `preview` e o plano esperado (`service`, `tools`, `preview`, `progressRange` de cada estágio). Incluir **todos** os pipelines usados (a) em `VIDEO_CASES` de `docs/fase2/medicoes/regressao_hashes.py`, (b) nas chamadas a `process_video` de `Tools/video/tests/test_video_processor.py`, `test_subtitles.py` e `test_frame_extraction.py` (e.g., `[trim, subtitles, speed]`, `[subtitles, efeito, subtitles]`) e (c) nos casos-limite da *spec* (só legendas; legendas no início — estágio de edição vazio antes; só extração; edição + extração com faixas `[0, 70]` e `[70, 100]`; pré-visualização com `trim`/`speed` antes e depois de legendas). Derivar cada plano esperado das regras de `Tools/video/video_processor.py:286-369`
-- [ ] T004 [P] Escrever `projects/tests/videoStages.test.js`: para cada entrada do ficheiro de T003, `planStages(tools, preview)` devolve exatamente o plano esperado (deve falhar até T005)
+- [x] T003 Criar `projects/tests/fixtures/video_stage_plans.json` (R2) com uma entrada por pipeline, identificada por um nome, com `tools`, `preview` e o plano esperado (`service`, `tools`, `preview`, `progressRange` de cada estágio). Incluir **todos** os pipelines usados (a) em `VIDEO_CASES` de `docs/fase2/medicoes/regressao_hashes.py`, (b) nas chamadas a `process_video` de `Tools/video/tests/test_video_processor.py`, `test_subtitles.py` e `test_frame_extraction.py` (e.g., `[trim, subtitles, speed]`, `[subtitles, efeito, subtitles]`) e (c) nos casos-limite da *spec* (só legendas; legendas no início — estágio de edição vazio antes; só extração; edição + extração com faixas `[0, 70]` e `[70, 100]`; pré-visualização com `trim`/`speed` antes e depois de legendas). Derivar cada plano esperado das regras de `Tools/video/video_processor.py:286-369`
+- [x] T004 [P] Escrever `projects/tests/videoStages.test.js`: para cada entrada do ficheiro de T003, `planStages(tools, preview)` devolve exatamente o plano esperado (deve falhar até T005)
 
 ### Implementação
 
-- [ ] T005 Implementar `planStages(tools, preview)` em `projects/utils/videoStages.js` (R1, R4): regras de divisão de `process_video` (extração no fim; partir à volta de `subtitles`; estágio de edição vazio se a lista começar por `subtitles`; `preview` só no estágio `preview_stage` — último estágio de edição com `trim` ou `speed`, 0 se não houver — e na extração; edição antes da extração sempre sem `preview`) e faixas de progresso (estágio *i* de *n* em `[i·100/n, (i+1)·100/n]`; edição + extração em `[0, 70]` + `[70, 100]`). T004 passa
+- [x] T005 Implementar `planStages(tools, preview)` em `projects/utils/videoStages.js` (R1, R4): regras de divisão de `process_video` (extração no fim; partir à volta de `subtitles`; estágio de edição vazio se a lista começar por `subtitles`; `preview` só no estágio `preview_stage` — último estágio de edição com `trim` ou `speed`, 0 se não houver — e na extração; edição antes da extração sempre sem `preview`) e faixas de progresso (estágio *i* de *n* em `[i·100/n, (i+1)·100/n]`; edição + extração em `[0, 70]` + `[70, 100]`). T004 passa
 - [x] T006 [P] Criar `Tools/video_common/errors.py` com os códigos 2000–2005 e as exceções `InvalidVideo`, `InvalidTrim`, `InvalidSpeed`, `ProcessingError`, `UnsupportedEffect`, movidos de `Tools/video/video.py` (`CODES`), `Tools/video/video_processor.py:34-48` e `Tools/video/effects.py` (R6)
 - [x] T007 [P] Criar `Tools/video_common/probe.py` com `probe(path, prefer_video_duration=False)` movido de `Tools/video/video_processor.py:50-95`, sem alterações (R6)
 - [x] T008 Criar `Tools/video_common/worker.py` com a classe base do *worker* a partir de `Tools/video/video.py`: ligação com `heartbeat=0` (inalterado nesta *spec*), `basic_qos(prefetch_count=1)`, consumo com `auto_ack=False` e `basic_ack` só no fim, respostas de sucesso e erro na `project_queue` com o mesmo formato (`contracts/mensagens-estagio.md`), progresso na `ws_queue` com a conversão para `progress.range` (R4). Recebe como parâmetros o nome da fila, a `procedure` esperada, o identificador `microservice` e a função que processa o estágio (depende de T006)
@@ -72,8 +72,8 @@ os três serviços; `regressao_hashes.py video` igual à base.
 - [x] T012 [P] [US1] Repartir `Tools/video/tests/test_subtitles.py` para `Tools/video_subtitles/tests/test_subtitles.py`, sem perder casos; os que combinam legendas com efeitos usam `local_pipeline` (INV-006)
 - [x] T013 [P] [US1] Repartir `Tools/video/tests/test_frame_extraction.py` para `Tools/video_frames/tests/test_frame_extraction.py`, sem perder casos; acrescentar um caso em que a informação do vídeo chega por `sourceInfo` (R5) (INV-006)
 - [x] T014 [P] [US1] Copiar `Tools/video/tests/conftest.py` para cada `Tools/video_*/tests/`, ajustando o `sys.path` à pasta do serviço e a `Tools/video_common/`
-- [ ] T015 [P] [US1] Teste em `projects/tests/`: dado um plano com vários estágios, a resposta de sucesso do estágio *i* cria o `Process` do estágio *i+1* (com `cur_pos = i+1` e o plano guardado) e envia a mensagem para a fila do serviço seguinte; a resposta do último estágio é tratada como fim da cadeia (`data-model.md`, transições)
-- [ ] T016 [P] [US1] Teste em `projects/tests/`: a pré-visualização de um pipeline com legendas e `trim` envia os estágios com `preview: true` só no estágio previsto pelo plano e trata a resposta do último como pré-visualização (RE-006)
+- [x] T015 [P] [US1] Teste em `projects/tests/`: dado um plano com vários estágios, a resposta de sucesso do estágio *i* cria o `Process` do estágio *i+1* (com `cur_pos = i+1` e o plano guardado) e envia a mensagem para a fila do serviço seguinte; a resposta do último estágio é tratada como fim da cadeia (`data-model.md`, transições)
+- [x] T016 [P] [US1] Teste em `projects/tests/`: a pré-visualização de um pipeline com legendas e `trim` envia os estágios com `preview: true` só no estágio previsto pelo plano e trata a resposta do último como pré-visualização (RE-006)
 
 ### Implementação
 
@@ -81,14 +81,14 @@ os três serviços; `regressao_hashes.py video` igual à base.
 - [x] T018 [P] [US1] Criar `Tools/video_edit/Dockerfile` (ffmpeg, sem `fonts-noto-cjk` nem `faster-whisper`; copia `video_edit`, `video_common`, `utils`) e `Tools/video_edit/requirements.txt` sem `faster-whisper` (RE-002)
 - [x] T019 [P] [US1] Criar o serviço de legendagem em `Tools/video_subtitles/`: `subtitles.py` movido de `Tools/video/subtitles.py`; `video_subtitles.py` como ponto de entrada (fila `video_subtitles_queue`, `procedure` `video_subtitles`, executa `caption_video` sobre a entrada do estágio); `Dockerfile` (ffmpeg e as fontes de `Tools/video/Dockerfile`) e `requirements.txt` com `faster-whisper==1.2.1` — o único serviço com esta dependência (RE-002)
 - [x] T020 [P] [US1] Criar o serviço de extração em `Tools/video_frames/`: `frame_extraction.py` movido de `Tools/video/frame_extraction.py`; `video_frames.py` como ponto de entrada (fila `video_frames_queue`, `procedure` `video_frames`); usa `parameters.sourceInfo` quando existe e, sem ele, `probe(..., prefer_video_duration=True)` (R5); `Dockerfile` e `requirements.txt` sem `faster-whisper`
-- [ ] T021 [US1] Em `docs/fase2/medicoes/regressao_hashes.py`, trocar só a chamada `process_video` (`run_video`, ~l. 136-139) pelo executor `Tools/video_common/local_pipeline.py`, e atualizar o comando do cabeçalho para a imagem do serviço de edição (R7). Correr `regressao_hashes.py video apos-rnf2` → *hashes* iguais aos de `resultados/base/` (depende de T010, T017, T019, T020)
-- [ ] T022 [US1] Declarar `video_edit_queue`, `video_subtitles_queue` e `video_frames_queue` em `rabbitMQ/definitions.json`, com as mesmas propriedades da `video_queue` (R9)
-- [ ] T023 [US1] Mapear `video_edit`, `video_subtitles` e `video_frames` para as filas novas em `projects/utils/project_msg.js` (R9)
-- [ ] T024 [US1] Acrescentar ao esquema Mongoose em `projects/models/process.js` o campo do plano de estágios (e.g., `stages: { type: Array }`, opcional, para não afetar os `Process` de imagem), senão o Mongoose descarta-o ao gravar (`data-model.md`)
-- [ ] T025 [US1] Em `projects/routes/projects.js`, no *Apply* (`POST /:user/:project/process`, ~l. 1630-1645) e na pré-visualização (`POST /:user/:project/preview/:img`, ~l. 1110-1125): calcular `planStages`, guardar o plano no `Process` (T024), atribuir os caminhos dos estágios em `…/projects/<projeto>/stages/<token>/<imgId>-<índice>.mp4` (R3) e enviar só o primeiro estágio, com `progress.range` e `stage` (`contracts/mensagens-estagio.md`)
-- [ ] T026 [US1] Em `projects/routes/projects.js`, no tratamento das respostas (~l. 196-520): para vídeo, `chainEnd` passa a ser «último estágio do plano» em vez de `sourceIsVideo`; ao receber sucesso de um estágio intermédio, verificar o `activeToken` (como hoje), criar o `Process` do estágio seguinte e enviá-lo, passando `video_info` como `sourceInfo` quando o seguinte é a extração (R5). Os ramos de pré-visualização, extração (`holdsRunCommit`) e registo do resultado mantêm-se, agora aplicados ao último estágio (INV-003, INV-004). T015 e T016 passam
-- [ ] T027 [US1] Em `docker-compose.yaml`, substituir `video_tool` por `video_edit`, `video_subtitles` e `video_frames` (volume `image_data` nos três; `whisper_models` e `WHISPER_*` só na legendagem; `VIDEO_PREVIEW_SECONDS` na edição e na extração; `restart: on-failure` nos três)
-- [ ] T028 [US1] Correr os testes e confirmar que o total de casos de vídeo não é inferior a 74: `docker compose exec -T projects sh -c "node --test tests/*.test.js"` e, para cada serviço `S` em `video_edit`, `video_subtitles`, `video_frames`: `docker compose run --rm --no-deps -T -v "<raiz>:/repo" -w /repo/Tools/S S sh -c "pip install -q pytest && python -m pytest -q -p no:cacheprovider tests"` (o repositório montado dá aos testes o ficheiro de casos do `projects` e o código dos outros serviços, usados pelo `local_pipeline`; sem ele há testes que falham ou são saltados)
+- [x] T021 [US1] Em `docs/fase2/medicoes/regressao_hashes.py`, trocar só a chamada `process_video` (`run_video`, ~l. 136-139) pelo executor `Tools/video_common/local_pipeline.py`, e atualizar o comando do cabeçalho para a imagem do serviço de edição (R7). Correr `regressao_hashes.py video apos-rnf2` → *hashes* iguais aos de `resultados/base/` (depende de T010, T017, T019, T020)
+- [x] T022 [US1] Declarar `video_edit_queue`, `video_subtitles_queue` e `video_frames_queue` em `rabbitMQ/definitions.json`, com as mesmas propriedades da `video_queue` (R9)
+- [x] T023 [US1] Mapear `video_edit`, `video_subtitles` e `video_frames` para as filas novas em `projects/utils/project_msg.js` (R9)
+- [x] T024 [US1] Acrescentar ao esquema Mongoose em `projects/models/process.js` o campo do plano de estágios (e.g., `stages: { type: Array }`, opcional, para não afetar os `Process` de imagem), senão o Mongoose descarta-o ao gravar (`data-model.md`)
+- [x] T025 [US1] Em `projects/routes/projects.js`, no *Apply* (`POST /:user/:project/process`, ~l. 1630-1645) e na pré-visualização (`POST /:user/:project/preview/:img`, ~l. 1110-1125): calcular `planStages`, guardar o plano no `Process` (T024), atribuir os caminhos dos estágios em `…/projects/<projeto>/stages/<token>/<imgId>-<índice>.mp4` (R3) e enviar só o primeiro estágio, com `progress.range` e `stage` (`contracts/mensagens-estagio.md`)
+- [x] T026 [US1] Em `projects/routes/projects.js`, no tratamento das respostas (~l. 196-520): para vídeo, `chainEnd` passa a ser «último estágio do plano» em vez de `sourceIsVideo`; ao receber sucesso de um estágio intermédio, verificar o `activeToken` (como hoje), criar o `Process` do estágio seguinte e enviá-lo, passando `video_info` como `sourceInfo` quando o seguinte é a extração (R5). Os ramos de pré-visualização, extração (`holdsRunCommit`) e registo do resultado mantêm-se, agora aplicados ao último estágio (INV-003, INV-004). T015 e T016 passam
+- [x] T027 [US1] Em `docker-compose.yaml`, substituir `video_tool` por `video_edit`, `video_subtitles` e `video_frames` (volume `image_data` nos três; `whisper_models` e `WHISPER_*` só na legendagem; `VIDEO_PREVIEW_SECONDS` na edição e na extração; `restart: on-failure` nos três)
+- [x] T028 [US1] Correr os testes e confirmar que o total de casos de vídeo não é inferior a 74: `docker compose exec -T projects sh -c "node --test tests/*.test.js"` e, para cada serviço `S` em `video_edit`, `video_subtitles`, `video_frames`: `docker compose run --rm --no-deps -T -v "<raiz>:/repo" -w /repo/Tools/S S sh -c "pip install -q pytest && python -m pytest -q -p no:cacheprovider tests"` (o repositório montado dá aos testes o ficheiro de casos do `projects` e o código dos outros serviços, usados pelo `local_pipeline`; sem ele há testes que falham ou são saltados)
 
 **Checkpoint**: a aplicação processa vídeos pelos três serviços; N2 (C2) = 1 tipo; *hashes* de vídeo iguais à base; o M1
 deixa de esperar pela legendagem.
@@ -104,17 +104,17 @@ deixa de esperar pela legendagem.
 
 ### Testes primeiro
 
-- [ ] T029 [US2] Comparar, efeito a efeito, o código inline de cada ferramenta de imagem com a cópia em `Tools/video/effects.py:11-41`; se algum diferir, registar a diferença em `specs/001-rnf2-modularidade/research.md` (R8, «Cuidado») antes de unificar (H-07)
+- [X] T029 [US2] Comparar, efeito a efeito, o código inline de cada ferramenta de imagem com a cópia em `Tools/video/effects.py:11-41`; se algum diferir, registar a diferença em `specs/001-rnf2-modularidade/research.md` (R8, «Cuidado») antes de unificar (H-07)
 
 ### Implementação
 
-- [ ] T030 [P] [US2] Criar `Tools/effects/brightness.py`, `contrast.py`, `saturation.py`, `rotate.py`, `resize.py`, `binarization.py`, `cut.py`, `border.py`, cada um com a função PIL de `Tools/video/effects.py` correspondente, com os mesmos nomes de parâmetros
-- [ ] T031 [P] [US2] `Tools/brightness/brightness.py` (`adjust_brightness`) e `Tools/brightness/Dockerfile` (`COPY ./effects/brightness.py ./effects/brightness.py`): usar `effects.brightness` em vez do código inline
-- [ ] T032 [P] [US2] Idem para `Tools/contrast/` (`contrast_image`) e `Tools/saturation/` (`saturation_image`), cada Dockerfile a copiar só o seu ficheiro de efeito
-- [ ] T033 [P] [US2] Idem para `Tools/rotate/` (`rotate_image`), `Tools/resize/` (`resize_image`) e `Tools/cut/` (`cut_image`)
-- [ ] T034 [P] [US2] Idem para `Tools/binarization/` (`add_binarization`) e `Tools/border/` (`add_border`)
-- [ ] T035 [US2] Em `Tools/video_edit/`, apagar `effects.py`, criar o registo `apply_frame_effects` (com `FRAME_EFFECTS`, `TIME_EFFECTS`, `SUPPORTED`) a importar de `Tools/effects/`, e fazer o `Dockerfile` copiar `./effects` inteira (depende de T017)
-- [ ] T036 [US2] Correr `regressao_hashes.py imagem apos-rnf2` e `regressao_hashes.py video apos-rnf2` (adaptado em T021) e confirmar *hashes* iguais aos de `resultados/base/` (SC-007)
+- [X] T030 [P] [US2] Criar `Tools/effects/brightness.py`, `contrast.py`, `saturation.py`, `rotate.py`, `resize.py`, `binarization.py`, `cut.py`, `border.py`, cada um com a função PIL de `Tools/video/effects.py` correspondente, com os mesmos nomes de parâmetros
+- [X] T031 [P] [US2] `Tools/brightness/brightness.py` (`adjust_brightness`) e `Tools/brightness/Dockerfile` (`COPY ./effects/brightness.py ./effects/brightness.py`): usar `effects.brightness` em vez do código inline
+- [X] T032 [P] [US2] Idem para `Tools/contrast/` (`contrast_image`) e `Tools/saturation/` (`saturation_image`), cada Dockerfile a copiar só o seu ficheiro de efeito
+- [X] T033 [P] [US2] Idem para `Tools/rotate/` (`rotate_image`), `Tools/resize/` (`resize_image`) e `Tools/cut/` (`cut_image`)
+- [X] T034 [P] [US2] Idem para `Tools/binarization/` (`add_binarization`) e `Tools/border/` (`add_border`)
+- [x] T035 [US2] Em `Tools/video_edit/`, apagar `effects.py`, criar o registo `apply_frame_effects` (com `FRAME_EFFECTS`, `TIME_EFFECTS`, `SUPPORTED`) a importar de `Tools/effects/`, e fazer o `Dockerfile` copiar `./effects` inteira (depende de T017)
+- [x] T036 [US2] Correr `regressao_hashes.py imagem apos-rnf2` e `regressao_hashes.py video apos-rnf2` (adaptado em T021) e confirmar *hashes* iguais aos de `resultados/base/` (SC-007)
 
 **Checkpoint**: N1 = 0; mudar o brilho reconstrói só `brightness_tool` e `video_edit`.
 
@@ -129,12 +129,12 @@ repartido (INV-001 a INV-005, H-08).
 
 ### Testes primeiro
 
-- [ ] T037 [P] [US3] Teste em `projects/tests/`: cancelar entre dois estágios (o `activeToken` muda antes de chegar a resposta do estágio *i*) → o estágio *i+1* não é enviado, nada é registado, nenhuma mensagem de sucesso chega ao cliente, e a quota fica como na base (H-08)
-- [ ] T038 [P] [US3] Teste em `projects/tests/`: erro num estágio intermédio → o erro chega ao cliente com o mesmo código (2000–2005), o pipeline não continua e a pasta `stages/<token>/` é apagada
+- [x] T037 [P] [US3] Teste em `projects/tests/`: cancelar entre dois estágios (o `activeToken` muda antes de chegar a resposta do estágio *i*) → o estágio *i+1* não é enviado, nada é registado, nenhuma mensagem de sucesso chega ao cliente, e a quota fica como na base (H-08)
+- [x] T038 [P] [US3] Teste em `projects/tests/`: erro num estágio intermédio → o erro chega ao cliente com o mesmo código (2000–2005), o pipeline não continua e a pasta `stages/<token>/` é apagada
 
 ### Implementação
 
-- [ ] T039 [US3] Em `projects/routes/projects.js`, apagar `…/stages/<token>/` no fim do pipeline (sucesso, erro e cancelamento) (R3). T037 e T038 passam
+- [x] T039 [US3] Em `projects/routes/projects.js`, apagar `…/stages/<token>/` no fim do pipeline (sucesso, erro e cancelamento) (R3). T037 e T038 passam (feito por vídeo e também no cancelamento: ver o desvio registado na R3)
 - [ ] T040 [US3] Verificação manual do `quickstart.md`, secção 1, passo 4 (projeto com 2 imagens e 2 vídeos; brilho; legendas + brilho; corte + extração; pré-visualizações; cancelamento a meio), confirmando também que as interfaces HTTP e a interface do utilizador não mudaram (INV-005); registar o resultado
 
 **Checkpoint**: preservação funcional provada; pipeline repartido robusto a erros e cancelamento.
@@ -143,9 +143,9 @@ repartido (INV-001 a INV-005, H-08).
 
 ## Fase final: Acabamento e transversal
 
-- [ ] T041 [P] README curto em `Tools/video_edit/`, `Tools/video_subtitles/` e `Tools/video_frames/` (o que faz, fila, comando dos testes da T028)
-- [ ] T042 Retirar `Tools/video/` e a `video_queue` de `rabbitMQ/definitions.json`, depois de T028, T036 e T040
-- [ ] T043 Confirmar a deteção do `rnf2_estaticas.py` com a nova estrutura (R10); se for preciso adaptar, mudar só a deteção e registar em `docs/fase2/medicoes/README.md`
+- [x] T041 [P] README curto em `Tools/video_edit/`, `Tools/video_subtitles/` e `Tools/video_frames/` (o que faz, fila, comando dos testes da T028)
+- [x] T042 Retirar `Tools/video/` e a `video_queue` de `rabbitMQ/definitions.json`, depois de T028, T036 e T040
+- [x] T043 Confirmar a deteção do `rnf2_estaticas.py` com a nova estrutura (R10); se for preciso adaptar, mudar só a deteção e registar em `docs/fase2/medicoes/README.md`
 - [ ] T044 Medição completa `apos-rnf2` (`quickstart.md`, secções 2 e 3): `rnf2_estaticas.py`, N3 com imagens do mesmo dia, `carga_rnf1.py` (`isolado`, `m1`, `m2`, `paralelo`) → `docs/fase2/medicoes/resultados/apos-rnf2/`
 - [ ] T045 Atualizar o estado de H-06 a H-09 em `docs/fase2/exercicios/RAS-exercicio_6_bloco1_SWdesign_template_PT.md` (secção 2.6) e preencher «Implementação» e «Desvios face à decisão» da DA-2 no relatório (cap. 8); se houver desvios, atualizar `docs/fase2/relatorio/images/vista_depois.puml` e regenerar o SVG
 

@@ -17,9 +17,9 @@ from video_common.probe import probe
 # Package import when run through local_pipeline (regressao_hashes.py); plain import when the
 # service folder is on sys.path (the container entry point and the tests).
 try:
-    from video_edit.effects import SUPPORTED, apply_frame_effects
+    from video_edit.frame_effects import SUPPORTED, apply_frame_effects
 except ModuleNotFoundError:
-    from effects import SUPPORTED, apply_frame_effects
+    from frame_effects import SUPPORTED, apply_frame_effects
 
 PREVIEW_SECONDS = float(os.getenv("VIDEO_PREVIEW_SECONDS", "3"))
 MIN_SPEED = 0.25

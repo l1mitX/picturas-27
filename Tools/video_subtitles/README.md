@@ -15,10 +15,19 @@ language and the captions are burned into an MP4/H.264 + AAC. A video with no au
 
 The pipeline tests (`test_subtitles.py`) combine this service with the edit service through
 `video_common/local_pipeline.py` and the plans in `projects/tests/fixtures/video_stage_plans.json`, so they need the
-whole repository. They run on the host (ffmpeg/ffprobe on the PATH) and are skipped inside this service's image, where
-only `test_video_subtitles.py` and the caption unit tests run.
+whole repository. Without the repository they are skipped.
+
+On the host (ffmpeg/ffprobe on the PATH):
 
 ```bash
 cd Tools/video_subtitles && python3 -m venv .venv && .venv/bin/pip install -r requirements-dev.txt
 .venv/bin/python -m pytest -q tests
+```
+
+Inside Docker, from the repository root (mounting the repository gives the tests the stage plans in
+`projects/tests/fixtures/` and the code of the other video services, used by `local_pipeline.py`):
+
+```bash
+docker compose run --rm --no-deps -T -v "<repo>:/repo" -w /repo/Tools/video_subtitles video_subtitles \
+  sh -c "pip install -q pytest && python -m pytest -q -p no:cacheprovider tests"
 ```

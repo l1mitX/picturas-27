@@ -56,6 +56,16 @@ decisão, a razão e as alternativas. Nenhuma altera a DA-2; detalham como reali
 - **Razão**: hoje os MP4 intermédios já existem, numa pasta temporária do mesmo volume (EV-15); muda só quem a gere.
 - **Alternativas**: passar o vídeo pela fila (inviável pelo tamanho); cada serviço apagar a entrada que recebeu (falha
   se o estágio seguinte ainda não a leu ou se o pipeline for cancelado).
+- **Desvio na implementação (T039, 2026-11-24)**: (1) no fim do pipeline de um vídeo, o `projects` apaga só os
+  ficheiros `<imgId>-<índice>.mp4` desse vídeo e depois a pasta `stages/<token>/`, se ficar vazia: a pasta é partilhada
+  pelos vídeos da mesma execução, e apagá-la inteira podia remover a entrada de um vídeo que ainda vai a meio.
+  (2) O cancelamento já apagava todos os `Process` em curso, por isso a resposta de um estágio que acaba depois do
+  cancelamento não encontra o seu `Process`. Acrescentou-se: o cancelamento apaga `stages/<token>/` da execução
+  cancelada (como já fazia com `src/` e `preview/`), e a resposta sem `Process` cujo ficheiro de saída é intermédio
+  (`…/stages/<n>/<id>-<n>.mp4`) apaga esse ficheiro. Nada disto é visível para o utilizador (princípio I).
+  (3) A pré-visualização usa o `activeToken`, que é o token da execução em curso; os seus intermédios ficam em
+  `stages/preview-<token>/`, senão a pré-visualização e o *Apply* do mesmo vídeo escreveriam no mesmo ficheiro e a
+  limpeza de um apagaria os intermédios do outro (encontrado no `analyze` de 2026-11-24).
 
 ## R4. Progresso igual ao da base
 
@@ -102,6 +112,13 @@ decisão, a razão e as alternativas. Nenhuma altera a DA-2; detalham como reali
   cabeçalho do *script* já prevê adaptar só as funções de chamada).
 - **Razão**: mantém os 74 casos (INV-006) e permite comparar *hashes* com a base sem RabbitMQ.
 - **Alternativa**: manter `process_video` como está para os testes (rejeitado: testaria código que deixa de correr).
+- **Desvio na implementação (T021, T028, 2026-11-24)**: o executor local precisa do ficheiro de casos
+  (`projects/tests/fixtures/`) e do código dos três serviços, que não estão dentro da imagem de cada serviço. Por isso:
+  (1) os testes de cada serviço correm na sua imagem **com o repositório montado** (`-v <raiz>:/repo -w
+  /repo/Tools/<serviço>`); sem ele, 3 testes falham e 14 são saltados. (2) O `regressao_hashes.py video` corre na
+  imagem do `video_subtitles`, com o repositório e `samples/video` montados, porque o caso V8 (legendas) precisa do
+  `faster-whisper` e das fontes, que só essa imagem tem. As entradas, os parâmetros e o cálculo dos *hashes* não
+  mudaram.
 
 ## R8. Efeitos partilhados: forma do módulo
 
@@ -113,6 +130,29 @@ decisão, a razão e as alternativas. Nenhuma altera a DA-2; detalham como reali
 - **Razão**: DA-2 e constituição, princípio V; com um ficheiro por efeito, mudar o brilho reconstrói só 2 serviços (SC-002).
 - **Cuidado**: o código inline de cada ferramenta de imagem e a cópia do vídeo têm de ser **iguais** antes de os
   unificar; se não forem, prevalece o comportamento de cada caminho na base e regista-se (H-07).
+- **Comparação efetuada em 2026-11-23 (T029)**: os caminhos não são literalmente iguais em todos os detalhes:
+  - `brightness`, `contrast` e `saturation`: as ferramentas de imagem convertem imagens em modo `P` para `RGB`;
+    as funções de vídeo não fazem essa conversão. As funções de vídeo também convertem o parâmetro para `float`.
+  - `binarization`: a ferramenta de imagem compara com o `threshold` recebido e devolve uma imagem `L`; a função
+    de vídeo converte o limiar para `int` e devolve `RGB`.
+  - `rotate`: a função de vídeo converte `degrees` para `float`; a ferramenta de imagem passa o valor diretamente.
+    Ambas usam `expand=True`.
+  - `resize`: o vídeo converte `width` e `height` para `int`; a imagem passa o par `dimensions` diretamente. Os
+    casos atuais da regressão usam dimensões inteiras.
+  - `cut`: o vídeo converte cada coordenada para `int`; a imagem passa o tuplo diretamente. Os casos atuais da
+    regressão usam coordenadas inteiras.
+  - `border`: o vídeo recebe `borderWidth`, `r`, `g` e `b` e converte-os para `int`; a imagem recebe uma cor em
+    tuplo e a largura separadamente. Ambas usam `ImageOps.expand`.
+  - As interfaces internas também diferem: as ferramentas de imagem usam nomes como `brightness_factor`,
+    `contrast_factor`, `dimensions` e `border_color`, enquanto as funções de vídeo usam os nomes dos parâmetros
+    enviados pelo pipeline.
+- Estas diferenças têm de ser preservadas para as respetivas entradas da baseline. Antes de escolher a forma de
+  adaptar as assinaturas e o modo de saída da binarização, validar a abordagem com a equipa; não normalizar os
+  comportamentos apenas para tornar os corpos das funções iguais. Os testes de regressão de imagem e vídeo são a
+  condição para a unificação (H-07).
+- **Abordagem adotada neste ramo**: os módulos comuns mantêm por omissão a coerção e o modo de saída do vídeo;
+  as ferramentas de imagem chamam-nos sem coerção, preservam a conversão de imagens `P` existente e pedem saída `L`
+  para a binarização. Assim, partilham a operação sem uniformizar diferenças observáveis entre os dois caminhos.
 
 ## R9. Filas e nomes
 
@@ -141,3 +181,19 @@ decisão, a razão e as alternativas. Nenhuma altera a DA-2; detalham como reali
   Combinar onde fica uma cópia única dessa validação (e.g., em `Tools/video_common/`), sem obrigar o serviço de edição a
   copiar o código da extração.
 
+
+## R12. Erro herdado: pré-visualização durante o *Apply*
+
+- **Facto** (encontrado a 2026-11-24, ao verificar a R3): na base, a pré-visualização regista um `Process` com o
+  `activeToken`, que é o token da execução em curso, e a execução só é confirmada quando
+  `countByProjectAndToken` chega a 0 (`projects/controllers/process.js`). Se o *Apply* acabar com uma
+  pré-visualização ainda a meio, a contagem não chega a 0 e a execução nunca é confirmada: o utilizador não vê os
+  resultados. O RNF2 torna isto mais provável, porque a pré-visualização passa a ter vários estágios.
+- **Decisão**: a contagem deixa de incluir os `Process` de pré-visualização (`msg_id` com o prefixo `preview-`).
+  É uma correção de um erro da base, não uma funcionalidade nova (princípio I); o comportamento esperado é o da base
+  quando a pré-visualização acaba antes do *Apply*. Testes em `projects/tests/runCommit.test.js`.
+- **Classe**: **B** — o utilizador vê a diferença nesse caso (antes os resultados nunca apareciam; agora aparecem).
+  As saídas são as mesmas da base, por isso os *hashes* não mudam, e os cenários de medição não usam a
+  pré-visualização. Está justificada nesta entrada e nos «Desvios face à decisão» da DA-2 (constituição, princípios I
+  e III). Fica fora do âmbito estrito do RNF2: decidida pela pessoa E a 2026-11-24 e a confirmar com a equipa; se a
+  equipa preferir só _refactoring_, reverte-se o *commit* e regista-se o erro como problema conhecido.

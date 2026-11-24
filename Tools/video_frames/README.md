@@ -13,10 +13,20 @@ interval, PNG or JPEG, at most 100 images per video. Full output is a frame mani
 
 ## Tests
 
-Extraction-only tests call `process_stage` directly and also run inside this service's image. The tests that combine
-extraction with edits or captions go through `video_common/local_pipeline.py` and need the whole repository (host).
+Extraction-only tests call `process_stage` directly. The tests that combine extraction with edits or captions go
+through `video_common/local_pipeline.py` and need the whole repository; without it they are skipped.
+
+On the host (ffmpeg/ffprobe on the PATH):
 
 ```bash
 cd Tools/video_frames && python3 -m venv .venv && .venv/bin/pip install -r requirements-dev.txt
 .venv/bin/python -m pytest -q tests
+```
+
+Inside Docker, from the repository root (mounting the repository gives the tests the stage plans in
+`projects/tests/fixtures/` and the code of the other video services, used by `local_pipeline.py`):
+
+```bash
+docker compose run --rm --no-deps -T -v "<repo>:/repo" -w /repo/Tools/video_frames video_frames \
+  sh -c "pip install -q pytest && python -m pytest -q -p no:cacheprovider tests"
 ```

@@ -9,7 +9,7 @@ import subprocess
 import pytest
 from PIL import Image, ImageStat
 
-from effects import UnsupportedEffect
+from video_common.exceptions import UnsupportedEffect
 from video_common.frame_validation import InvalidExtraction
 from video_processor import (InvalidSpeed, InvalidTrim, InvalidVideo, PREVIEW_SECONDS,
                              atempo_chain, probe, process_video, resolve_trim,

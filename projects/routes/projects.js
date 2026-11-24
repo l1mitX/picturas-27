@@ -70,7 +70,9 @@ const { persistFrameResults } = require("../utils/frameResults");
 const { dispatchProcessBatch } = require("../utils/processBatch");
 // RNF2 (DA-2): o vídeo é dividido em estágios, um por serviço de vídeo
 const { planStages } = require("../utils/videoStages");
-const { firstStage, nextStage, nextMessageId } = require("../utils/videoDispatch");
+const {
+  firstStage, nextMessageId, stageReplyAction, removeStageFiles, removeStageOutput,
+} = require("../utils/videoDispatch");
 
 // Cria a pasta do ficheiro intermédio de um estágio (volume image_data, partilhado com os serviços de vídeo).
 function ensureStageDir(outputUri) {
@@ -189,7 +191,14 @@ function process_msg() {
       const msg_id = msg_content.correlationId;
 
       const process = await Process.getOneByMsgId(msg_id);
-      if (!process) return;
+      if (!process) {
+        // RNF2 T037/T039: estágio de vídeo que acabou depois de um cancelamento (o Process já foi apagado):
+        // nada é enviado nem registado, mas o ficheiro intermédio que escreveu é apagado.
+        if (msg_content.status !== "error") {
+          removeStageOutput(path.resolve(__dirname, ".."), msg_content.output && msg_content.output.imageURI);
+        }
+        return;
+      }
 
       ownerIdSafe = process.user_id;
       runnerIdSafe = process.runner_id || process.user_id;
@@ -216,7 +225,13 @@ function process_msg() {
       const holdsRunCommit = project.tools.some((tool) => tool.procedure === "extract_frames") && !/preview/.test(msg_id);
       // RNF2 T026: um vídeo com estágio seguinte mantém o seu Process até o sucessor estar criado; senão, entre apagar e
       // criar, o último resultado de outra fonte podia contar 0 pendentes e dar a execução por terminada a meio.
-      const nextVideoStage = sourceIsVideo && msg_content.status !== "error" ? nextStage(process, msg_content) : null;
+      // RNF2 T037–T039: decisão sobre a resposta de um estágio de vídeo (erro, cancelamento, seguinte ou último).
+      const stageReply = sourceIsVideo ? stageReplyAction(process, msg_content, project.activeToken) : null;
+      const nextVideoStage = stageReply && stageReply.action === "next" ? stageReply.next : null;
+      // No fim do pipeline deste vídeo (sucesso, erro ou cancelamento) os seus ficheiros intermédios já não servem.
+      if (stageReply && stageReply.ends) {
+        removeStageFiles(path.resolve(__dirname, ".."), process.new_img_uri, process.token, img_id);
+      }
       if (!holdsRunCommit && !nextVideoStage) await Process.delete(process.user_id, process.project_id, process._id);
       
       if (msg_content.status === "error") {
@@ -1150,8 +1165,7 @@ router.post("/:user/:project/preview/:img", checkSharePermission, requireEditPer
         }
       }
 
-      // video: the whole pipeline goes in one message to the video worker,
-      // which only processes the initial excerpt
+      // video: placeholder; the service and parameters of the first stage are set below (RNF2 T025)
       const tool = previewIsVideo ? { procedure: "video" } : imageTools(project)[0];
       if (!tool) {
         return res.status(400).jsonp("No tools selected");
@@ -2409,7 +2423,8 @@ router.delete(
 
       // limpar dirs temporários (opcional)
       const basePath = `/../images/users/${ownerId}/projects/${projectId}`;
-      for (const dir of ["src", "preview"]) {
+      // RNF2 T039: inclui os ficheiros intermédios da execução cancelada e das suas pré-visualizações
+      for (const dir of ["src", "preview", `stages/${cancelTok}`, `stages/preview-${cancelTok}`]) {
         const full = path.join(__dirname, `${basePath}/${dir}`);
         if (fs.existsSync(full)) fs.rmSync(full, { recursive: true, force: true });
       }

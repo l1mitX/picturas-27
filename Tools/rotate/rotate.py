@@ -4,11 +4,10 @@ import datetime
 import pytz
 import pytz
 
-from PIL import Image
-
 from utils.img_handler import Img_Handler
 from utils.tool_msg import ToolMSG
 import utils.env as env
+from effects.rotate import rotate as apply_rotate
 
 class Rotate:
     def __init__(self):
@@ -22,7 +21,7 @@ class Rotate:
 
     def rotate_image(self, img_path, store_img_path, degrees, expand=True):
         img = self._img_handler.get_img(img_path)
-        new_img = img.rotate(degrees, expand=expand)
+        new_img = apply_rotate(img, degrees, expand=expand, coerce=False)
         self._img_handler.store_img(new_img, store_img_path)
 
     def rotate_callback(self, ch, method, properties, body):

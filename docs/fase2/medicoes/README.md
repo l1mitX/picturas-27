@@ -81,6 +81,15 @@ Comandos exatos no cabeçalho de cada script. Resultados em `resultados/<etiquet
 | N4 — complexidade ciclomática máxima | 22 (`process_video`); `extract_frames` 14; `callback` 11 |
 | N4 — orquestrador `projects/routes/projects.js` | 2733 linhas; 16 com ramificação imagem/vídeo (`isVideo`/`media_type`) |
 
+> **Deteção ajustada para a estrutura do RNF2 (T043, R10, 2026-11-24).** Com a estrutura nova, a deteção dos
+> cenários de N2 dava dois falsos positivos: no C1, a ferramenta de imagem `Tools/brightness/brightness.py` continua a
+> ter `adjust_brightness`, mas só chama a função partilhada de `Tools/effects/brightness.py`; no C2, o comentário
+> «No faster-whisper here» de `Tools/video_frames/requirements.txt` e a *docstring* de
+> `Tools/video_subtitles/__init__.py` contavam como uso do Faster-Whisper. Mudou só a deteção: os cenários procuram
+> no código sem comentários nem *docstrings*, e o C1 exige também `ImageEnhance.Brightness` no mesmo ficheiro. A
+> definição dos cenários não mudou. Confirmado: o `rnf2_estaticas.py` novo, corrido sobre o commit da base
+> (`0523102`), dá N1, N2 e N4 iguais aos de `resultados/base/rnf2_estaticas.json`.
+
 ### RNF2 — N3 (imagem Docker do vídeo)
 
 | Item | Base |

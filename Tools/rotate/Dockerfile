@@ -4,6 +4,8 @@ WORKDIR /app
 
 COPY ./rotate .
 
+COPY ./effects/rotate.py ./effects/rotate.py
+
 COPY ./utils ./utils
 RUN pip install --no-cache-dir -r ./utils/requirements.txt
 

@@ -3,11 +3,10 @@ import json
 import datetime
 import pytz
 
-from PIL import Image
-
 from utils.img_handler import Img_Handler
 from utils.tool_msg import ToolMSG
 import utils.env as env
+from effects.resize import resize as apply_resize
 
 class Resize:
     def __init__(self):
@@ -26,7 +25,7 @@ class Resize:
     
     def resize_image(self, img_path, store_img_path, dimensions):
         img = self._img_handler.get_img(img_path)
-        new_img = img.resize(dimensions)
+        new_img = apply_resize(img, *dimensions, coerce=False)
         self._img_handler.store_img(new_img, store_img_path)
             
     def resize_callback(self, ch, method, properties, body):
