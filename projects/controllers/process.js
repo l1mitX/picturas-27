@@ -41,7 +41,9 @@ module.exports.delete = (user_id, project_id, process_id) => {
   });
 };
 
+// Trabalhos da execução `token` ainda por acabar. As pré-visualizações usam o mesmo token (activeToken) mas não
+// fazem parte da execução: não contam, senão um Apply que acabe com uma pré-visualização a meio nunca é confirmado.
 module.exports.countByProjectAndToken = async (project_id, token) => {
-  return await Process.countDocuments({ project_id, token }).exec();
+  return await Process.countDocuments({ project_id, token, msg_id: { $not: /^preview-/ } }).exec();
 };
 

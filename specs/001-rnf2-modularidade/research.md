@@ -181,3 +181,14 @@ decisão, a razão e as alternativas. Nenhuma altera a DA-2; detalham como reali
   Combinar onde fica uma cópia única dessa validação (e.g., em `Tools/video_common/`), sem obrigar o serviço de edição a
   copiar o código da extração.
 
+
+## R12. Erro herdado: pré-visualização durante o *Apply*
+
+- **Facto** (encontrado a 2026-11-24, ao verificar a R3): na base, a pré-visualização regista um `Process` com o
+  `activeToken`, que é o token da execução em curso, e a execução só é confirmada quando
+  `countByProjectAndToken` chega a 0 (`projects/controllers/process.js`). Se o *Apply* acabar com uma
+  pré-visualização ainda a meio, a contagem não chega a 0 e a execução nunca é confirmada: o utilizador não vê os
+  resultados. O RNF2 torna isto mais provável, porque a pré-visualização passa a ter vários estágios.
+- **Decisão**: a contagem deixa de incluir os `Process` de pré-visualização (`msg_id` com o prefixo `preview-`).
+  É uma correção de um erro da base, não uma funcionalidade nova (princípio I); o comportamento esperado é o da base
+  quando a pré-visualização acaba antes do *Apply*. Testes em `projects/tests/runCommit.test.js`.
