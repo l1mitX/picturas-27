@@ -129,12 +129,12 @@ repartido (INV-001 a INV-005, H-08).
 
 ### Testes primeiro
 
-- [ ] T037 [P] [US3] Teste em `projects/tests/`: cancelar entre dois estágios (o `activeToken` muda antes de chegar a resposta do estágio *i*) → o estágio *i+1* não é enviado, nada é registado, nenhuma mensagem de sucesso chega ao cliente, e a quota fica como na base (H-08)
-- [ ] T038 [P] [US3] Teste em `projects/tests/`: erro num estágio intermédio → o erro chega ao cliente com o mesmo código (2000–2005), o pipeline não continua e a pasta `stages/<token>/` é apagada
+- [x] T037 [P] [US3] Teste em `projects/tests/`: cancelar entre dois estágios (o `activeToken` muda antes de chegar a resposta do estágio *i*) → o estágio *i+1* não é enviado, nada é registado, nenhuma mensagem de sucesso chega ao cliente, e a quota fica como na base (H-08)
+- [x] T038 [P] [US3] Teste em `projects/tests/`: erro num estágio intermédio → o erro chega ao cliente com o mesmo código (2000–2005), o pipeline não continua e a pasta `stages/<token>/` é apagada
 
 ### Implementação
 
-- [ ] T039 [US3] Em `projects/routes/projects.js`, apagar `…/stages/<token>/` no fim do pipeline (sucesso, erro e cancelamento) (R3). T037 e T038 passam
+- [x] T039 [US3] Em `projects/routes/projects.js`, apagar `…/stages/<token>/` no fim do pipeline (sucesso, erro e cancelamento) (R3). T037 e T038 passam
 - [ ] T040 [US3] Verificação manual do `quickstart.md`, secção 1, passo 4 (projeto com 2 imagens e 2 vídeos; brilho; legendas + brilho; corte + extração; pré-visualizações; cancelamento a meio), confirmando também que as interfaces HTTP e a interface do utilizador não mudaram (INV-005); registar o resultado
 
 **Checkpoint**: preservação funcional provada; pipeline repartido robusto a erros e cancelamento.
