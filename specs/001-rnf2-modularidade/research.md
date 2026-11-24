@@ -56,6 +56,13 @@ decisão, a razão e as alternativas. Nenhuma altera a DA-2; detalham como reali
 - **Razão**: hoje os MP4 intermédios já existem, numa pasta temporária do mesmo volume (EV-15); muda só quem a gere.
 - **Alternativas**: passar o vídeo pela fila (inviável pelo tamanho); cada serviço apagar a entrada que recebeu (falha
   se o estágio seguinte ainda não a leu ou se o pipeline for cancelado).
+- **Desvio na implementação (T039, 2026-11-24)**: (1) no fim do pipeline de um vídeo, o `projects` apaga só os
+  ficheiros `<imgId>-<índice>.mp4` desse vídeo e depois a pasta `stages/<token>/`, se ficar vazia: a pasta é partilhada
+  pelos vídeos da mesma execução, e apagá-la inteira podia remover a entrada de um vídeo que ainda vai a meio.
+  (2) O cancelamento já apagava todos os `Process` em curso, por isso a resposta de um estágio que acaba depois do
+  cancelamento não encontra o seu `Process`. Acrescentou-se: o cancelamento apaga `stages/<token>/` da execução
+  cancelada (como já fazia com `src/` e `preview/`), e a resposta sem `Process` cujo ficheiro de saída é intermédio
+  (`…/stages/<n>/<id>-<n>.mp4`) apaga esse ficheiro. Nada disto é visível para o utilizador (princípio I).
 
 ## R4. Progresso igual ao da base
 
@@ -102,6 +109,13 @@ decisão, a razão e as alternativas. Nenhuma altera a DA-2; detalham como reali
   cabeçalho do *script* já prevê adaptar só as funções de chamada).
 - **Razão**: mantém os 74 casos (INV-006) e permite comparar *hashes* com a base sem RabbitMQ.
 - **Alternativa**: manter `process_video` como está para os testes (rejeitado: testaria código que deixa de correr).
+- **Desvio na implementação (T021, T028, 2026-11-24)**: o executor local precisa do ficheiro de casos
+  (`projects/tests/fixtures/`) e do código dos três serviços, que não estão dentro da imagem de cada serviço. Por isso:
+  (1) os testes de cada serviço correm na sua imagem **com o repositório montado** (`-v <raiz>:/repo -w
+  /repo/Tools/<serviço>`); sem ele, 3 testes falham e 14 são saltados. (2) O `regressao_hashes.py video` corre na
+  imagem do `video_subtitles`, com o repositório e `samples/video` montados, porque o caso V8 (legendas) precisa do
+  `faster-whisper` e das fontes, que só essa imagem tem. As entradas, os parâmetros e o cálculo dos *hashes* não
+  mudaram.
 
 ## R8. Efeitos partilhados: forma do módulo
 
