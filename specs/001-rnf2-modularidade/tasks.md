@@ -113,8 +113,8 @@ deixa de esperar pela legendagem.
 - [X] T032 [P] [US2] Idem para `Tools/contrast/` (`contrast_image`) e `Tools/saturation/` (`saturation_image`), cada Dockerfile a copiar só o seu ficheiro de efeito
 - [X] T033 [P] [US2] Idem para `Tools/rotate/` (`rotate_image`), `Tools/resize/` (`resize_image`) e `Tools/cut/` (`cut_image`)
 - [X] T034 [P] [US2] Idem para `Tools/binarization/` (`add_binarization`) e `Tools/border/` (`add_border`)
-- [ ] T035 [US2] Em `Tools/video_edit/`, apagar `effects.py`, criar o registo `apply_frame_effects` (com `FRAME_EFFECTS`, `TIME_EFFECTS`, `SUPPORTED`) a importar de `Tools/effects/`, e fazer o `Dockerfile` copiar `./effects` inteira (depende de T017)
-- [ ] T036 [US2] Correr `regressao_hashes.py imagem apos-rnf2` e `regressao_hashes.py video apos-rnf2` (adaptado em T021) e confirmar *hashes* iguais aos de `resultados/base/` (SC-007)
+- [x] T035 [US2] Em `Tools/video_edit/`, apagar `effects.py`, criar o registo `apply_frame_effects` (com `FRAME_EFFECTS`, `TIME_EFFECTS`, `SUPPORTED`) a importar de `Tools/effects/`, e fazer o `Dockerfile` copiar `./effects` inteira (depende de T017)
+- [x] T036 [US2] Correr `regressao_hashes.py imagem apos-rnf2` e `regressao_hashes.py video apos-rnf2` (adaptado em T021) e confirmar *hashes* iguais aos de `resultados/base/` (SC-007)
 
 **Checkpoint**: N1 = 0; mudar o brilho reconstrói só `brightness_tool` e `video_edit`.
 
