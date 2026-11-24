@@ -1,0 +1,4 @@
+# Only what the tests need (no RabbitMQ broker). Also needs ffmpeg/ffprobe on the PATH.
+# pika/pytz/python-dotenv: the pipeline tests import the edit service entry point.
+-r ../video_common/requirements.txt
+pytest>=8

@@ -1,0 +1,2 @@
+# No extra dependencies: pika, pytz, python-dotenv and pillow come from
+# video_common/requirements.txt. No faster-whisper here (RE-002).
