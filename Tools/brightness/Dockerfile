@@ -4,6 +4,8 @@ WORKDIR /app
 
 COPY ./brightness .
 
+COPY ./effects/brightness.py ./effects/brightness.py
+
 COPY ./utils ./utils
 RUN pip install --no-cache-dir -r ./utils/requirements.txt
 

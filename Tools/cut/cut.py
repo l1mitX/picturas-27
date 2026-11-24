@@ -4,11 +4,10 @@ import json
 import datetime
 import pytz
 
-from PIL import Image
-
 from utils.img_handler import Img_Handler
 from utils.tool_msg import ToolMSG
 import utils.env as env
+from effects.cut import cut as apply_cut
 import utils.env as env
 
 class Cut:
@@ -34,8 +33,7 @@ class Cut:
         # left, top, right, bottom = map(float, dimensions) 
         # dimensions = (round(left), round(top), round(right), round(bottom))
         
-        # cut image
-        new_img = img.crop(dimensions)
+        new_img = apply_cut(img, *dimensions, coerce=False)
         
         # store image
         self._img_handler.store_img(new_img, store_img_path)

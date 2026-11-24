@@ -4,6 +4,8 @@ WORKDIR /app
 
 COPY ./binarization .
 
+COPY ./effects/binarization.py ./effects/binarization.py
+
 COPY ./utils ./utils
 RUN pip install --no-cache-dir -r ./utils/requirements.txt
 

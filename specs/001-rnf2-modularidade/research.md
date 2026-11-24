@@ -113,6 +113,29 @@ decisão, a razão e as alternativas. Nenhuma altera a DA-2; detalham como reali
 - **Razão**: DA-2 e constituição, princípio V; com um ficheiro por efeito, mudar o brilho reconstrói só 2 serviços (SC-002).
 - **Cuidado**: o código inline de cada ferramenta de imagem e a cópia do vídeo têm de ser **iguais** antes de os
   unificar; se não forem, prevalece o comportamento de cada caminho na base e regista-se (H-07).
+- **Comparação efetuada em 2026-11-23 (T029)**: os caminhos não são literalmente iguais em todos os detalhes:
+  - `brightness`, `contrast` e `saturation`: as ferramentas de imagem convertem imagens em modo `P` para `RGB`;
+    as funções de vídeo não fazem essa conversão. As funções de vídeo também convertem o parâmetro para `float`.
+  - `binarization`: a ferramenta de imagem compara com o `threshold` recebido e devolve uma imagem `L`; a função
+    de vídeo converte o limiar para `int` e devolve `RGB`.
+  - `rotate`: a função de vídeo converte `degrees` para `float`; a ferramenta de imagem passa o valor diretamente.
+    Ambas usam `expand=True`.
+  - `resize`: o vídeo converte `width` e `height` para `int`; a imagem passa o par `dimensions` diretamente. Os
+    casos atuais da regressão usam dimensões inteiras.
+  - `cut`: o vídeo converte cada coordenada para `int`; a imagem passa o tuplo diretamente. Os casos atuais da
+    regressão usam coordenadas inteiras.
+  - `border`: o vídeo recebe `borderWidth`, `r`, `g` e `b` e converte-os para `int`; a imagem recebe uma cor em
+    tuplo e a largura separadamente. Ambas usam `ImageOps.expand`.
+  - As interfaces internas também diferem: as ferramentas de imagem usam nomes como `brightness_factor`,
+    `contrast_factor`, `dimensions` e `border_color`, enquanto as funções de vídeo usam os nomes dos parâmetros
+    enviados pelo pipeline.
+- Estas diferenças têm de ser preservadas para as respetivas entradas da baseline. Antes de escolher a forma de
+  adaptar as assinaturas e o modo de saída da binarização, validar a abordagem com a equipa; não normalizar os
+  comportamentos apenas para tornar os corpos das funções iguais. Os testes de regressão de imagem e vídeo são a
+  condição para a unificação (H-07).
+- **Abordagem adotada neste ramo**: os módulos comuns mantêm por omissão a coerção e o modo de saída do vídeo;
+  as ferramentas de imagem chamam-nos sem coerção, preservam a conversão de imagens `P` existente e pedem saída `L`
+  para a binarização. Assim, partilham a operação sem uniformizar diferenças observáveis entre os dois caminhos.
 
 ## R9. Filas e nomes
 
