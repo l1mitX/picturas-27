@@ -192,3 +192,8 @@ decisão, a razão e as alternativas. Nenhuma altera a DA-2; detalham como reali
 - **Decisão**: a contagem deixa de incluir os `Process` de pré-visualização (`msg_id` com o prefixo `preview-`).
   É uma correção de um erro da base, não uma funcionalidade nova (princípio I); o comportamento esperado é o da base
   quando a pré-visualização acaba antes do *Apply*. Testes em `projects/tests/runCommit.test.js`.
+- **Classe**: **B** — o utilizador vê a diferença nesse caso (antes os resultados nunca apareciam; agora aparecem).
+  As saídas são as mesmas da base, por isso os *hashes* não mudam, e os cenários de medição não usam a
+  pré-visualização. Está justificada nesta entrada e nos «Desvios face à decisão» da DA-2 (constituição, princípios I
+  e III). Fica fora do âmbito estrito do RNF2: decidida pela pessoa E a 2026-11-24 e a confirmar com a equipa; se a
+  equipa preferir só _refactoring_, reverte-se o *commit* e regista-se o erro como problema conhecido.
