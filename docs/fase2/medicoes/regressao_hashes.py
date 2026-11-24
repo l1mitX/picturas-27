@@ -10,10 +10,11 @@ Modo "imagem" (ferramentas de imagem, sem RabbitMQ), na raiz do repositório:
       "pip install -q pillow==11.0.0 pika==1.3.2 pytz python-dotenv && \
        python docs/fase2/medicoes/regressao_hashes.py imagem <etiqueta>"
 
-Modo "video" (dentro da imagem do serviço de edição, que tem o ffmpeg e o código):
+Modo "video" (dentro da imagem do serviço de legendagem: é a única com o ffmpeg, as fontes das legendas e o
+faster-whisper, de que o caso V8 precisa; o código dos três serviços vem do repositório montado em /repo):
 
-    docker compose run --rm --no-deps -T -v "<raiz>:/repo" -w /repo video_edit \
-      python docs/fase2/medicoes/regressao_hashes.py video <etiqueta>
+    docker compose run --rm --no-deps -T -v "<raiz>:/repo" -v "<raiz>/samples/video:/samples" -w /repo \
+      video_subtitles python docs/fase2/medicoes/regressao_hashes.py video <etiqueta>
 
 Escreve docs/fase2/medicoes/resultados/<etiqueta>/regressao_<modo>.json.
 
