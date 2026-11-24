@@ -30,6 +30,42 @@ SCENARIOS = {
     "C2_versao_whisper": re.compile(r"faster[-_]whisper", re.IGNORECASE),
     "C3_amostragem_fotogramas": re.compile(r"def sampling_times\b"),
 }
+# Deteção ajustada para a estrutura do RNF2 (T043, R10; registada em README.md). A definição dos cenários
+# não muda e o resultado da base é o mesmo:
+# - C1 só conta um ficheiro que aplique mesmo o filtro (ImageEnhance.Brightness), e não uma função com esse
+#   nome que só chama a função partilhada de Tools/effects/ (e.g., Tools/brightness/brightness.py depois do RNF2);
+# - os cenários procuram só no código: comentários e docstrings não contam (e.g., "No faster-whisper here").
+SCENARIO_ALSO = {"C1_filtro_brightness": re.compile(r"ImageEnhance\.Brightness\b")}
+
+
+def code_text(p):
+    """Texto de um ficheiro sem comentários nem docstrings, para os cenários de N2."""
+    text = p.read_text(encoding="utf-8", errors="ignore")
+    if p.suffix == ".py":
+        try:
+            tree = ast.parse(text)
+        except SyntaxError:
+            return text
+        lines = text.splitlines()
+        drop = set()
+        for node in ast.walk(tree):
+            body = getattr(node, "body", None)
+            if isinstance(body, list) and body and isinstance(body[0], ast.Expr) \
+                    and isinstance(body[0].value, ast.Constant) and isinstance(body[0].value.value, str):
+                drop.update(range(body[0].lineno - 1, body[0].end_lineno))
+        lines = ["" if i in drop else line for i, line in enumerate(lines)]
+        return "\n".join(re.sub(r"(^|\s)#.*$", "", line) for line in lines)
+    if p.suffix == ".txt":
+        return "\n".join(re.sub(r"(^|\s)#.*$", "", line) for line in text.splitlines())
+    if p.suffix in (".js", ".ts"):
+        return "\n".join(re.sub(r"(^|\s)//.*$", "", line) for line in text.splitlines())
+    return text
+
+
+def matches_scenario(scenario, pattern, p):
+    text = code_text(p)
+    also = SCENARIO_ALSO.get(scenario)
+    return bool(pattern.search(text)) and (also is None or bool(also.search(text)))
 # Tipos de trabalho de vídeo, identificados pela função que os implementa. Servem para dizer que trabalhos de
 # vídeo ficam indisponíveis quando um serviço é reconstruído e reimplantado.
 VIDEO_JOBS = {
@@ -133,7 +169,7 @@ def n2():
     services = {s: service_inputs(*v) for s, v in compose_services().items()}
     result = {}
     for scenario, pattern in SCENARIOS.items():
-        files = sorted(p for p in source_files() if pattern.search(p.read_text(encoding="utf-8", errors="ignore")))
+        files = sorted(p for p in source_files() if matches_scenario(scenario, pattern, p))
         affected = sorted(s for s, inputs in services.items() if any(is_input(f, inputs) for f in files))
         jobs = sorted(set().union(*(jobs_of(services[s]) for s in affected)) if affected else set())
         result[scenario] = {"ficheiros_a_alterar": [rel(f) for f in files],
