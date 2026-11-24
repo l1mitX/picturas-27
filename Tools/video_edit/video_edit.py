@@ -1,4 +1,10 @@
 """RabbitMQ entry point for the PictuRAS video editing stage."""
+import os
+import sys
+
+if __name__ == "__main__":
+    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from video_common.worker import VideoWorker
 try:
     from video_edit.video_processor import process_video

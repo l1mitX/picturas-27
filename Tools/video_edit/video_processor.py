@@ -2,7 +2,6 @@
 import os
 import subprocess
 import tempfile
-from fractions import Fraction
 
 from PIL import Image
 

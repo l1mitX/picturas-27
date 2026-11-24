@@ -10,8 +10,10 @@ import pytest
 from PIL import Image, ImageStat
 
 from effects import UnsupportedEffect
+from video_common.frame_validation import InvalidExtraction
 from video_processor import (InvalidSpeed, InvalidTrim, InvalidVideo, PREVIEW_SECONDS,
-                             atempo_chain, probe, process_video, resolve_trim)
+                             atempo_chain, probe, process_video, resolve_trim,
+                             validate_tools)
 
 
 def sha(path):
@@ -236,3 +238,27 @@ def test_edit_is_reproducible(sample_video, tmp_path):
     process_video(sample_video, a, tools)
     process_video(sample_video, b, tools)
     assert frames(a) and frames(a) == frames(b)
+
+
+@pytest.mark.parametrize("tools", [
+    [
+        {"procedure": "extract_frames", "params": {"mode": "count", "count": 6}},
+        {"procedure": "brightness", "params": {"brightness": 1.2}},
+    ],
+    [
+        {"procedure": "extract_frames", "params": {"mode": "count", "count": 6}},
+        {"procedure": "extract_frames", "params": {"mode": "count", "count": 6}},
+    ],
+])
+def test_extract_frames_must_be_unique_and_last(tools):
+    with pytest.raises(InvalidExtraction):
+        validate_tools(tools)
+
+
+def test_extract_frames_params_are_validated():
+    tools = [
+        {"procedure": "extract_frames",
+         "params": {"mode": "count", "count": 101}}
+    ]
+    with pytest.raises(InvalidExtraction):
+        validate_tools(tools)
