@@ -68,6 +68,14 @@ const {
 } = require("../utils/video");
 const { persistFrameResults } = require("../utils/frameResults");
 const { dispatchProcessBatch } = require("../utils/processBatch");
+// RNF2 (DA-2): o vídeo é dividido em estágios, um por serviço de vídeo
+const { planStages } = require("../utils/videoStages");
+const { firstStage, nextStage, nextMessageId } = require("../utils/videoDispatch");
+
+// Cria a pasta do ficheiro intermédio de um estágio (volume image_data, partilhado com os serviços de vídeo).
+function ensureStageDir(outputUri) {
+  fs.mkdirSync(path.dirname(path.resolve(__dirname, "..", outputUri)), { recursive: true });
+}
 
 const storage = multer.memoryStorage();
 var upload = multer({ storage: storage });
@@ -206,7 +214,10 @@ function process_msg() {
       // persisted, including ordinary images in mixed projects. Failed jobs stay
       // as barriers so another source cannot commit a partial run.
       const holdsRunCommit = project.tools.some((tool) => tool.procedure === "extract_frames") && !/preview/.test(msg_id);
-      if (!holdsRunCommit) await Process.delete(process.user_id, process.project_id, process._id);
+      // RNF2 T026: um vídeo com estágio seguinte mantém o seu Process até o sucessor estar criado; senão, entre apagar e
+      // criar, o último resultado de outra fonte podia contar 0 pendentes e dar a execução por terminada a meio.
+      const nextVideoStage = sourceIsVideo && msg_content.status !== "error" ? nextStage(process, msg_content) : null;
+      if (!holdsRunCommit && !nextVideoStage) await Process.delete(process.user_id, process.project_id, process._id);
       
       if (msg_content.status === "error") {
         console.log(JSON.stringify(msg_content));
@@ -239,7 +250,39 @@ function process_msg() {
 
       if (active !== tok) {
         console.log(`[RUN-GUARD] IGNORE msg=${msg_id} processTok=${tok} activeTok=${active}`);
-        if (holdsRunCommit) await Process.delete(process.user_id, process.project_id, process._id);
+        if (holdsRunCommit || nextVideoStage) await Process.delete(process.user_id, process.project_id, process._id);
+        return;
+      }
+
+      // RNF2 T026: num vídeo com vários estágios, a resposta de um estágio intermédio só envia o seguinte;
+      // o resultado (pré-visualização, ficheiro ou fotogramas) só é tratado na resposta do último estágio.
+      if (nextVideoStage) {
+        const next_msg_id = nextMessageId(msg_id, uuidv4());
+        ensureStageDir(nextVideoStage.outputUri);
+        await Process.create({
+          user_id: process.user_id,
+          runner_id: runnerId,
+          project_id: process.project_id,
+          img_id: img_id,
+          msg_id: next_msg_id,
+          cur_pos: nextVideoStage.curPos,
+          og_img_uri: process.og_img_uri,
+          new_img_uri: process.new_img_uri,
+          cache_key: process.cache_key,
+          stages: process.stages,
+          cancelToken: process.cancelToken || 0,
+          token: process.token,
+        });
+        // O sucessor já está registado: só agora se apaga o Process deste estágio (vale também para as extrações)
+        await Process.delete(process.user_id, process.project_id, process._id);
+        send_msg_tool(
+          next_msg_id,
+          timestamp,
+          nextVideoStage.inputUri,
+          nextVideoStage.outputUri,
+          nextVideoStage.toolName,
+          nextVideoStage.params
+        );
         return;
       }
 
@@ -1114,14 +1157,9 @@ router.post("/:user/:project/preview/:img", checkSharePermission, requireEditPer
         return res.status(400).jsonp("No tools selected");
       }
 
-      const tool_name = tool.procedure;
-      const params = previewIsVideo
-        ? {
-            tools: videoPipeline(project, req.params.img),
-            preview: true,
-            progress: { user: runnerUserId, projectId: req.params.project, imgId: req.params.img },
-          }
-        : tool.params;
+      // RNF2 T025: no vídeo, o serviço e os parâmetros são os do 1.º estágio (calculados abaixo, com o destino)
+      let tool_name = tool.procedure;
+      let params = tool.params;
 
       const source_path = `/../images/users/${ownerId}/projects/${req.params.project}/src`;
       const result_path = `/../images/users/${ownerId}/projects/${req.params.project}/preview`;
@@ -1227,6 +1265,24 @@ router.post("/:user/:project/preview/:img", checkSharePermission, requireEditPer
       const img_name = img_name_parts[img_name_parts.length - 1];
       const new_img_uri = `./images/users/${ownerId}/projects/${req.params.project}/preview/${img_name}`;
 
+      let stages;
+      let message_output_uri = new_img_uri;
+      if (previewIsVideo) {
+        stages = planStages(videoPipeline(project, req.params.img), true);
+        const first = firstStage({
+          stages,
+          inputUri: og_img_uri,
+          finalUri: new_img_uri,
+          token: project.activeToken || 0,
+          imgId: String(img_id),
+          progress: { user: runnerUserId, projectId: req.params.project, imgId: req.params.img },
+        });
+        tool_name = first.toolName;
+        params = first.params;
+        message_output_uri = first.outputUri;
+        ensureStageDir(first.outputUri);
+      }
+
       const process = {
         user_id: ownerId,        
         runner_id: runnerUserId,  
@@ -1240,6 +1296,7 @@ router.post("/:user/:project/preview/:img", checkSharePermission, requireEditPer
         cancelToken: project.cancelToken || 0,
         token: project.activeToken || 0,
       };
+      if (stages) process.stages = stages;
 
       Process.create(process)
         .then(() => {
@@ -1247,7 +1304,7 @@ router.post("/:user/:project/preview/:img", checkSharePermission, requireEditPer
             msg_id,
             timestamp,
             og_img_uri,
-            new_img_uri,
+            message_output_uri,
             tool_name,
             params
           );
@@ -1631,14 +1688,23 @@ router.post("/:user/:project/process", checkSharePermission, requireEditPermissi
           const new_img_uri = img.new_uri;
           let tool_name;
           let params;
+          // RNF2 T025: o vídeo segue em estágios; só o primeiro é enviado agora (os seguintes no tratamento das respostas)
+          let stages;
+          let message_output_uri = new_img_uri;
           if (isVideoMedia(img)) {
-            // video: the whole pipeline in a single message to the video worker
-            tool_name = "video";
-            params = {
-              tools: videoPipeline(project, img._id),
-              preview: false,
+            stages = planStages(videoPipeline(project, img._id), false);
+            const first = firstStage({
+              stages,
+              inputUri: og_img_uri,
+              finalUri: new_img_uri,
+              token: runToken,
+              imgId: String(img._id),
               progress: { user: runnerUserId, projectId: req.params.project, imgId: String(img._id) },
-            };
+            });
+            tool_name = first.toolName;
+            params = first.params;
+            message_output_uri = first.outputUri;
+            ensureStageDir(first.outputUri);
           } else {
             const tool = imageTools(project)[0];
             if (!tool) continue; // only video effects: images are left as they are
@@ -1658,8 +1724,10 @@ router.post("/:user/:project/process", checkSharePermission, requireEditPermissi
             cancelToken: project.cancelToken || 0,
             token: runToken,
           };
+          if (stages) process.stages = stages;
 
-          pendingJobs.push({ process, msg_id, timestamp, og_img_uri, new_img_uri, tool_name, params });
+          // new_img_uri do Process é sempre o destino final; a mensagem leva a saída do 1.º estágio
+          pendingJobs.push({ process, msg_id, timestamp, og_img_uri, new_img_uri: message_output_uri, tool_name, params });
         }
 
         // Register the complete batch before dispatching anything. Otherwise a

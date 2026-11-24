@@ -10,10 +10,11 @@ Modo "imagem" (ferramentas de imagem, sem RabbitMQ), na raiz do repositório:
       "pip install -q pillow==11.0.0 pika==1.3.2 pytz python-dotenv && \
        python docs/fase2/medicoes/regressao_hashes.py imagem <etiqueta>"
 
-Modo "video" (dentro da imagem do serviço de vídeo, que tem o ffmpeg e o código):
+Modo "video" (dentro da imagem do serviço de legendagem: é a única com o ffmpeg, as fontes das legendas e o
+faster-whisper, de que o caso V8 precisa; o código dos três serviços vem do repositório montado em /repo):
 
-    docker compose run --rm --no-deps -T -v "<raiz>/docs:/docs" -v "<raiz>/samples/video:/samples" video_tool \
-      python /docs/fase2/medicoes/regressao_hashes.py video <etiqueta>
+    docker compose run --rm --no-deps -T -v "<raiz>:/repo" -v "<raiz>/samples/video:/samples" -w /repo \
+      video_subtitles python docs/fase2/medicoes/regressao_hashes.py video <etiqueta>
 
 Escreve docs/fase2/medicoes/resultados/<etiqueta>/regressao_<modo>.json.
 
@@ -135,8 +136,8 @@ def media_hash(path):
 
 def run_video(src, dst, tools, preview):
     sys.path.insert(0, "/app")
-    from video_processor import process_video
-    return process_video(str(src), str(dst), tools, progress_cb=None, preview=preview)
+    from video_common.local_pipeline import run
+    return run(tools, str(src), str(dst), preview=preview)
 
 
 def mode_video(samples):

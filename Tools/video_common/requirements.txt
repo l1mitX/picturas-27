@@ -1,0 +1,4 @@
+pika==1.3.2
+pytz
+python-dotenv
+pillow==11.0.0

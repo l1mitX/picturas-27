@@ -18,6 +18,14 @@ decisão, a razão e as alternativas. Nenhuma altera a DA-2; detalham como reali
 - **Razão**: a DA-2 põe o encadeamento no `projects` (TAT-09). Um planeador puro testa-se sem RabbitMQ.
 - **Alternativas**: encadeamento entre os serviços de vídeo (rejeitado na DA-2); o serviço de edição a coordenar os
   outros (recriava o monólito e acoplava os serviços).
+- **Confirmado na implementação (2026-11-23, T003–T005)**: ao extrair os planos da base (R2), apareceram dois
+  pormenores que o planeador reproduz:
+  1. se a lista começar por `subtitles`, a base cria um estágio de edição **vazio** antes da legendagem (converte o
+     vídeo para MP4/H.264 mesmo sem efeitos); legendas seguidas (`[subtitles, subtitles]`) dão dois estágios de
+     legendagem consecutivos, sem edição entre eles;
+  2. um **pipeline inválido** (extração que não está no fim, extração repetida, ou ferramenta fora de `VIDEO_TOOLS`)
+     falha na base antes de qualquer estágio (`InvalidExtraction` ou `UnsupportedEffect`). O planeador devolve um
+     único estágio de edição com todas as ferramentas, para o serviço de edição falhar com o mesmo erro (ver R11).
 
 ## R2. Garantir que o planeador JS e as regras Python não divergem
 
@@ -30,6 +38,14 @@ decisão, a razão e as alternativas. Nenhuma altera a DA-2; detalham como reali
   que o `projects` vai pedir.
 - **Alternativas**: *hashes* ponta a ponta através da aplicação (mais fiel, mas lento e dependente do RabbitMQ; fica
   como verificação manual no `quickstart.md`); duplicar o planeador em Python (duas implementações a divergir).
+- **Como foi gerado (2026-11-23)**: os planos esperados **não foram escritos à mão**. Correu-se o `process_video` da
+  base (`0523102`) com o ffmpeg, o Whisper e a extração substituídos por funções que só registam o que lhes é pedido
+  (serviço, ferramentas, `preview` e progresso nos extremos de cada estágio). O ficheiro tem 32 casos: os 9 do
+  `regressao_hashes.py`, os pipelines dos testes de `Tools/video/tests`, casos-limite e 4 pipelines inválidos. O formato
+  está descrito no próprio ficheiro (`_formato`).
+- **Para o `local_pipeline` (pessoa B)**: o plano depende só da sequência de `procedure` e de `preview`, não dos
+  valores dos `params`. O executor pode procurar o caso por essa sequência e usar os `params` do teste, o que cobre
+  testes parametrizados (e.g., vários fatores de velocidade) sem um caso por valor.
 
 ## R3. Ficheiros intermédios entre estágios
 
@@ -48,6 +64,15 @@ decisão, a razão e as alternativas. Nenhuma altera a DA-2; detalham como reali
   em `[i·100/n, (i+1)·100/n]` com teto de 99 até ao fim; extração depois de edição fica com `[0, 70]` para a edição e
   `[70, 100]` para a extração. Só o último estágio envia 100.
 - **Razão**: INV-002 (as mensagens de progresso mantêm-se).
+- **Confirmado na implementação (2026-11-23)**: os extremos de cada faixa são os da base, incluindo os arredondamentos
+  (`int()` em Python, `Math.trunc` no planeador):
+  - com legendas, o último estágio termina em **99 %** e só depois chega o **100 %** (na base, `progress_cb(100)` no fim
+    do pipeline); o serviço do último estágio envia o 100 % quando termina;
+  - com extração depois de edição, a parte editada é `int(pct × 0,7)`, por isso pode haver um **salto de 69 % para
+    70 %** entre o último estágio de edição/legendagem e a extração (e.g., `[brilho, legendas, extração]`: `[0, 35]`,
+    `[35, 69]`, `[70, 100]`);
+  - os valores **intermédios** são interpolados dentro da faixa de cada estágio; podem diferir em 1 % dos da base, o
+    que não muda o que o utilizador vê (barra de progresso).
 
 ## R5. Informação do vídeo editado para a extração
 
@@ -102,3 +127,17 @@ decisão, a razão e as alternativas. Nenhuma altera a DA-2; detalham como reali
   serviços de vídeo, (ii) não conta `Tools/effects/` como uma segunda implementação dos efeitos (N1) e (iii) encontra
   os serviços pelas linhas `COPY` novas (N2). Se for preciso adaptar, muda-se só a deteção, nunca a definição da
   métrica, e regista-se a alteração em `docs/fase2/medicoes/README.md`.
+
+## R11. Validação do pipeline completo antes do primeiro estágio
+
+- **Facto**: na base, `validate_tools` valida o pipeline **inteiro** antes de processar
+  (`Tools/video/video_processor.py:153-165`): extração só no fim e uma vez, parâmetros da extração
+  (`frame_extraction.validate_params`) e ferramentas suportadas. O `projects` já valida a extração ao acrescentar
+  ferramentas (`projects/utils/video.js`, `validateFrameExtraction`), por isso um pipeline inválido só chega aos
+  serviços por outro caminho; mesmo assim, a base responde-lhe com um erro antes de gastar tempo.
+- **Decisão**: o planeador manda os pipelines inválidos para um único estágio de edição (R1); o serviço de edição corre a
+  mesma validação completa da base antes de processar, e responde com o mesmo código e mensagem de erro.
+- **Coordenação (pessoas B e C)**: a validação usa `validate_params` da extração, que passa para o serviço de extração.
+  Combinar onde fica uma cópia única dessa validação (e.g., em `Tools/video_common/`), sem obrigar o serviço de edição a
+  copiar o código da extração.
+
