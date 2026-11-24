@@ -25,6 +25,13 @@ def now():
     return datetime.datetime.now(pytz.utc)
 
 
+def _stage_percent(percent, stage_range, is_last_stage):
+    if is_last_stage and percent == 100:
+        return 100
+    start, end = stage_range
+    return int(start + (end - start) * percent / 100)
+
+
 class VideoWorker:
     def __init__(self, queue, procedure, microservice, processor):
         self.queue = queue
@@ -96,12 +103,15 @@ class VideoWorker:
             },
         })
 
-    def _progress(self, progress, preview, percent):
+    def _progress(self, progress, preview, percent, stage_index=0, stage_count=1):
         if not progress or not progress.get("user"):
             return
         stage_range = progress.get("range") or [0, 100]
-        start, end = stage_range
-        converted = start + (end - start) * percent / 100
+        mapped = _stage_percent(
+            percent,
+            stage_range,
+            stage_index == stage_count - 1,
+        )
         self._publish(WS_QUEUE, {
             "messageId": f"update-client-video-progress-{uuid.uuid4()}",
             "timestamp": now().isoformat(),
@@ -110,7 +120,7 @@ class VideoWorker:
             "projectId": progress.get("projectId"),
             "imgId": progress.get("imgId"),
             "preview": bool(preview),
-            "percent": round(converted, 2),
+            "percent": mapped,
         })
 
     def callback(self, ch, method, properties, body):
@@ -148,13 +158,10 @@ class VideoWorker:
                 stage_count = int(stage.get("count", 1))
 
                 def progress_cb(percent):
-                    if stage_count > 1 and stage_index == stage_count - 1 and percent == 100:
-                        converted = 100
-                    else:
-                        converted = percent
-                        if percent == 100 and stage_index != stage_count - 1:
-                            converted = 99
-                    self._progress(progress, preview, converted)
+                    self._progress(
+                        progress, preview, percent,
+                        stage_index, stage_count,
+                    )
 
                 result = self.processor(
                     input_uri, output_uri, tools, progress_cb,

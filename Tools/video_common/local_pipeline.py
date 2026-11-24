@@ -1,5 +1,7 @@
 """Local, in-process stage executor used only by tests and hash regression."""
+import copy
 import json
+import os
 import tempfile
 from pathlib import Path
 
@@ -53,6 +55,18 @@ def _find_plan(name_or_tools, preview):
     return matches[0]
 
 
+def _stages_with_input_params(case, tools):
+    stages = copy.deepcopy(case["estagios"])
+    cursor = 0
+    for stage in stages:
+        count = len(stage["tools"])
+        stage["tools"] = tools[cursor:cursor + count]
+        cursor += count
+    if cursor != len(tools):
+        raise ValueError(f"Fixture plan '{case['nome']}' does not cover all input tools")
+    return stages
+
+
 def run(name_or_tools, input_path, output_path, preview=False, progress_cb=None):
     """Execute a fixture-defined pipeline directly through service functions."""
     import sys
@@ -70,7 +84,11 @@ def run(name_or_tools, input_path, output_path, preview=False, progress_cb=None)
         sys.path.insert(0, str(tools_root))
 
     case = _find_plan(name_or_tools, preview)
-    stages = case["estagios"]
+    stages = (
+        _stages_with_input_params(case, name_or_tools)
+        if not isinstance(name_or_tools, str)
+        else case["estagios"]
+    )
 
     with tempfile.TemporaryDirectory(prefix="video-local-pipeline-") as work:
         current = str(Path(input_path).resolve())
@@ -83,10 +101,17 @@ def run(name_or_tools, input_path, output_path, preview=False, progress_cb=None)
 
             def stage_progress(percent):
                 if progress_cb:
-                    start, end = stage_range
-                    progress_cb(start + (end - start) * percent / 100)
+                    if index == len(stages) - 1 and percent == 100:
+                        progress_cb(100)
+                    else:
+                        start, end = stage_range
+                        progress_cb(int(start + (end - start) * percent / 100))
 
-            if index == len(stages) - 1:
+            final_stage = index == len(stages) - 1
+            if final_stage and stage["service"] == "video_subtitles":
+                final_output = Path(output_path).resolve()
+                stage_output = str(Path(work) / "final-subtitles.mp4")
+            elif final_stage:
                 stage_output = str(Path(output_path).resolve())
             else:
                 stage_output = str(Path(work) / f"stage-{index}.mp4")
@@ -124,9 +149,11 @@ def run(name_or_tools, input_path, output_path, preview=False, progress_cb=None)
             else:
                 raise RuntimeError(f"Unknown fixture stage service: {service}")
 
+            if final_stage and service == "video_subtitles":
+                os.replace(stage_output, final_output)
+                stage_output = str(final_output)
             current = stage_output
-            if service == "video_edit":
-                source_info = result
+            source_info = result
 
         if progress_cb:
             progress_cb(100)
