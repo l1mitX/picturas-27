@@ -18,7 +18,6 @@ const queues = {
     'people_ai': 'people_ai_queue',
     'expand_ai': 'expand_ai_queue',
     'watermark': 'watermark_queue',
-    'video': 'video_queue', // RNF2: deixa de ser usada; retirar na T042
     'video_edit': 'video_edit_queue',
     'video_subtitles': 'video_subtitles_queue',
     'video_frames': 'video_frames_queue',

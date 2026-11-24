@@ -1165,8 +1165,7 @@ router.post("/:user/:project/preview/:img", checkSharePermission, requireEditPer
         }
       }
 
-      // video: the whole pipeline goes in one message to the video worker,
-      // which only processes the initial excerpt
+      // video: placeholder; the service and parameters of the first stage are set below (RNF2 T025)
       const tool = previewIsVideo ? { procedure: "video" } : imageTools(project)[0];
       if (!tool) {
         return res.status(400).jsonp("No tools selected");
