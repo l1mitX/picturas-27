@@ -63,6 +63,9 @@ decisão, a razão e as alternativas. Nenhuma altera a DA-2; detalham como reali
   cancelamento não encontra o seu `Process`. Acrescentou-se: o cancelamento apaga `stages/<token>/` da execução
   cancelada (como já fazia com `src/` e `preview/`), e a resposta sem `Process` cujo ficheiro de saída é intermédio
   (`…/stages/<n>/<id>-<n>.mp4`) apaga esse ficheiro. Nada disto é visível para o utilizador (princípio I).
+  (3) A pré-visualização usa o `activeToken`, que é o token da execução em curso; os seus intermédios ficam em
+  `stages/preview-<token>/`, senão a pré-visualização e o *Apply* do mesmo vídeo escreveriam no mesmo ficheiro e a
+  limpeza de um apagaria os intermédios do outro (encontrado no `analyze` de 2026-11-24).
 
 ## R4. Progresso igual ao da base
 

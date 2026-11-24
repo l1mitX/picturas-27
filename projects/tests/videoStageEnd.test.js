@@ -132,3 +132,26 @@ test('não apaga nada que não seja um ficheiro intermédio', () => {
   removeStageOutput(root, stagePath(FINAL, 7, 'i1', 0)); // já não existe: não lança erro
   assert.equal(fs.existsSync(other), true);
 });
+
+// ------------------------------------------------------------------ pré-visualização durante uma execução (analyze R1)
+// A pré-visualização usa o activeToken, que é o token da execução em curso: os intermédios de um e de outro
+// não podem coincidir, nem a limpeza de um pode apagar os do outro.
+const PREVIEW = './images/users/u1/projects/p1/preview/video.mp4';
+
+test('pré-visualização e execução do mesmo vídeo com o mesmo token não partilham ficheiros intermédios', () => {
+  assert.notEqual(stagePath(PREVIEW, 7, 'i1', 0), stagePath(FINAL, 7, 'i1', 0));
+  assert.equal(isStageUri(stagePath(PREVIEW, 7, 'i1', 0)), true);
+});
+
+test('a limpeza da pré-visualização não apaga os intermédios da execução, e vice-versa', () => {
+  const root = tmpRoot();
+  const run = touch(root, stagePath(FINAL, 7, 'i1', 0));
+  const preview = touch(root, stagePath(PREVIEW, 7, 'i1', 0));
+  removeStageFiles(root, PREVIEW, 7, 'i1');
+  assert.equal(fs.existsSync(preview), false);
+  assert.equal(fs.existsSync(run), true);
+  touch(root, stagePath(PREVIEW, 7, 'i1', 0));
+  removeStageFiles(root, FINAL, 7, 'i1');
+  assert.equal(fs.existsSync(run), false);
+  assert.equal(fs.existsSync(path.resolve(root, stagePath(PREVIEW, 7, 'i1', 0))), true);
+});

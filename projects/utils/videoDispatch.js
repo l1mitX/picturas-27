@@ -4,10 +4,14 @@ const fs = require('fs');
 const path = require('path');
 
 // Pasta dos ficheiros intermédios de uma execução (R3): …/projects/<projeto>/stages/<token>,
-// na mesma pasta de projeto do destino final (out/ ou preview/).
+// na mesma pasta de projeto do destino final (out/ ou preview/). A pré-visualização usa o activeToken, que é o
+// token da execução em curso, por isso fica em stages/preview-<token>: senão a pré-visualização e o Apply do mesmo
+// vídeo escreveriam no mesmo ficheiro e a limpeza de um apagaria os intermédios do outro.
 function stageDir(finalUri, token) {
-  const projectDir = path.posix.dirname(path.posix.dirname(finalUri));
-  return `${projectDir}/stages/${token}`;
+  const finalDir = path.posix.dirname(finalUri);
+  const projectDir = path.posix.dirname(finalDir);
+  const name = path.posix.basename(finalDir) === 'preview' ? `preview-${token}` : `${token}`;
+  return `${projectDir}/stages/${name}`;
 }
 
 // Caminho de um ficheiro intermédio (R3): …/projects/<projeto>/stages/<token>/<imgId>-<índice>.mp4.
@@ -102,10 +106,10 @@ function removeStageFiles(root, finalUri, token, imgId) {
   }
 }
 
-// Um ficheiro intermédio tem sempre a forma …/stages/<token>/<imgId>-<índice>.mp4 (stagePath).
+// Um ficheiro intermédio tem sempre a forma …/stages/[preview-]<token>/<imgId>-<índice>.mp4 (stagePath).
 function isStageUri(uri) {
   const s = String(uri || '');
-  return !s.split('/').includes('..') && /\/stages\/\d+\/[^/]+-\d+\.mp4$/.test(s);
+  return !s.split('/').includes('..') && /\/stages\/(preview-)?\d+\/[^/]+-\d+\.mp4$/.test(s);
 }
 
 // RNF2 T037/T039: o cancelamento apaga os Process em curso, por isso a resposta de um estágio que acaba depois

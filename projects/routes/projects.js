@@ -2423,8 +2423,8 @@ router.delete(
 
       // limpar dirs temporários (opcional)
       const basePath = `/../images/users/${ownerId}/projects/${projectId}`;
-      // RNF2 T039: inclui os ficheiros intermédios dos vídeos da execução cancelada (stages/<token>/)
-      for (const dir of ["src", "preview", `stages/${cancelTok}`]) {
+      // RNF2 T039: inclui os ficheiros intermédios da execução cancelada e das suas pré-visualizações
+      for (const dir of ["src", "preview", `stages/${cancelTok}`, `stages/preview-${cancelTok}`]) {
         const full = path.join(__dirname, `${basePath}/${dir}`);
         if (fs.existsSync(full)) fs.rmSync(full, { recursive: true, force: true });
       }
