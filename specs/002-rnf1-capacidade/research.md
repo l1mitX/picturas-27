@@ -40,7 +40,8 @@ RNF2). Cada uma indica a decisão, a razão e as alternativas.
 - **Parâmetros**: configuráveis por variáveis de ambiente do `video_autoscaler`. **[PROPOSTA]** a decidir pela equipa
   antes de medir `apos-rnf1` (constituição, princípio IV): edição 1–4, legendagem 1–2 (cada réplica pode chegar a
   2 506 MiB, EV-18; 7,7 GiB para o Docker), extração 1–2; limiar de 1 mensagem pendente por réplica; consulta a cada 5 s;
-  espera de 30 s antes de descer.
+  espera de 30 s antes de descer. **Decidido em T003 (2026-11-25):** como proposto, exceto legendagem 1–1 e espera de
+  60 s (ver `docs/fase2/T003-decisao-equipa.md`).
 - **Alternativas**: ajustar pela utilização de CPU (mede mal o trabalho à espera de trabalhos longos e não é o estímulo
   do QS-03).
 
@@ -92,7 +93,9 @@ RNF2). Cada uma indica a decisão, a razão e as alternativas.
 
 - **Decisão**: `deploy.resources.limits.memory` em cada serviço de vídeo, compatível com o máximo de réplicas e com os
   7,7 GiB do Docker na máquina de medição. **[PROPOSTA]**: legendagem 2,75 GiB por réplica (máximo medido 2 506 MiB,
-  EV-18), edição e extração conforme a medição `apos-rnf2` (`docker stats`).
+  EV-18), edição e extração conforme a medição `apos-rnf2` (`docker stats`). **Decidido em T003 (2026-11-25)**, com os
+  máximos da `apos-rnf2` + ~10 %: edição 2,1 GiB (1 888 MiB medidos), legendagem 1,6 GiB (1 451 MiB medidos; os
+  2 506 MiB eram do serviço único da base), extração 512 MiB (não usada nos cenários; a confirmar).
 
 ## R10. Medição do M4
 

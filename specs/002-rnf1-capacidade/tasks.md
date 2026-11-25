@@ -26,7 +26,7 @@ prova-o com os cenários de falha.
 
 - [ ] T001 Confirmar o ponto de partida: RNF2 concluído, testes verdes e `docs/fase2/medicoes/resultados/apos-rnf2/` completo; registar em `specs/002-rnf1-capacidade/quickstart.md` («Registo»)
 - [ ] T002 Criar a pasta `Tools/video_autoscaler/tests/`
-- [ ] T003 Decidir em equipa os parâmetros da política de réplicas e os limites de memória (`research.md`, R3 e R9, **[PROPOSTA]**) e registá-los em `docs/fase2/medicoes/README.md` antes de qualquer medição `apos-rnf1` (constituição, princípio IV)
+- [x] T003 Decidir em equipa os parâmetros da política de réplicas e os limites de memória (`research.md`, R3 e R9, **[PROPOSTA]**) e registá-los em `docs/fase2/medicoes/README.md` antes de qualquer medição `apos-rnf1` (constituição, princípio IV)
 
 ---
 

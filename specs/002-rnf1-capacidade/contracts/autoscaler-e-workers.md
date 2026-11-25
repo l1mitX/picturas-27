@@ -11,7 +11,7 @@ Interfaces internas. As mensagens entre o `projects` e os serviços de vídeo s�
 | `RABBITMQ_API` | `http://rabbitmq:15672` | API de gestão do RabbitMQ (R2) |
 | `RABBITMQ_USERNAME`, `RABBITMQ_PASSWORD` | — | As mesmas credenciais dos outros serviços |
 | `SCALE_<SERVIÇO>` | `video_edit_queue:1:4:1` | `fila:mínimo:máximo:por_réplica` para cada serviço de vídeo |
-| `POLL_SECONDS`, `COOLDOWN_SECONDS` | `5`, `30` | Intervalo de consulta e espera antes de descer (R3) |
+| `POLL_SECONDS`, `COOLDOWN_SECONDS` | `5`, `60` | Intervalo de consulta e espera antes de descer (R3; valores decididos em T003, 2026-11-25) |
 
 Montagens: `/var/run/docker.sock` e o `docker-compose.yaml` (só leitura). É o único serviço com acesso ao *socket*.
 
