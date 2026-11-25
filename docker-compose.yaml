@@ -320,6 +320,36 @@ services:
     volumes:
       - image_data:/app/images
 
+  # RNF1 T020 (DA-1, TAT-02): adjusts the replicas of the three video services to their queues
+  # (Tools/video_autoscaler; parameters decided in T003, docs/fase2/T003-decisao-equipa.md).
+  # Only service with the Docker socket. It only touches the video services, which use named volumes only,
+  # so the read-only copy of this file is enough (research.md R1, care 3).
+  video_autoscaler:
+    build:
+      context: ./Tools
+      dockerfile: video_autoscaler/Dockerfile
+    restart: on-failure
+    environment:
+      COMPOSE_PROJECT_NAME: picturas
+      COMPOSE_FILE: /compose/docker-compose.yaml
+      RABBITMQ_API: http://rabbitmq:15672
+      RABBITMQ_USERNAME: "user"
+      RABBITMQ_PASSWORD: "password"
+      POLL_SECONDS: 5
+      COOLDOWN_SECONDS: 60
+      # queue:min:max:per_replica
+      SCALE_VIDEO_EDIT: video_edit_queue:1:4:1
+      SCALE_VIDEO_SUBTITLES: video_subtitles_queue:1:1:1
+      SCALE_VIDEO_FRAMES: video_frames_queue:1:2:1
+    networks:
+      - elk
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./docker-compose.yaml:/compose/docker-compose.yaml:ro
+
   border_tool:
     build:
       context: ./Tools
