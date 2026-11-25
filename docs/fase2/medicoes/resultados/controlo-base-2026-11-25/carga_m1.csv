@@ -1,0 +1,11 @@
+cenario,n,repeticao,trabalho,papel,media,pipeline,t_submit_rel_s,estado,latencia_s,t_fim_rel_s,makespan_ronda_s
+m1,2,1,A,legendagem,speech_mandela_177s_1080p.webm,subtitles,0.0,ok,195.608,195.608,201.317
+m1,2,1,B,curto,sample_10s_720p.mp4,brightness,5.0,ok,196.317,201.317,201.317
+m1,2,2,A,legendagem,speech_mandela_177s_1080p.webm,subtitles,0.0,ok,166.774,166.774,172.514
+m1,2,2,B,curto,sample_10s_720p.mp4,brightness,5.0,ok,167.514,172.514,172.514
+m1,2,3,A,legendagem,speech_mandela_177s_1080p.webm,subtitles,0.0,ok,166.405,166.405,170.025
+m1,2,3,B,curto,sample_10s_720p.mp4,brightness,5.0,ok,165.025,170.025,170.025
+m1,2,4,A,legendagem,speech_mandela_177s_1080p.webm,subtitles,0.001,ok,163.259,163.26,168.423
+m1,2,4,B,curto,sample_10s_720p.mp4,brightness,5.0,ok,163.423,168.424,168.423
+m1,2,5,A,legendagem,speech_mandela_177s_1080p.webm,subtitles,0.0,ok,162.762,162.763,167.56
+m1,2,5,B,curto,sample_10s_720p.mp4,brightness,5.0,ok,162.56,167.56,167.56

@@ -1,0 +1,26 @@
+{
+  "etiqueta": "controlo-base-2026-11-25",
+  "cenario": "m2",
+  "data": "2026-11-25T12:52:56.565967+00:00",
+  "replicas_video": [
+    "picturas-video_tool-1"
+  ],
+  "repeticoes": 3,
+  "falhas": [],
+  "por_n": {
+    "4": {
+      "debito_videos_min_media": 1.337,
+      "makespan_s_p50": 179.554,
+      "latencia_s_p50": 13.883,
+      "latencia_s_p95": 179.797,
+      "latencia_curtos_s_p95": 16.473
+    }
+  },
+  "recursos_video": {
+    "picturas-video_tool-1": {
+      "mem_mib_max": 2512.9,
+      "cpu_pct_media": 349.1,
+      "cpu_pct_max": 850.51
+    }
+  }
+}

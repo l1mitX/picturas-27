@@ -2,8 +2,8 @@
 
 > **Estado (2026-11-25):** RNF2 implementado (`fase2`, `a3dcdac`); `apos-rnf2` medido (estáticas, N3, *hashes* e
 > carga). **Atenção:** a máquina estava mais rápida a 25/11 do que a 18/11 — a base, medida de novo a 25/11, faz o
-> isolado em 6,4 s (contra 17,8 s). Os tempos só se comparam com a base do mesmo dia (`controlo-base-2026-11-25`);
-> falta esse controlo para o M1 e o M2 (ver «Resultados após o RNF2», no fim).
+> isolado em 6,4 s (contra 17,8 s). Os tempos só se comparam com a base do mesmo dia (`controlo-base-2026-11-25`,
+> isolado, M1, M2 e M6; ver «Resultados após o RNF2», no fim).
 >
 > **Estado (2026-11-22):** baseline completa (RNF2 e RNF1, plano mínimo, mais o cenário M6). Escala principal do
 > RNF1 e alvos decididos (relatório, capítulo 6). Próximo passo: refactoring do RNF2 e medição "após RNF2". A pasta
@@ -160,8 +160,8 @@ M1 ×1), com os parâmetros da base (isolado ×5, M1 ×5, M2 N = 4 ×3, M6 N = 4
 Os tempos de `apos-rnf2` saíram muito abaixo da base (e.g., isolado p95 5,9 s contra 17,8 s), mais do que o RNF2
 explica: cada edição curta demorava ~10,5 s a 18/11 e ~5,4 s a 25/11, com saídas iguais (*hashes*). Para separar o
 efeito do código do efeito da máquina, a aplicação da base (`0523102`) foi reconstruída e medida de novo a 25/11, logo
-a seguir (12:04–12:11 UTC), com o mesmo *script*, aquecimento e parâmetros: `resultados/controlo-base-2026-11-25/`
-(isolado e M6). A base de 25/11 faz o isolado em 6,4 s: **a diferença era da máquina** (causa não identificada;
+a seguir, com o mesmo *script*, aquecimento e parâmetros: `resultados/controlo-base-2026-11-25/` (isolado e M6 às
+12:04–12:11 UTC; M1 e M2 às 12:24–12:55 UTC, com aquecimento isolado ×1 e M1 ×1, como na `apos-rnf2`). A base de 25/11 faz o isolado em 6,4 s: **a diferença era da máquina** (causa não identificada;
 hipóteses: modo de energia ou carga de fundo a 18/11). Os tempos de `apos-rnf2` comparam-se, por isso, com a base do
 **mesmo dia**; os valores de `base/` (18/11) não servem para tempos (as métricas estáticas, o N3 e os *hashes* não
 dependem da velocidade da máquina).
@@ -171,9 +171,9 @@ dependem da velocidade da máquina).
 | Isolado (N5): p50 / p95 | 14,8 / 17,8 s | 6,38 / 6,40 s | 5,88 / 5,92 s | −8 % no p95; não piora ✅ |
 | M6 (4 edições curtas): p50 / p95 | 28,8 / 44,0 s | 15,2 / 24,2 s | 14,1 / 21,8 s | −10 % no p95 |
 | M6: débito | 5,54 vídeos/min | 9,95 vídeos/min | 10,96 vídeos/min | +10 % |
-| M1 (curto 5 s depois de uma legendagem): p50 / p95 do curto | 307,6 / 322,6 s | **por medir** | 106,0 / 108,9 s | por calcular |
-| M1: legendagem do vídeo de 177 s, p50 | 302,3 s | por medir | 162,6 s | por calcular |
-| M2 (1 legendagem + 3 curtos): débito / p95 dos curtos | 0,70 vídeos/min / 35,3 s | por medir | 1,35 vídeos/min / 16,5 s | por calcular |
+| M1 (curto 5 s depois de uma legendagem): p50 / p95 do curto | 307,6 / 322,6 s | 165,0 / 190,6 s | 106,0 / 108,9 s | **−36 %** no p50, −43 % no p95 |
+| M1: legendagem do vídeo de 177 s, p50 / p95 | 302,3 / 316,4 s | 166,4 / 189,8 s | 162,6 / 165,7 s | −2 % no p50 (igual) |
+| M2 (1 legendagem + 3 curtos): débito / p95 dos curtos | 0,70 vídeos/min / 35,3 s | 1,34 vídeos/min / 16,5 s | 1,35 vídeos/min / 16,5 s | igual (+1 % no débito) |
 
 - **Isolado e M6:** com a mesma máquina, o RNF2 não piora o trabalho isolado (H-06, SC-006) e melhora-o ~8 %; no M6
   os 4 trabalhos continuam a acabar em escada (≈ 6, 11, 16 e 22 s), um de cada vez — é o que as réplicas do RNF1 vão
@@ -181,8 +181,12 @@ dependem da velocidade da máquina).
 - **M1:** o curto deixa de esperar pela legendagem em si, mas **continua a esperar ~100 s**: a legendagem sozinha
   começa por um estágio de edição sem efeitos que recodifica o vídeo de 177 s (como `process_video` na base, R1 do
   RNF2; é isso que mantém os *hashes*), e o curto, enviado 5 s depois, fica na fila do `video_edit` atrás dele. Com
-  réplicas do `video_edit` (RNF1) este bloqueio desaparece. Falta o controlo do M1 e do M2 com a base no mesmo dia
-  (~45 min) para calcular o ganho do RNF2 nestes dois cenários (SC-008).
+  réplicas do `video_edit` (RNF1) este bloqueio desaparece. Com a base do mesmo dia, o curto passa de 165 s para
+  106 s (p50, −36 %): na base esperava pela legendagem inteira (acabava sempre logo a seguir a ela), agora só pelo
+  estágio de edição dela (SC-008, ganho atribuído ao RNF2). A legendagem em si demora o mesmo.
+- **M2:** sem diferença (débito 1,34 → 1,35 vídeos/min; curtos p95 16,5 s em ambos). Como já se notava na base, os
+  3 curtos e a legendagem são submetidos ao mesmo tempo e os curtos não ficam atrás dela: o M2 mostra a serialização
+  dos curtos (≈ 6, 11 e 16 s), que é o que as réplicas do RNF1 podem melhorar.
 - **Memória máxima:** `video_edit` 1 888 MiB (M2), `video_subtitles` 1 451 MiB (M1), `video_frames` 16 MiB (não usado
   nestes cenários). Base: um só serviço com 2 506 MiB (M1). Dados para os limites de memória do RNF1 (T003, R9).
 
