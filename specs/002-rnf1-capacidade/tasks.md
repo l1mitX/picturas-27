@@ -58,12 +58,12 @@ simultâneo e p95 abaixo de `apos-rnf2`.
 
 ### Testes primeiro
 
-- [ ] T009 [P] [US1] Teste em `Tools/video_edit/tests/`: duas execuções de `_process_video` para a mesma saída em simultâneo não colidem no ficheiro `.part` e terminam com uma saída válida (R7, H-02)
+- [X] T009 [P] [US1] Teste em `Tools/video_edit/tests/`: duas execuções de `_process_video` para a mesma saída em simultâneo não colidem no ficheiro `.part` e terminam com uma saída válida (R7, H-02)
 - [ ] T010 [P] [US1] Teste em `Tools/video_subtitles/tests/`: duas chamadas concorrentes à primeira carga de `speech_model()` com um diretório de *cache* vazio (modelo falso) fazem uma só descarga (R8, H-03)
 
 ### Implementação
 
-- [ ] T011 [P] [US1] Em `Tools/video_edit/video_processor.py`, dar ao ficheiro `.part` um nome único (sufixo `uuid`), mantendo o `os.replace` final e a remoção em caso de erro (R7). T009 passa
+- [X] T011 [P] [US1] Em `Tools/video_edit/video_processor.py`, dar ao ficheiro `.part` um nome único (sufixo `uuid`), mantendo o `os.replace` final e a remoção em caso de erro (R7). T009 passa
 - [ ] T012 [P] [US1] Em `Tools/video_subtitles/subtitles.py`, proteger a primeira carga de `speech_model()` com `fcntl.flock` num ficheiro de *lock* em `WHISPER_CACHE_DIR` (R8). T010 passa
 - [ ] T013 [US1] Em `docker-compose.yaml`, confirmar que os três serviços de vídeo não têm `container_name` nem portas fixas que impeçam réplicas, e acrescentar `stop_grace_period` (maior do que o estágio mais longo de cada serviço) e `deploy.resources.limits.memory` com os valores decididos em T003 (R4, R9); confirmar que os serviços de vídeo só usam volumes com nome, sem caminhos relativos (R1, cuidado 3)
 - [ ] T014 [US1] Verificar H-01 e H-02 com réplicas manuais (`quickstart.md`, secção 2, passo 1) e H-03 (passo 2); registar o resultado no estado das hipóteses (T030)

@@ -148,7 +148,7 @@ def test_failure_leaves_no_partial_output(sample_video, tmp_path):
         process_video(sample_video, out, [{"procedure": "brightness", "params": {"brightness": 1.2}}],
                       progress_cb=boom)
     assert not os.path.exists(out)
-    assert not os.path.exists(out + ".part.mp4")
+    assert not [name for name in os.listdir(tmp_path) if ".part" in name]
 
 
 # Progress increases up to 100 %

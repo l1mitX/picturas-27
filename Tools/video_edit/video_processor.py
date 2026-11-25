@@ -2,6 +2,7 @@
 import os
 import subprocess
 import tempfile
+import uuid
 
 from PIL import Image
 
@@ -117,7 +118,9 @@ def _process_video(input_path: str, output_path: str, tools: list,
     ]
 
     os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
-    tmp_out = output_path + ".part.mp4"
+    # RNF1 T011 (R7, H-02): unique name, so that two replicas writing the same output (e.g., two
+    # previews of the same video) never share the temporary file; os.replace keeps the write atomic.
+    tmp_out = f"{output_path}.{uuid.uuid4().hex}.part.mp4"
     dec_err = tempfile.TemporaryFile()
     enc_err = tempfile.TemporaryFile()
     decoder = subprocess.Popen(decode_cmd, stdout=subprocess.PIPE, stderr=dec_err)
