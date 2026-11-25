@@ -23,6 +23,12 @@ RNF2). Cada uma indica a decisão, a razão e as alternativas.
   o problema; isto tem de se manter, ou então o repositório é montado no mesmo caminho absoluto do anfitrião e o
   comando usa `--project-directory` com esse caminho.
 
+- **Na implementação (T018, 2026-11-25)**: o comando leva também `--no-deps`, para o ajuste de um serviço de vídeo nunca
+  tocar nas suas dependências (o RabbitMQ). O registo tem uma linha por decisão `up`/`down`; as decisões `hold` só são
+  registadas quando o número de mensagens pendentes ou de réplicas muda (senão seria uma linha a cada 5 s por serviço).
+  Erros da API ou do Docker ficam numa linha `{"event": "error", ...}` (sem `action`, por isso o `elasticidade_m4.py`
+  ignora-as).
+
 ## R2. Como se lê o tamanho de cada fila
 
 - **Decisão**: `GET /api/queues/%2F/<fila>` na API de gestão do RabbitMQ (já ativa: `rabbitmq:4.0.5-management`,
