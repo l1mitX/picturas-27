@@ -146,8 +146,8 @@ repartido (INV-001 a INV-005, H-08).
 - [x] T041 [P] README curto em `Tools/video_edit/`, `Tools/video_subtitles/` e `Tools/video_frames/` (o que faz, fila, comando dos testes da T028)
 - [x] T042 Retirar `Tools/video/` e a `video_queue` de `rabbitMQ/definitions.json`, depois de T028, T036 e T040
 - [x] T043 Confirmar a deteção do `rnf2_estaticas.py` com a nova estrutura (R10); se for preciso adaptar, mudar só a deteção e registar em `docs/fase2/medicoes/README.md`
-- [ ] T044 Medição completa `apos-rnf2` (`quickstart.md`, secções 2 e 3): `rnf2_estaticas.py`, N3 com imagens do mesmo dia, `carga_rnf1.py` (`isolado`, `m1`, `m2`, `paralelo`) → `docs/fase2/medicoes/resultados/apos-rnf2/`
-- [ ] T045 Atualizar o estado de H-06 a H-09 em `docs/fase2/exercicios/RAS-exercicio_6_bloco1_SWdesign_template_PT.md` (secção 2.6) e preencher «Implementação» e «Desvios face à decisão» da DA-2 no relatório (cap. 8); se houver desvios, atualizar `docs/fase2/relatorio/images/vista_depois.puml` e regenerar o SVG
+- [x] T044 Medição completa `apos-rnf2` (`quickstart.md`, secções 2 e 3): `rnf2_estaticas.py`, N3 com imagens do mesmo dia, `carga_rnf1.py` (`isolado`, `m1`, `m2`, `paralelo`) → `docs/fase2/medicoes/resultados/apos-rnf2/`
+- [x] T045 Atualizar o estado de H-06 a H-09 em `docs/fase2/exercicios/RAS-exercicio_6_bloco1_SWdesign_template_PT.md` (secção 2.6) e preencher «Implementação» e «Desvios face à decisão» da DA-2 no relatório (cap. 8); se houver desvios, atualizar `docs/fase2/relatorio/images/vista_depois.puml` e regenerar o SVG
 
 ---
 

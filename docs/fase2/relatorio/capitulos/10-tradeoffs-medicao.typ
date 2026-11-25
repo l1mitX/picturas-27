@@ -85,19 +85,48 @@ CAND-1, entre `apos-rnf2` e `apos-rnf1` (secção 6.2).
     colunas: (1.4cm, 1fr, 2.2cm, 2.2cm, 1.6cm, 2.2cm, 1.8cm),
     tamanho: 8pt,
     [Cenário], [Medição (o que se mede, unidade)], [Antes (_baseline_)], [Depois], [Valor-alvo], [Mínimo aceitável], [Atingido?],
-    [QS-03], [M6: tempo por trabalho com 4 edições em paralelo, p95 (s); débito (vídeos/min)], [44,0 s; 5,54 vídeos/min (EV-26)], [#preencher[apos-rnf2 / apos-rnf1]], [≤ 30 s], [≥ 2 trabalhos em simultâneo], [#preencher[Alvo / Mínimo / Não]],
+    [QS-03], [M6: tempo por trabalho com 4 edições em paralelo, p95 (s); débito (vídeos/min)], [44,0 s; 5,54 vídeos/min (18/11, EV-26). Controlo de 25/11: 24,2 s; 9,95 vídeos/min], [Após CAND-2 (25/11): 21,8 s; 10,96 vídeos/min, ainda um trabalho de cada vez. Após CAND-1: #preencher[apos-rnf1]], [≤ 30 s (equivalente a 25/11: ≤ 11 s, cap. 6)], [≥ 2 trabalhos em simultâneo], [#preencher[após CAND-1]],
     [QS-03], [M4: tempo até acrescentar réplicas (s)], [n/a (sem ajuste)], [#preencher[apos-rnf1]], [≤ 30 s], [≤ 60 s], [#preencher[…]],
-    [QS-01], [M1: trabalho curto durante uma legendagem, p95 (s) (complementar)], [322,6 s (EV-18)], [#preencher[apos-rnf2 / apos-rnf1]], [≤ 36 s], [≤ 50 s], [#preencher[…]],
-    [QS-02], [N2 (C2): tipos de trabalho de vídeo reimplantados], [3 (EV-17)], [#preencher[apos-rnf2]], [1], [1], [#preencher[…]],
-    [QS-04], [N1: efeitos com duas implementações], [8 (EV-17)], [#preencher[apos-rnf2]], [0], [0], [#preencher[…]],
-    [QS-02], [N3: imagem do serviço de edição (GB)], [1,69 GB (EV-14)], [#preencher[apos-rnf2, mesmo dia]], [≤ 1,23 GB], [< imagem da base do mesmo dia], [#preencher[…]],
-    [—], [Trabalho isolado, p95 (s) (efeito colateral, N5)], [17,8 s (EV-18)], [#preencher[apos-rnf2 / apos-rnf1]], [≤ 17,8 s], [≤ 19,6 s], [#preencher[…]],
+    [QS-01], [M1: trabalho curto durante uma legendagem, p95 (s) (complementar)], [322,6 s (18/11, EV-18). Controlo de 25/11: 190,6 s], [Após CAND-2 (25/11): 108,9 s. Após CAND-1: #preencher[apos-rnf1]], [≤ 36 s], [≤ 50 s], [Ainda não após o CAND-2; #preencher[após CAND-1]],
+    [QS-02], [N2 (C2): tipos de trabalho de vídeo reimplantados], [3 (EV-17)], [1 (também 1 em C1 e em C3)], [1], [1], [Alvo],
+    [QS-04], [N1: efeitos com duas implementações], [8 (EV-17)], [0], [0], [0], [Alvo],
+    [QS-02], [N3: imagem do serviço de edição (GB)], [1,69 GB (EV-14). Reconstruída a 25/11: 1,66 GB], [0,86 GB (25/11, mesmo dia que a base reconstruída)], [≤ 1,23 GB], [< imagem da base do mesmo dia], [Alvo],
+    [—], [Trabalho isolado, p95 (s) (efeito colateral, N5)], [17,8 s (18/11, EV-18). Controlo de 25/11: 6,40 s], [Após CAND-2 (25/11): 5,92 s. Após CAND-1: #preencher[apos-rnf1]], [≤ 17,8 s], [≤ 19,6 s], [Alvo após o CAND-2 (−8 % face à base do mesmo dia)],
+    [—], [N4: linhas do orquestrador `projects/routes/projects.js` (efeito colateral, H-09)], [2733], [2816 (+3 %)], [—], [≤ 2733 + 10 % (3006)], [Mínimo],
   ),
 )
 
 *Análise dos resultados* (por requisito não funcional):
 
-#preencher[O que melhorou, o que não foi atingido e porquê, efeitos noutros atributos de qualidade e ameaças à validade das medições (e.g., 5 repetições, uma só máquina, variação das imagens Docker entre dias).]
+*CAND-2 (modularidade, medido a 25/11 sobre o _commit_ `a3dcdac`).* Cumpre os valores-alvo de todas as medidas
+estáticas: uma mudança na legendagem, na extração ou num efeito reimplanta só um tipo de trabalho de vídeo (N2, base: 3);
+os 8 efeitos passam a ter uma única implementação, em `Tools/effects/` (N1, base: 8); a imagem da edição passa de 1,66 GB
+para 0,86 GB (−48 %, N3), porque deixa de ter o `faster-whisper` e as fontes das legendas; o orquestrador cresce 3 %
+(N4, mínimo +10 %). As saídas são iguais às da base: os _hashes_ de imagem (9 casos) e de vídeo (9 pipelines) coincidem,
+e passam os testes de vídeo (101, base: 74) e do `projects` (68, base: 8).
+
+*Comportamento temporal.* Comparando com a base medida no mesmo dia, o salto entre serviços e o MP4 intermédio por
+estágio não pioraram o desempenho (H-06 refutada): o trabalho isolado passa de 6,40 s para 5,92 s (p95) e o M6 de 24,2 s
+para 21,8 s (p95), com os 4 trabalhos ainda a acabar um de cada vez. No M1, o trabalho curto passa de 190,6 s para
+108,9 s (p95; p50 de 165,0 s para 106,0 s, −36 %): deixa de esperar pela legendagem em si, mas continua a esperar
+cerca de 100 s pelo estágio de edição sem efeitos com que a legendagem começa. Esse estágio recodifica o vídeo, como o
+`process_video` fazia na base, e é o que mantém as saídas iguais às da base. A previsão da secção 6.2 (o CAND-2
+resolveria a maior parte do M1) cumpriu-se, por isso, só em parte; o resto depende das réplicas do serviço de edição
+(CAND-1). No M2 não há diferença (1,34 e 1,35 vídeos/min), porque a legendagem já não atrasava os curtos submetidos ao
+mesmo tempo.
+
+*Ameaças à validade.* A velocidade da máquina variou entre dias: a base, medida de novo a 25/11 com o mesmo _script_,
+os mesmos parâmetros e o mesmo aquecimento, fez o trabalho isolado em 6,40 s, contra 17,8 s a 18/11 (e o M6 em 24,2 s,
+contra 44,0 s). A causa é a alimentação do portátil: a base de 18/11 foi medida na aula, com o portátil a funcionar
+na bateria e, segundo quem mediu, provavelmente em modo de poupança de energia; as medições de 25/11 foram feitas com o
+portátil ligado à tomada. Para não atribuir ao _refactoring_ um ganho que é da máquina, os tempos comparam-se só entre medições do mesmo
+dia: a base de 25/11 (`docs/fase2/medicoes/resultados/controlo-base-2026-11-25/`) e a `apos-rnf2`. Os valores de 18/11
+mantêm-se nas tabelas, porque foram eles que fixaram os valores-alvo do capítulo 6, que não se alteram. As medidas
+estáticas (N1, N2, N4) e os _hashes_ não dependem da velocidade da máquina; o N3 compara imagens construídas no mesmo
+dia, porque o `apt-get` não fixa versões (a imagem da base tem 1,69 GB num dia e 1,66 GB noutro). Outras limitações:
+5 repetições (3 no M2), uma só máquina e um só vídeo por cenário.
+
+*CAND-1 (capacidade).* #preencher[Resultados da medição `apos-rnf1`, comparados com a `apos-rnf2` do mesmo dia.]
 
 #paisagem[
 == Preservação funcional
@@ -107,9 +136,9 @@ CAND-1, entre `apos-rnf2` e `apos-rnf1` (secção 6.2).
     colunas: (3.4cm, 4.4cm, 4cm, 1fr, 3cm),
     tamanho: 8pt,
     [Zona alterada], [Testes de regressão existentes (`Tools/video/tests`, `projects/tests`, …)], [Lacunas de teste], [Testes acrescentados], [Resultado (imagem e vídeo)],
-    [DA-2: efeitos em `Tools/effects/`, usados por imagem e vídeo], [`regressao_hashes.py` (imagem e 9 pipelines de vídeo, base guardada em `resultados/base/`); `Tools/video/tests` (74 testes na base)], [Os testes de vídeo assumem um só serviço e importam `effects.py` desse serviço], [Adaptar os imports dos testes; correr `regressao_hashes.py` em `apos-rnf2` e exigir _hashes_ iguais aos da base (H-07)], [#preencher[após a implementação]],
-    [DA-2: encadeamento dos estágios no `projects` (edição → legendas → extração; pré-visualização)], [`projects/tests` (8 testes); `Tools/video/tests` cobre a divisão em estágios dentro do `process_video`], [Não há testes do encadeamento feito pelo `projects` nem da pré-visualização por estágios], [Teste de cada combinação de estágios (só edição, legendas + edição, edição + extração, as três), incluindo a regra «extração no fim» e a pré-visualização], [#preencher[após a implementação]],
-    [DA-2: cancelamento e quota com o pipeline repartido], [`projects/tests` (verificação do `activeToken`)], [Cancelamento a meio de um pipeline que passa por vários serviços (H-08)], [Cancelar a meio de legendas + filtro + extração e verificar que nenhum resultado é registado e que a quota é devolvida], [#preencher[após a implementação]],
+    [DA-2: efeitos em `Tools/effects/`, usados por imagem e vídeo], [`regressao_hashes.py` (imagem e 9 pipelines de vídeo, base guardada em `resultados/base/`); `Tools/video/tests` (74 testes na base)], [Os testes de vídeo assumem um só serviço e importam `effects.py` desse serviço], [Adaptar os imports dos testes; correr `regressao_hashes.py` em `apos-rnf2` e exigir _hashes_ iguais aos da base (H-07)], [_Hashes_ iguais aos da base: imagem 9/9 e vídeo 9/9 (`apos-rnf2`, 25/11). Testes de vídeo repartidos pelos três serviços: 101 (base: 74), corridos com o repositório montado. H-07 confirmada.],
+    [DA-2: encadeamento dos estágios no `projects` (edição → legendas → extração; pré-visualização)], [`projects/tests` (8 testes); `Tools/video/tests` cobre a divisão em estágios dentro do `process_video`], [Não há testes do encadeamento feito pelo `projects` nem da pré-visualização por estágios], [Teste de cada combinação de estágios (só edição, legendas + edição, edição + extração, as três), incluindo a regra «extração no fim» e a pré-visualização], [`videoStages.test.js` (32 planos de estágios tirados da base) e `videoDispatch.test.js` (encadeamento e pré-visualização): 68 testes no `projects` (base: 8). Na aplicação: V7 e V8 iguais à base, corte + extração e pré-visualização a funcionar.],
+    [DA-2: cancelamento e quota com o pipeline repartido], [`projects/tests` (verificação do `activeToken`)], [Cancelamento a meio de um pipeline que passa por vários serviços (H-08)], [Cancelar a meio de legendas + filtro + extração e verificar que nenhum resultado é registado e que a quota é devolvida], [`videoStageEnd.test.js` (cancelar entre estágios, erro num estágio intermédio, limpeza dos intermédios) e `runCommit.test.js`. Na aplicação, cancelar a meio não envia o estágio seguinte nem deixa ficheiros. A devolução da quota não foi verificada à parte (H-08 confirmada em parte; falta a T040).],
     [DA-1: réplicas e `video_autoscaler`], [Nenhum], [Réplicas em simultâneo (H-01, H-02, H-03), cancelamento com várias réplicas (H-05), retirar réplicas a meio de um trabalho (H-10), legendagens longas (H-04, pouco provável: EV-35)], [Dois trabalhos do mesmo projeto em réplicas diferentes; arranque de 2 réplicas com o volume `whisper_models` vazio; cancelar com 2 réplicas ativas; reduzir réplicas com um vídeo em curso e verificar que ele termina na mesma réplica (TAT-13); suspender uma réplica (`docker pause`) e verificar que a mensagem passa a outra pelo _heartbeat_; legendagem do vídeo Premium mais longo (600 s, EV-35) sem reentrega nem a ligação cair], [#preencher[após a implementação]],
   ),
 )
