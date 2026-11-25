@@ -49,6 +49,15 @@ Cenários para provar que a *spec* está cumprida. Mesma máquina e mesmos parâ
   Validação: `video_common/tests` e `video_edit/tests/test_worker_progress.py` 8/8; suites `video_edit` 38/38,
   `video_subtitles` 21/21 e `video_frames` 42/42. A regressão de hashes da T008 ainda não foi executada; T001
   continua pendente até existirem as medições `apos-rnf2`.
+- **2026-11-25**: depois do merge de `origin/fase2`, confirmei que `apos-rnf2` contém os quatro cenários de carga
+  (isolado ×5, M1 ×5, M2 ×3, paralelo ×5), sem falhas; os hashes de imagem e vídeo são 9/9 iguais aos de `base`.
+  As suites atuais de vídeo passaram (38 + 21 + 42 testes) e `projects/tests` tinha passado 68/68. T001 concluída.
+- **2026-11-25**: T008 executada. As suites dos três serviços passaram novamente (38/38, 21/21, 42/42), mas
+  `regressao_hashes.py video dev-rnf1` não coincide com `base` em V1, V1p, V2, V7 e V8; os restantes quatro casos
+  coincidem. O resultado está em `docs/fase2/medicoes/resultados/dev-rnf1/regressao_video.json`. A discrepância
+  persistiu após reconstruir `video_subtitles`; não foi possível atribuí-la com segurança a uma alteração de código
+  ou a diferenças de ambiente. T008 permanece pendente e não se deve iniciar a medição final `apos-rnf1` até a
+  discrepância ser esclarecida.
 
 Resultados em `docs/fase2/medicoes/resultados/apos-rnf1/`. O ganho do RNF1 é a diferença entre `apos-rnf2` e
 `apos-rnf1`. Hipóteses H-01 a H-05 e H-10 atualizam o Exercício 6, Bloco 1; desvios face à DA-1 vão para o relatório
