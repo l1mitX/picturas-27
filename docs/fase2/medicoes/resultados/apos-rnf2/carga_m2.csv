@@ -1,0 +1,13 @@
+cenario,n,repeticao,trabalho,papel,media,pipeline,t_submit_rel_s,estado,latencia_s,t_fim_rel_s,makespan_ronda_s
+m2,4,1,J1,legendagem,speech_mandela_177s_1080p.webm,subtitles,0.001,ok,177.128,177.128,177.128
+m2,4,1,J2,curto,sample_10s_720p.mp4,brightness,0.0,ok,16.508,16.509,177.128
+m2,4,1,J3,curto,sample_10s_720p.mp4,brightness,0.0,ok,5.906,5.906,177.128
+m2,4,1,J4,curto,sample_10s_720p.mp4,brightness,0.001,ok,11.232,11.232,177.128
+m2,4,2,J1,legendagem,speech_mandela_177s_1080p.webm,subtitles,0.0,ok,177.919,177.919,177.919
+m2,4,2,J2,curto,sample_10s_720p.mp4,brightness,0.001,ok,5.965,5.966,177.919
+m2,4,2,J3,curto,sample_10s_720p.mp4,brightness,0.0,ok,11.211,11.211,177.919
+m2,4,2,J4,curto,sample_10s_720p.mp4,brightness,0.001,ok,16.413,16.413,177.919
+m2,4,3,J1,legendagem,speech_mandela_177s_1080p.webm,subtitles,0.0,ok,176.615,176.615,176.615
+m2,4,3,J2,curto,sample_10s_720p.mp4,brightness,0.0,ok,11.195,11.195,176.615
+m2,4,3,J3,curto,sample_10s_720p.mp4,brightness,0.0,ok,5.925,5.925,176.615
+m2,4,3,J4,curto,sample_10s_720p.mp4,brightness,0.0,ok,16.369,16.369,176.615

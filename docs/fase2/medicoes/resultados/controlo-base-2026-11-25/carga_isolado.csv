@@ -1,0 +1,6 @@
+cenario,n,repeticao,trabalho,papel,media,pipeline,t_submit_rel_s,estado,latencia_s,t_fim_rel_s,makespan_ronda_s
+isolado,1,1,B,curto,sample_10s_720p.mp4,brightness,0.0,ok,6.409,6.41,6.41
+isolado,1,2,B,curto,sample_10s_720p.mp4,brightness,0.0,ok,6.38,6.381,6.381
+isolado,1,3,B,curto,sample_10s_720p.mp4,brightness,0.0,ok,6.383,6.383,6.383
+isolado,1,4,B,curto,sample_10s_720p.mp4,brightness,0.0,ok,6.381,6.382,6.382
+isolado,1,5,B,curto,sample_10s_720p.mp4,brightness,0.0,ok,6.383,6.383,6.383
