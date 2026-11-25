@@ -112,7 +112,7 @@ simultâneo e p95 abaixo de `apos-rnf2`.
 
 ## Fase final: Acabamento e transversal
 
-- [ ] T026 [P] README curto em `Tools/video_autoscaler/` (o que faz, variáveis, risco do *socket* do Docker)
+- [X] T026 [P] README curto em `Tools/video_autoscaler/` (o que faz, variáveis, risco do *socket* do Docker)
 - [ ] T027 Medição completa `apos-rnf1` (`quickstart.md`, secção 3): `carga_rnf1.py` (`paralelo`, `m1`, `isolado`, `m2`), `elasticidade_m4.py`, verificação de `OOMKilled` → `docs/fase2/medicoes/resultados/apos-rnf1/`
 - [ ] T028 `regressao_hashes.py imagem` e `video` com o ajuste automático ligado → *hashes* iguais à base (SC-005)
 - [ ] T029 Atualizar a vista «depois» (`docs/fase2/relatorio/images/vista_depois.puml`) se a implementação se afastou da DA-1, e regenerar o SVG
