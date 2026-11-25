@@ -41,8 +41,8 @@ prova-o com os cenários de falha.
 
 ### Implementação
 
-- [ ] T006 Em `Tools/video_common/worker.py`: processar cada estágio numa *thread* de trabalho; publicar `ack`, respostas e progresso com `connection.add_callback_threadsafe`; abrir a ligação com o *heartbeat* por omissão do broker em vez de `heartbeat=0` (R5, EV-33, EV-34). T005 passa
-- [ ] T007 Em `Tools/video_common/worker.py`: tratar o `SIGTERM` com paragem ordenada (`basic_cancel`, terminar o estágio em curso, `ack`, fechar a ligação, sair) e registar a hora da primeira mensagem consumida depois de arrancar (R4, R10). T004 passa
+- [X] T006 Em `Tools/video_common/worker.py`: processar cada estágio numa *thread* de trabalho; publicar `ack`, respostas e progresso com `connection.add_callback_threadsafe`; abrir a ligação com o *heartbeat* por omissão do broker em vez de `heartbeat=0` (R5, EV-33, EV-34). T005 passa
+- [X] T007 Em `Tools/video_common/worker.py`: tratar o `SIGTERM` com paragem ordenada (`basic_cancel`, terminar o estágio em curso, `ack`, fechar a ligação, sair) e registar a hora da primeira mensagem consumida depois de arrancar (R4, R10). T004 passa
 - [ ] T008 Correr os testes dos três serviços de vídeo (comandos da T028 do RNF2) e `regressao_hashes.py video dev-rnf1` (etiqueta de desenvolvimento, não a da medição final) → tudo igual (INV-001, INV-005)
 
 **Checkpoint**: *workers* com *heartbeat* ativo e paragem ordenada; comportamento inalterado.

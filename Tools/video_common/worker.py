@@ -1,5 +1,7 @@
 import datetime
 import json
+import signal
+import threading
 import time
 import uuid
 
@@ -38,6 +40,15 @@ class VideoWorker:
         self.procedure = procedure
         self.microservice = microservice
         self.processor = processor
+        self._active_thread = None
+        self._active_lock = threading.Lock()
+        self._stage_complete = threading.Event()
+        self._stage_complete.set()
+        self._stopping = threading.Event()
+        self._cancel_scheduled = threading.Event()
+        self._consumer_tag = None
+        self._first_message_logged = False
+        self._first_message_lock = threading.Lock()
         self._connection = self._connect()
         self._channel = self._connection.channel()
         self._channel.exchange_declare(
@@ -51,7 +62,7 @@ class VideoWorker:
     def _connect():
         credentials = pika.PlainCredentials(env.RABBITMQ_USERNAME, env.RABBITMQ_PASSWORD)
         params = pika.ConnectionParameters(
-            env.RABBITMQ_HOST, int(env.RABBITMQ_PORT), "/", credentials, heartbeat=0
+            env.RABBITMQ_HOST, int(env.RABBITMQ_PORT), "/", credentials
         )
         for _ in range(30):
             try:
@@ -123,7 +134,93 @@ class VideoWorker:
             "percent": mapped,
         })
 
+    def _log_first_message(self):
+        with self._first_message_lock:
+            if self._first_message_logged:
+                return
+            self._first_message_logged = True
+        print(
+            f"[video] first_message_at={now().isoformat()} queue={self.queue}",
+            flush=True,
+        )
+
+    def _schedule_cancel(self):
+        if self._consumer_tag is None or self._cancel_scheduled.is_set():
+            return
+        self._cancel_scheduled.set()
+        self._connection.add_callback_threadsafe(
+            lambda: self._channel.basic_cancel(self._consumer_tag)
+        )
+
+    def _handle_sigterm(self, signum, frame):
+        self._stopping.set()
+        self._schedule_cancel()
+
+    @staticmethod
+    def _processing_error(exc):
+        if isinstance(exc, UnsupportedEffect):
+            return CODES["unsupported_effect"], str(exc)
+        if isinstance(exc, InvalidTrim):
+            return CODES["invalid_trim"], str(exc)
+        if isinstance(exc, InvalidSpeed):
+            return CODES["invalid_speed"], str(exc)
+        if isinstance(exc, InvalidVideo):
+            return CODES["invalid_video"], str(exc)
+        return CODES["error_processing"], str(exc)
+
+    def _complete_stage(
+        self, ch, delivery_tag, msg_id, started, input_uri, output_uri,
+        result, error,
+    ):
+        try:
+            if error is None:
+                self._reply_success(
+                    msg_id, started, input_uri, output_uri, result
+                )
+            else:
+                code, message = error
+                self._reply_error(
+                    msg_id, started, code, message, input_uri
+                )
+            ch.basic_ack(delivery_tag=delivery_tag)
+        finally:
+            with self._active_lock:
+                self._active_thread = None
+                self._stage_complete.set()
+
+    def _process_stage(
+        self, ch, delivery_tag, msg_id, started, input_uri, output_uri,
+        tools, preview, progress, source_info, params,
+    ):
+        try:
+            stage = params.get("stage") or {}
+            stage_index = int(stage.get("index", 0))
+            stage_count = int(stage.get("count", 1))
+
+            def progress_cb(percent):
+                self._connection.add_callback_threadsafe(
+                    lambda percent=percent: self._progress(
+                        progress, preview, percent, stage_index, stage_count
+                    )
+                )
+
+            result = self.processor(
+                input_uri, output_uri, tools, progress_cb, preview, source_info
+            )
+            error = None
+        except Exception as exc:
+            result = None
+            error = self._processing_error(exc)
+
+        self._connection.add_callback_threadsafe(
+            lambda: self._complete_stage(
+                ch, delivery_tag, msg_id, started, input_uri, output_uri,
+                result, error,
+            )
+        )
+
     def callback(self, ch, method, properties, body):
+        self._log_first_message()
         started = now()
         try:
             info = json.loads(body.decode())
@@ -151,41 +248,42 @@ class VideoWorker:
                 msg_id, started, CODES["wrong_procedure"],
                 "The procedure received does not fit into this tool", input_uri
             )
-        else:
-            try:
-                stage = params.get("stage") or {}
-                stage_index = int(stage.get("index", 0))
-                stage_count = int(stage.get("count", 1))
+            ch.basic_ack(delivery_tag=method.delivery_tag)
+            return
 
-                def progress_cb(percent):
-                    self._progress(
-                        progress, preview, percent,
-                        stage_index, stage_count,
-                    )
-
-                result = self.processor(
-                    input_uri, output_uri, tools, progress_cb,
-                    preview, source_info
-                )
-                self._reply_success(msg_id, started, input_uri, output_uri, result)
-            except UnsupportedEffect as exc:
-                self._reply_error(msg_id, started, CODES["unsupported_effect"], str(exc), input_uri)
-            except InvalidTrim as exc:
-                self._reply_error(msg_id, started, CODES["invalid_trim"], str(exc), input_uri)
-            except InvalidSpeed as exc:
-                self._reply_error(msg_id, started, CODES["invalid_speed"], str(exc), input_uri)
-            except InvalidVideo as exc:
-                self._reply_error(msg_id, started, CODES["invalid_video"], str(exc), input_uri)
-            except Exception as exc:
-                self._reply_error(
-                    msg_id, started, CODES["error_processing"], str(exc), input_uri
-                )
-
-        ch.basic_ack(delivery_tag=method.delivery_tag)
+        with self._active_lock:
+            if not self._stage_complete.is_set():
+                raise RuntimeError("Received a video stage while another is active")
+            self._stage_complete.clear()
+            thread = threading.Thread(
+                target=self._process_stage,
+                args=(
+                    ch, method.delivery_tag, msg_id, started, input_uri,
+                    output_uri, tools, preview, progress, source_info, params,
+                ),
+                name=f"video-stage-{msg_id}",
+            )
+            self._active_thread = thread
+            thread.start()
 
     def run(self):
-        self._channel.basic_consume(
-            queue=self.queue, on_message_callback=self.callback, auto_ack=False
-        )
-        print(f"[video] waiting for jobs on {self.queue}", flush=True)
-        self._channel.start_consuming()
+        signal.signal(signal.SIGTERM, self._handle_sigterm)
+        try:
+            self._consumer_tag = self._channel.basic_consume(
+                queue=self.queue, on_message_callback=self.callback, auto_ack=False
+            )
+            if self._stopping.is_set():
+                self._schedule_cancel()
+            print(f"[video] waiting for jobs on {self.queue}", flush=True)
+            self._channel.start_consuming()
+
+            while not self._stage_complete.is_set():
+                self._connection.process_data_events(time_limit=0.1)
+
+            with self._active_lock:
+                thread = self._active_thread
+            if thread is not None:
+                thread.join()
+        finally:
+            if not getattr(self._connection, "is_closed", False):
+                self._connection.close()

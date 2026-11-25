@@ -43,6 +43,12 @@ Cenários para provar que a *spec* está cumprida. Mesma máquina e mesmos parâ
   `docs/fase2/medicoes/resultados/apos-rnf2/` ainda não existe. Por isso, o ponto de partida está testado, mas a
   medição obrigatória do RNF2 não está completa e a T001 permanece pendente; não iniciar as medições `apos-rnf1`
   até os resultados `apos-rnf2` serem recolhidos conforme o quickstart do RNF2.
+- **2026-11-25**: T006–T007 implementados. Os estágios correm numa *thread* de trabalho e encaminham progresso,
+  respostas e `ack` pela thread Pika; `SIGTERM` cancela o consumo e aguarda o estágio em curso antes de fechar a
+  ligação. O *heartbeat* volta à negociação por omissão do broker, e o *worker* regista a hora da primeira mensagem.
+  Validação: `video_common/tests` e `video_edit/tests/test_worker_progress.py` 8/8; suites `video_edit` 38/38,
+  `video_subtitles` 21/21 e `video_frames` 42/42. A regressão de hashes da T008 ainda não foi executada; T001
+  continua pendente até existirem as medições `apos-rnf2`.
 
 Resultados em `docs/fase2/medicoes/resultados/apos-rnf1/`. O ganho do RNF1 é a diferença entre `apos-rnf2` e
 `apos-rnf1`. Hipóteses H-01 a H-05 e H-10 atualizam o Exercício 6, Bloco 1; desvios face à DA-1 vão para o relatório

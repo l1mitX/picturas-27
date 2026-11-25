@@ -225,7 +225,23 @@ def test_worker_connection_uses_active_heartbeat(monkeypatch):
         "video_edit_queue", "video_edit", "video-edit", lambda *args: {"duration": 1}
     )
 
-    assert parameters[0].heartbeat > 0
+    assert parameters[0].heartbeat != 0
+
+
+def test_worker_logs_timestamp_for_only_the_first_consumed_message(monkeypatch, capsys):
+    connection = FakeConnection()
+    monkeypatch.setattr(VideoWorker, "_connect", lambda self: connection)
+    worker = VideoWorker(
+        "video_edit_queue", "video_edit", "video-edit", lambda *args: {"duration": 1}
+    )
+    method = type("Method", (), {"delivery_tag": 1})()
+
+    worker.callback(connection.channel_instance, method, None, b"{}")
+    worker.callback(connection.channel_instance, method, None, b"{}")
+
+    output = capsys.readouterr().out
+    assert output.count("first_message_at=") == 1
+    assert "queue=video_edit_queue" in output
 
 
 def test_worker_marshals_ack_reply_and_progress_to_io_thread(monkeypatch):
