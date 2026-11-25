@@ -85,7 +85,7 @@ CAND-1, entre `apos-rnf2` e `apos-rnf1` (secção 6.2).
     colunas: (1.4cm, 1fr, 2.2cm, 2.2cm, 1.6cm, 2.2cm, 1.8cm),
     tamanho: 8pt,
     [Cenário], [Medição (o que se mede, unidade)], [Antes (_baseline_)], [Depois], [Valor-alvo], [Mínimo aceitável], [Atingido?],
-    [QS-03], [M6: tempo por trabalho com 4 edições em paralelo, p95 (s); débito (vídeos/min)], [44,0 s; 5,54 vídeos/min (18/11, EV-26). Controlo de 25/11: 24,2 s; 9,95 vídeos/min], [Após CAND-2 (25/11): 21,8 s; 10,96 vídeos/min, ainda um trabalho de cada vez. Após CAND-1: #preencher[apos-rnf1]], [≤ 30 s], [≥ 2 trabalhos em simultâneo], [#preencher[após CAND-1]],
+    [QS-03], [M6: tempo por trabalho com 4 edições em paralelo, p95 (s); débito (vídeos/min)], [44,0 s; 5,54 vídeos/min (18/11, EV-26). Controlo de 25/11: 24,2 s; 9,95 vídeos/min], [Após CAND-2 (25/11): 21,8 s; 10,96 vídeos/min, ainda um trabalho de cada vez. Após CAND-1: #preencher[apos-rnf1]], [≤ 30 s (equivalente a 25/11: ≤ 11 s, cap. 6)], [≥ 2 trabalhos em simultâneo], [#preencher[após CAND-1]],
     [QS-03], [M4: tempo até acrescentar réplicas (s)], [n/a (sem ajuste)], [#preencher[apos-rnf1]], [≤ 30 s], [≤ 60 s], [#preencher[…]],
     [QS-01], [M1: trabalho curto durante uma legendagem, p95 (s) (complementar)], [322,6 s (18/11, EV-18). Controlo de 25/11: 190,6 s], [Após CAND-2 (25/11): 108,9 s. Após CAND-1: #preencher[apos-rnf1]], [≤ 36 s], [≤ 50 s], [Ainda não após o CAND-2; #preencher[após CAND-1]],
     [QS-02], [N2 (C2): tipos de trabalho de vídeo reimplantados], [3 (EV-17)], [1 (também 1 em C1 e em C3)], [1], [1], [Alvo],
