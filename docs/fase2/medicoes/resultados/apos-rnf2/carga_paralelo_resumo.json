@@ -1,0 +1,38 @@
+{
+  "etiqueta": "apos-rnf2",
+  "cenario": "paralelo",
+  "data": "2026-11-25T12:00:23.458231+00:00",
+  "replicas_video": [
+    "picturas-video_edit-1",
+    "picturas-video_frames-1",
+    "picturas-video_subtitles-1"
+  ],
+  "repeticoes": 5,
+  "falhas": [],
+  "por_n": {
+    "4": {
+      "debito_videos_min_media": 10.957,
+      "makespan_s_p50": 21.719,
+      "latencia_s_p50": 14.099,
+      "latencia_s_p95": 21.8,
+      "latencia_curtos_s_p95": 21.8
+    }
+  },
+  "recursos_video": {
+    "picturas-video_frames-1": {
+      "mem_mib_max": 15.7,
+      "cpu_pct_media": 0.0,
+      "cpu_pct_max": 0.01
+    },
+    "picturas-video_subtitles-1": {
+      "mem_mib_max": 688.7,
+      "cpu_pct_media": 0.0,
+      "cpu_pct_max": 0.04
+    },
+    "picturas-video_edit-1": {
+      "mem_mib_max": 777.0,
+      "cpu_pct_media": 252.0,
+      "cpu_pct_max": 307.18
+    }
+  }
+}

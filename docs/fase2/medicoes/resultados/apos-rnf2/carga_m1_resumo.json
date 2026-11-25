@@ -1,0 +1,39 @@
+{
+  "etiqueta": "apos-rnf2",
+  "cenario": "m1",
+  "data": "2026-11-25T11:49:10.676501+00:00",
+  "replicas_video": [
+    "picturas-video_edit-1",
+    "picturas-video_frames-1",
+    "picturas-video_subtitles-1"
+  ],
+  "repeticoes": 5,
+  "falhas": [],
+  "curto_latencia_s": {
+    "n": 5,
+    "p50": 105.964,
+    "p95": 108.917,
+    "media": 106.399
+  },
+  "legendagem_latencia_s": {
+    "p50": 162.634,
+    "p95": 165.707
+  },
+  "recursos_video": {
+    "picturas-video_frames-1": {
+      "mem_mib_max": 15.9,
+      "cpu_pct_media": 0.0,
+      "cpu_pct_max": 0.03
+    },
+    "picturas-video_subtitles-1": {
+      "mem_mib_max": 1451.0,
+      "cpu_pct_media": 137.3,
+      "cpu_pct_max": 851.82
+    },
+    "picturas-video_edit-1": {
+      "mem_mib_max": 1886.2,
+      "cpu_pct_media": 225.3,
+      "cpu_pct_max": 496.87
+    }
+  }
+}

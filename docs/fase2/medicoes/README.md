@@ -1,7 +1,9 @@
 # Medições da Fase 2
 
-> **Estado (2026-11-25):** RNF2 implementado (`fase2`, `a3dcdac`); `apos-rnf2` parcial — métricas estáticas, N3 e
-> *hashes* feitos, falta a carga (ver «Resultados após o RNF2», no fim).
+> **Estado (2026-11-25):** RNF2 implementado (`fase2`, `a3dcdac`); `apos-rnf2` medido (estáticas, N3, *hashes* e
+> carga). **Atenção:** a máquina estava mais rápida a 25/11 do que a 18/11 — a base, medida de novo a 25/11, faz o
+> isolado em 6,4 s (contra 17,8 s). Os tempos só se comparam com a base do mesmo dia (`controlo-base-2026-11-25`);
+> falta esse controlo para o M1 e o M2 (ver «Resultados após o RNF2», no fim).
 >
 > **Estado (2026-11-22):** baseline completa (RNF2 e RNF1, plano mínimo, mais o cenário M6). Escala principal do
 > RNF1 e alvos decididos (relatório, capítulo 6). Próximo passo: refactoring do RNF2 e medição "após RNF2". A pasta
@@ -146,12 +148,43 @@ terem arrancado antes das bases de dados. Foram reiniciados e foi feita uma corr
   *hashes* são iguais nos 9 casos, incluindo as legendas (Faster-Whisper em CPU). A comparação depois do
   refactoring é, por isso, válida.
 
-## Resultados após o RNF2 (`resultados/apos-rnf2/`) — parcial
+## Resultados após o RNF2 (`resultados/apos-rnf2/`)
 
-Medido a 2026-11-25 sobre o commit `a3dcdac` do `fase2` (RNF2 completo), na mesma máquina e com os mesmos recursos
-do Docker da base (Engine 29.8.0, Compose 5.5.1, 12 CPUs, 7,7 GiB). **Falta a carga** (isolado, M1, M2 e M6, ~50 min),
-que se corre numa só sessão, com a aplicação arrancada com `docker compose up -d --build` e uma corrida de
-aquecimento descartada, como na base.
+Medido a 2026-11-25 sobre o código do commit `a3dcdac` do `fase2` (RNF2 completo), na mesma máquina e com os mesmos
+recursos do Docker da base (Engine 29.8.0, Compose 5.5.1, 12 CPUs, 7,7 GiB). A carga correu numa só sessão
+(11:29–12:00 UTC), com a aplicação arrancada com `docker compose up -d --build` e um aquecimento descartado (isolado ×1 e
+M1 ×1), com os parâmetros da base (isolado ×5, M1 ×5, M2 N = 4 ×3, M6 N = 4 ×5). Sem falhas nem *timeouts*.
+
+### Carga: a máquina não estava igual — controlo da base no mesmo dia
+
+Os tempos de `apos-rnf2` saíram muito abaixo da base (e.g., isolado p95 5,9 s contra 17,8 s), mais do que o RNF2
+explica: cada edição curta demorava ~10,5 s a 18/11 e ~5,4 s a 25/11, com saídas iguais (*hashes*). Para separar o
+efeito do código do efeito da máquina, a aplicação da base (`0523102`) foi reconstruída e medida de novo a 25/11, logo
+a seguir (12:04–12:11 UTC), com o mesmo *script*, aquecimento e parâmetros: `resultados/controlo-base-2026-11-25/`
+(isolado e M6). A base de 25/11 faz o isolado em 6,4 s: **a diferença era da máquina** (causa não identificada;
+hipóteses: modo de energia ou carga de fundo a 18/11). Os tempos de `apos-rnf2` comparam-se, por isso, com a base do
+**mesmo dia**; os valores de `base/` (18/11) não servem para tempos (as métricas estáticas, o N3 e os *hashes* não
+dependem da velocidade da máquina).
+
+| Cenário | Base 18/11 (`base/`) | Base 25/11 (controlo) | Após RNF2 25/11 | Efeito do RNF2 (mesmo dia) |
+|---|---|---|---|---|
+| Isolado (N5): p50 / p95 | 14,8 / 17,8 s | 6,38 / 6,40 s | 5,88 / 5,92 s | −8 % no p95; não piora ✅ |
+| M6 (4 edições curtas): p50 / p95 | 28,8 / 44,0 s | 15,2 / 24,2 s | 14,1 / 21,8 s | −10 % no p95 |
+| M6: débito | 5,54 vídeos/min | 9,95 vídeos/min | 10,96 vídeos/min | +10 % |
+| M1 (curto 5 s depois de uma legendagem): p50 / p95 do curto | 307,6 / 322,6 s | **por medir** | 106,0 / 108,9 s | por calcular |
+| M1: legendagem do vídeo de 177 s, p50 | 302,3 s | por medir | 162,6 s | por calcular |
+| M2 (1 legendagem + 3 curtos): débito / p95 dos curtos | 0,70 vídeos/min / 35,3 s | por medir | 1,35 vídeos/min / 16,5 s | por calcular |
+
+- **Isolado e M6:** com a mesma máquina, o RNF2 não piora o trabalho isolado (H-06, SC-006) e melhora-o ~8 %; no M6
+  os 4 trabalhos continuam a acabar em escada (≈ 6, 11, 16 e 22 s), um de cada vez — é o que as réplicas do RNF1 vão
+  atacar (a comparação do RNF1 faz-se contra estes valores de `apos-rnf2`).
+- **M1:** o curto deixa de esperar pela legendagem em si, mas **continua a esperar ~100 s**: a legendagem sozinha
+  começa por um estágio de edição sem efeitos que recodifica o vídeo de 177 s (como `process_video` na base, R1 do
+  RNF2; é isso que mantém os *hashes*), e o curto, enviado 5 s depois, fica na fila do `video_edit` atrás dele. Com
+  réplicas do `video_edit` (RNF1) este bloqueio desaparece. Falta o controlo do M1 e do M2 com a base no mesmo dia
+  (~45 min) para calcular o ganho do RNF2 nestes dois cenários (SC-008).
+- **Memória máxima:** `video_edit` 1 888 MiB (M2), `video_subtitles` 1 451 MiB (M1), `video_frames` 16 MiB (não usado
+  nestes cenários). Base: um só serviço com 2 506 MiB (M1). Dados para os limites de memória do RNF1 (T003, R9).
 
 ### RNF2 — métricas estáticas (`rnf2_estaticas.json`)
 

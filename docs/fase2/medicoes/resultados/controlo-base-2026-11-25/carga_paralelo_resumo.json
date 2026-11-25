@@ -1,0 +1,26 @@
+{
+  "etiqueta": "controlo-base-2026-11-25",
+  "cenario": "paralelo",
+  "data": "2026-11-25T12:09:28.556004+00:00",
+  "replicas_video": [
+    "picturas-video_tool-1"
+  ],
+  "repeticoes": 5,
+  "falhas": [],
+  "por_n": {
+    "4": {
+      "debito_videos_min_media": 9.952,
+      "makespan_s_p50": 24.161,
+      "latencia_s_p50": 15.194,
+      "latencia_s_p95": 24.205,
+      "latencia_curtos_s_p95": 24.205
+    }
+  },
+  "recursos_video": {
+    "picturas-video_tool-1": {
+      "mem_mib_max": 816.1,
+      "cpu_pct_media": 237.1,
+      "cpu_pct_max": 286.67
+    }
+  }
+}
