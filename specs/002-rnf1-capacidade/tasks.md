@@ -36,8 +36,8 @@ prova-o com os cenários de falha.
 
 ### Testes primeiro
 
-- [ ] T004 [P] Teste em `Tools/video_common/tests/test_worker.py`: com um estágio a correr numa *thread* de trabalho (função de processamento falsa e lenta), o `SIGTERM` cancela o consumo, deixa terminar o estágio, publica o `ack` e a resposta, e só depois sai; sem estágio em curso, sai de imediato (R4)
-- [ ] T005 [P] Teste em `Tools/video_common/tests/test_worker.py`: o `ack`, a resposta e o progresso são publicados pela *thread* da ligação (`add_callback_threadsafe`), e a ligação é aberta com *heartbeat* diferente de 0 (R5)
+- [X] T004 [P] Teste em `Tools/video_common/tests/test_worker.py`: com um estágio a correr numa *thread* de trabalho (função de processamento falsa e lenta), o `SIGTERM` cancela o consumo, deixa terminar o estágio, publica o `ack` e a resposta, e só depois sai; sem estágio em curso, sai de imediato (R4)
+- [X] T005 [P] Teste em `Tools/video_common/tests/test_worker.py`: o `ack`, a resposta e o progresso são publicados pela *thread* da ligação (`add_callback_threadsafe`), e a ligação é aberta com *heartbeat* diferente de 0 (R5)
 
 ### Implementação
 
