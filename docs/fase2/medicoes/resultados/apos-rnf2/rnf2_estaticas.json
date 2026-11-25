@@ -1,0 +1,162 @@
+{
+  "etiqueta": "apos-rnf2",
+  "commit": "a3dcdac",
+  "N1": {
+    "efeitos_com_duas_implementacoes": 0,
+    "linhas_das_copias_no_video": 0,
+    "pares": []
+  },
+  "N2": {
+    "C1_filtro_brightness": {
+      "ficheiros_a_alterar": [
+        "Tools/effects/brightness.py"
+      ],
+      "n_ficheiros": 1,
+      "servicos_a_reconstruir": [
+        "brightness_tool",
+        "video_edit"
+      ],
+      "n_servicos": 2,
+      "trabalhos_de_video_reimplantados": [
+        "edicao"
+      ],
+      "n_trabalhos_de_video_reimplantados": 1
+    },
+    "C2_versao_whisper": {
+      "ficheiros_a_alterar": [
+        "Tools/video_subtitles/requirements.txt",
+        "Tools/video_subtitles/subtitles.py"
+      ],
+      "n_ficheiros": 2,
+      "servicos_a_reconstruir": [
+        "video_subtitles"
+      ],
+      "n_servicos": 1,
+      "trabalhos_de_video_reimplantados": [
+        "legendagem"
+      ],
+      "n_trabalhos_de_video_reimplantados": 1
+    },
+    "C3_amostragem_fotogramas": {
+      "ficheiros_a_alterar": [
+        "Tools/video_frames/frame_extraction.py"
+      ],
+      "n_ficheiros": 1,
+      "servicos_a_reconstruir": [
+        "video_frames"
+      ],
+      "n_servicos": 1,
+      "trabalhos_de_video_reimplantados": [
+        "extracao_fotogramas"
+      ],
+      "n_trabalhos_de_video_reimplantados": 1
+    }
+  },
+  "N4": {
+    "servicos_de_video": [
+      "video_common",
+      "video_edit",
+      "video_frames",
+      "video_subtitles"
+    ],
+    "modulos_python_video": [
+      {
+        "ficheiro": "Tools/video_common/errors.py",
+        "sloc": 16,
+        "cc_max": 0,
+        "cc_media": 0,
+        "bloco_mais_complexo": null
+      },
+      {
+        "ficheiro": "Tools/video_common/exceptions.py",
+        "sloc": 5,
+        "cc_max": 1,
+        "cc_media": 1.0,
+        "bloco_mais_complexo": "InvalidVideo"
+      },
+      {
+        "ficheiro": "Tools/video_common/frame_validation.py",
+        "sloc": 17,
+        "cc_max": 13,
+        "cc_media": 7.0,
+        "bloco_mais_complexo": "validate_params"
+      },
+      {
+        "ficheiro": "Tools/video_common/local_pipeline.py",
+        "sloc": 137,
+        "cc_max": 20,
+        "cc_media": 9.0,
+        "bloco_mais_complexo": "run"
+      },
+      {
+        "ficheiro": "Tools/video_common/probe.py",
+        "sloc": 45,
+        "cc_max": 19,
+        "cc_media": 19.0,
+        "bloco_mais_complexo": "probe"
+      },
+      {
+        "ficheiro": "Tools/video_common/worker.py",
+        "sloc": 170,
+        "cc_max": 12,
+        "cc_media": 3.0,
+        "bloco_mais_complexo": "callback"
+      },
+      {
+        "ficheiro": "Tools/video_edit/frame_effects.py",
+        "sloc": 34,
+        "cc_max": 6,
+        "cc_media": 6.0,
+        "bloco_mais_complexo": "apply_frame_effects"
+      },
+      {
+        "ficheiro": "Tools/video_edit/video_edit.py",
+        "sloc": 23,
+        "cc_max": 1,
+        "cc_media": 1.0,
+        "bloco_mais_complexo": "process_stage"
+      },
+      {
+        "ficheiro": "Tools/video_edit/video_processor.py",
+        "sloc": 181,
+        "cc_max": 20,
+        "cc_media": 6.38,
+        "bloco_mais_complexo": "_process_video"
+      },
+      {
+        "ficheiro": "Tools/video_frames/frame_extraction.py",
+        "sloc": 65,
+        "cc_max": 14,
+        "cc_media": 10.5,
+        "bloco_mais_complexo": "extract_frames"
+      },
+      {
+        "ficheiro": "Tools/video_frames/video_frames.py",
+        "sloc": 32,
+        "cc_max": 5,
+        "cc_media": 3.33,
+        "bloco_mais_complexo": "stage_info"
+      },
+      {
+        "ficheiro": "Tools/video_subtitles/subtitles.py",
+        "sloc": 64,
+        "cc_max": 7,
+        "cc_media": 3.25,
+        "bloco_mais_complexo": "write_captions"
+      },
+      {
+        "ficheiro": "Tools/video_subtitles/video_subtitles.py",
+        "sloc": 35,
+        "cc_max": 3,
+        "cc_media": 2.5,
+        "bloco_mais_complexo": "validate_tools"
+      }
+    ],
+    "sloc_total_video": 824,
+    "orquestrador": {
+      "ficheiro": "projects/routes/projects.js",
+      "linhas": 2816,
+      "linhas_com_ramificacao_imagem_video": 16
+    }
+  }
+}

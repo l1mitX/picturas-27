@@ -1,5 +1,8 @@
 # Medições da Fase 2
 
+> **Estado (2026-11-25):** RNF2 implementado (`fase2`, `a3dcdac`); `apos-rnf2` parcial — métricas estáticas, N3 e
+> *hashes* feitos, falta a carga (ver «Resultados após o RNF2», no fim).
+>
 > **Estado (2026-11-22):** baseline completa (RNF2 e RNF1, plano mínimo, mais o cenário M6). Escala principal do
 > RNF1 e alvos decididos (relatório, capítulo 6). Próximo passo: refactoring do RNF2 e medição "após RNF2". A pasta
 > `resultados/teste/` é só de teste do script: não é baseline.
@@ -142,3 +145,48 @@ terem arrancado antes das bases de dados. Foram reiniciados e foi feita uma corr
 - **Determinismo verificado:** a referência de vídeo foi gerada duas vezes (`base/` e `base-repeticao/`) e os
   *hashes* são iguais nos 9 casos, incluindo as legendas (Faster-Whisper em CPU). A comparação depois do
   refactoring é, por isso, válida.
+
+## Resultados após o RNF2 (`resultados/apos-rnf2/`) — parcial
+
+Medido a 2026-11-25 sobre o commit `a3dcdac` do `fase2` (RNF2 completo), na mesma máquina e com os mesmos recursos
+do Docker da base (Engine 29.8.0, Compose 5.5.1, 12 CPUs, 7,7 GiB). **Falta a carga** (isolado, M1, M2 e M6, ~50 min),
+que se corre numa só sessão, com a aplicação arrancada com `docker compose up -d --build` e uma corrida de
+aquecimento descartada, como na base.
+
+### RNF2 — métricas estáticas (`rnf2_estaticas.json`)
+
+Deteção ajustada na T043 (ver a nota na secção da base); sobre o commit da base dá os mesmos valores.
+
+| Métrica | Base | Após RNF2 | Alvo / mínimo |
+|---|---|---|---|
+| N1 — efeitos com duas implementações | 8 (18 linhas copiadas) | **0** (0 linhas) | 0 ✅ |
+| N2 — C1 (filtro de brilho) | 2 ficheiros; `brightness_tool` + `video_tool`; 3 trabalhos | 1 ficheiro (`Tools/effects/brightness.py`); `brightness_tool` + `video_edit`; **1** trabalho | 2 serviços, 1 trabalho ✅ |
+| N2 — C2 (Faster-Whisper, principal) | 2 ficheiros; `video_tool`; 3 trabalhos | 2 ficheiros; `video_subtitles`; **1** trabalho | 1 ✅ |
+| N2 — C3 (amostragem de fotogramas) | 1 ficheiro; `video_tool`; 3 trabalhos | 1 ficheiro; `video_frames`; **1** trabalho | 1 ✅ |
+| N4 — serviços de vídeo | 1 | 3 (+ `video_common`, código partilhado) | — |
+| N4 — SLOC Python do vídeo | 601 | 824 (inclui 137 de `local_pipeline.py`, só para testes) | — |
+| N4 — complexidade ciclomática máxima | 22 (`process_video`) | 20 (`_process_video`; e `run` do `local_pipeline.py`, só para testes) | — |
+| N4 — orquestrador `projects/routes/projects.js` | 2733 linhas; 16 com ramificação imagem/vídeo | 2816 linhas (+3 %); 16 | ≤ 3006 (+10 %) ✅ |
+
+### RNF2 — N3 (imagens Docker do vídeo), todas construídas sem *cache* a 2026-11-25
+
+A imagem da base foi reconstruída no mesmo dia a partir de uma cópia do repositório em `0523102`
+(`docker compose -p n3base build --no-cache video_tool`); as novas com `docker compose build --no-cache <serviço>`,
+uma de cada vez, sem a aplicação a correr.
+
+| Imagem | Tamanho | Tempo de build | Maiores camadas |
+|---|---|---|---|
+| `video_tool` (base, reconstruída hoje) | 1,66 GB (1 662 791 342 B) | 190 s | `apt-get` ffmpeg + fontes: 597 MB; `pip` com `faster-whisper`: 437 MB |
+| `video_edit` | **0,86 GB** (856 481 755 B) | 123 s | `apt-get` ffmpeg: 457 MB |
+| `video_subtitles` | 1,66 GB (1 662 803 933 B) | 204 s | `apt-get` ffmpeg + fontes: 597 MB; `pip` com `faster-whisper`: 437 MB |
+| `video_frames` | 0,86 GB (856 422 153 B) | 137 s | `apt-get` ffmpeg: 457 MB |
+
+SC-004: imagem da edição 0,86 GB ≤ 1,23 GB (alvo) ✅ e menor que a da base do mesmo dia (mínimo) ✅, −48 %.
+A edição e a extração deixam de ter o `faster-whisper` e as fontes das legendas (RE-002); a legendagem fica com o
+tamanho da imagem antiga.
+
+### Referência de regressão (`regressao_imagem.json`, `regressao_video.json`)
+
+- Imagem: **9 de 9** iguais à base. Vídeo: **9 de 9** iguais à base (V1–V8 e V1p), corrido na imagem do
+  `video_subtitles` com o repositório montado (R7 do RNF2). INV-001 e SC-007 ✅.
+- Testes (verificados a 2026-11-24 sobre o mesmo código): 68 do `projects` e 101 de vídeo (base: 8 e 74).

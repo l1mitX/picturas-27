@@ -1,0 +1,67 @@
+{
+  "_entrada": "113fa59744c6ea2a43beccb1a8c75668832397c67cb21c4e1a8dc166b49a93a1",
+  "brightness": {
+    "args": "(1.5,)",
+    "tamanho": [
+      320,
+      240
+    ],
+    "hash": "592aeeac8e783a6553352415026c1b0e15345ba2209bb4051435a8ee6981d2ec"
+  },
+  "contrast": {
+    "args": "(1.3,)",
+    "tamanho": [
+      320,
+      240
+    ],
+    "hash": "54ccfb37aa657007977a3b13ef5a71007fe50cc57f1f8544611a1ce0e57d5e4f"
+  },
+  "saturation": {
+    "args": "(0.5,)",
+    "tamanho": [
+      320,
+      240
+    ],
+    "hash": "cccb4e710e2b023cc8b2c8cf33caf16f2dc184a8fa30153ffbcb23888370d914"
+  },
+  "rotate": {
+    "args": "(90,)",
+    "tamanho": [
+      240,
+      320
+    ],
+    "hash": "bb411996fcf0bedfd7f556dc9f2cd3fa5a619a13802c2e32787b70265b6aa90d"
+  },
+  "resize": {
+    "args": "((160, 90),)",
+    "tamanho": [
+      160,
+      90
+    ],
+    "hash": "a8e14bcc373358e2f82779e733a318040f258911df2157c442c1d880c157c6e7"
+  },
+  "binarization": {
+    "args": "(128,)",
+    "tamanho": [
+      320,
+      240
+    ],
+    "hash": "fbe67c3bfdbe1b6ed593af444e62602d658cf1a3db1781f5c07da7622b45dc28"
+  },
+  "cut": {
+    "args": "((40, 30, 280, 200),)",
+    "tamanho": [
+      240,
+      170
+    ],
+    "hash": "ea778e57d30fc249db8e26e5bc908929fc8cf65d766e221624269a455b3753fb"
+  },
+  "border": {
+    "args": "((255, 0, 0), 10)",
+    "tamanho": [
+      340,
+      260
+    ],
+    "hash": "df182ea7267b27b9a6fb51be2bb7c07fb552b891ad271ad6128759e27641252d"
+  }
+}
