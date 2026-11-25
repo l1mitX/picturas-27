@@ -52,6 +52,10 @@ RNF2). Cada uma indica a decisão, a razão e as alternativas.
 - **Razão**: o Compose, ao reduzir réplicas, para contentores com `SIGTERM` e espera o `stop_grace_period`; com este
   tratamento, o vídeo em curso termina na mesma réplica em vez de recomeçar noutra.
 - **Alternativa**: o `video_autoscaler` escolher só réplicas sem trabalho (o Compose não deixa escolher qual réplica para).
+- **Valores (T013, 2026-11-25)**: edição 10 min, legendagem 15 min, extração 5 min. Estimativa a partir da `apos-rnf2`: o vídeo de 177 s
+  leva ~100 s na edição e ~60 s na legendagem; o mais longo permitido (600 s, EV-35) dá ~6 min e ~3,5 min. A margem cobre
+  uma máquina mais lenta e duas legendagens em paralelo; a T022 confirma o valor da legendagem. Uma réplica sem estágio em
+  curso sai logo, por isso o valor só atrasa a paragem de uma réplica que esteja a trabalhar.
 
 ## R5. *Heartbeat* ativo com processamento longo (TAT-13, EV-33, EV-34)
 

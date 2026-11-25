@@ -65,7 +65,7 @@ simultâneo e p95 abaixo de `apos-rnf2`.
 
 - [X] T011 [P] [US1] Em `Tools/video_edit/video_processor.py`, dar ao ficheiro `.part` um nome único (sufixo `uuid`), mantendo o `os.replace` final e a remoção em caso de erro (R7). T009 passa
 - [X] T012 [P] [US1] Em `Tools/video_subtitles/subtitles.py`, proteger a primeira carga de `speech_model()` com `fcntl.flock` num ficheiro de *lock* em `WHISPER_CACHE_DIR` (R8). T010 passa
-- [ ] T013 [US1] Em `docker-compose.yaml`, confirmar que os três serviços de vídeo não têm `container_name` nem portas fixas que impeçam réplicas, e acrescentar `stop_grace_period` (maior do que o estágio mais longo de cada serviço) e `deploy.resources.limits.memory` com os valores decididos em T003 (R4, R9); confirmar que os serviços de vídeo só usam volumes com nome, sem caminhos relativos (R1, cuidado 3)
+- [X] T013 [US1] Em `docker-compose.yaml`, confirmar que os três serviços de vídeo não têm `container_name` nem portas fixas que impeçam réplicas, e acrescentar `stop_grace_period` (maior do que o estágio mais longo de cada serviço) e `deploy.resources.limits.memory` com os valores decididos em T003 (R4, R9); confirmar que os serviços de vídeo só usam volumes com nome, sem caminhos relativos (R1, cuidado 3)
 - [ ] T014 [US1] Verificar H-01 e H-02 com réplicas manuais (`quickstart.md`, secção 2, passo 1) e H-03 (passo 2); registar o resultado no estado das hipóteses (T030)
 - [ ] T015 [US1] Medição exploratória com `--scale video_edit=4` manual e `carga_rnf1.py apos-rnf1-manual paralelo` (pasta separada, não conta como medição final), para confirmar o ganho antes do ajuste automático
 

@@ -259,6 +259,12 @@ services:
       context: ./Tools
       dockerfile: video_edit/Dockerfile
     restart: on-failure
+    # RNF1 T013 (R4, R9, T003): stops after the stage in progress (longest: ~6 min for a 600 s Premium video); 2,1 GiB per replica
+    stop_grace_period: 10m
+    deploy:
+      resources:
+        limits:
+          memory: 2150m
     environment:
       VIDEO_PREVIEW_SECONDS: 3
     networks:
@@ -274,6 +280,12 @@ services:
       context: ./Tools
       dockerfile: video_subtitles/Dockerfile
     restart: on-failure
+    # RNF1 T013 (R4, R9, T003): stops after the stage in progress (longest: subtitles of a 600 s video, confirm in T022); 1,6 GiB
+    stop_grace_period: 15m
+    deploy:
+      resources:
+        limits:
+          memory: 1638m
     environment:
       WHISPER_MODEL: small
       WHISPER_CACHE_DIR: /models/whisper
@@ -292,6 +304,12 @@ services:
       context: ./Tools
       dockerfile: video_frames/Dockerfile
     restart: on-failure
+    # RNF1 T013 (R4, R9, T003): stops after the stage in progress; 512 MiB (to confirm with 100 frames of a 1080p video)
+    stop_grace_period: 5m
+    deploy:
+      resources:
+        limits:
+          memory: 512m
     environment:
       VIDEO_PREVIEW_SECONDS: 3
     networks:
