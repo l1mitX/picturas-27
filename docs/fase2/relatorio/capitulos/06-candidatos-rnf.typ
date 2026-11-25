@@ -58,6 +58,16 @@ CAND-1, o utilizador obtém os mesmos resultados, apenas mais depressa; com o CA
   ),
 )
 
+*Nota sobre os valores da base (25/11).* Os valores medidos na base e os valores-alvo desta tabela foram fixados com as
+medições de 18/11 e não se alteram. Ao medir após o CAND-2 verificou-se que a máquina estava mais rápida: a base, medida
+de novo a 25/11 com o mesmo método, fez o trabalho isolado em 6,4 s (contra 17,8 s) e o M6 em 24,2 s (contra 44,0 s).
+Por isso, os ganhos de tempo avaliam-se sempre contra uma medição feita no mesmo dia (capítulo 10, «Ameaças à
+validade»).
+// [PROPOSTA] da pessoa E, a validar pela equipa: critério de avaliação do M6 com a máquina mais rápida.
+Com a máquina mais rápida, o M6 já fica abaixo dos 30 s antes de haver réplicas (21,8 s após o CAND-2, com os trabalhos
+ainda um de cada vez); o CAND-1 avalia-se, por isso, sobretudo pelo valor mínimo (pelo menos 2 trabalhos em
+simultâneo) e pela comparação com a `apos-rnf2` do mesmo dia.
+
 == Relação entre os dois candidatos
 
 O CAND-2 é *pré-requisito* do CAND-1: o CAND-1 escala cada serviço criado pelo CAND-2, com réplicas ajustadas à fila de
@@ -66,7 +76,9 @@ edições curtas, por isso resolve a maior parte do QS-01 (M1) antes de haver r�
 do CAND-1 é o *M6* (QS-03), que mede o que só as réplicas melhoram, e o M1 fica como medida complementar, cujo ganho se
 atribui sobretudo ao CAND-2. Para que cada candidato seja avaliado por si, as medições fazem-se em *três momentos*, com o
 mesmo método: na base, após o CAND-2 e após o CAND-1. O ganho atribuído ao CAND-2 é o que muda entre a base e o segundo
-momento; o atribuído ao CAND-1 é o que muda entre o segundo e o terceiro. Há também *sinergia*: as imagens de edição e de extração ficam sem
+momento; o atribuído ao CAND-1 é o que muda entre o segundo e o terceiro. (Medido após o CAND-2, a previsão sobre o M1
+cumpriu-se só em parte: o trabalho curto melhora 36 %, mas continua à espera do estágio de edição com que a legendagem
+começa; ver o capítulo 10.) Há também *sinergia*: as imagens de edição e de extração ficam sem
 `faster-whisper`, mais pequenas e mais rápidas a arrancar, o que ajuda a elasticidade (M4). Há um *conflito potencial*
 no comportamento temporal: o CAND-2 acrescenta um salto entre serviços e um MP4 intermédio por estágio (H-06), que se
 vigia medindo o trabalho isolado após cada etapa. Outros RNF afetados: utilização de recursos (mais contentores),
