@@ -117,8 +117,9 @@ mesmo tempo.
 
 *Ameaças à validade.* A velocidade da máquina variou entre dias: a base, medida de novo a 25/11 com o mesmo _script_,
 os mesmos parâmetros e o mesmo aquecimento, fez o trabalho isolado em 6,40 s, contra 17,8 s a 18/11 (e o M6 em 24,2 s,
-contra 44,0 s). A causa não foi identificada (o mais provável é o modo de energia do portátil ou carga de fundo a
-18/11). Para não atribuir ao _refactoring_ um ganho que é da máquina, os tempos comparam-se só entre medições do mesmo
+contra 44,0 s). A causa é a alimentação do portátil: a base de 18/11 foi medida na aula, com o portátil a funcionar
+na bateria e, segundo quem mediu, provavelmente em modo de poupança de energia; as medições de 25/11 foram feitas com o
+portátil ligado à tomada. Para não atribuir ao _refactoring_ um ganho que é da máquina, os tempos comparam-se só entre medições do mesmo
 dia: a base de 25/11 (`docs/fase2/medicoes/resultados/controlo-base-2026-11-25/`) e a `apos-rnf2`. Os valores de 18/11
 mantêm-se nas tabelas, porque foram eles que fixaram os valores-alvo do capítulo 6, que não se alteram. As medidas
 estáticas (N1, N2, N4) e os _hashes_ não dependem da velocidade da máquina; o N3 compara imagens construídas no mesmo

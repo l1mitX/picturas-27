@@ -2,7 +2,8 @@
 
 > **Estado (2026-11-25):** RNF2 implementado (`fase2`, `a3dcdac`); `apos-rnf2` medido (estáticas, N3, *hashes* e
 > carga). **Atenção:** a máquina estava mais rápida a 25/11 do que a 18/11 — a base, medida de novo a 25/11, faz o
-> isolado em 6,4 s (contra 17,8 s). Os tempos só se comparam com a base do mesmo dia (`controlo-base-2026-11-25`,
+> isolado em 6,4 s (contra 17,8 s). A 18/11 o portátil estava na bateria (na aula, provavelmente em poupança de
+> energia); a 25/11, ligado à tomada. Os tempos só se comparam com a base do mesmo dia (`controlo-base-2026-11-25`,
 > isolado, M1, M2 e M6; ver «Resultados após o RNF2», no fim).
 >
 > **Estado (2026-11-22):** baseline completa (RNF2 e RNF1, plano mínimo, mais o cenário M6). Escala principal do
@@ -37,6 +38,11 @@
 7. **N3 (tamanho das imagens):** o `apt-get` não fixa versões, por isso comparar só imagens construídas no mesmo dia.
 8. Valores-alvo e mínimos: estão no relatório (`docs/fase2/relatorio/capitulos/06-candidatos-rnf.typ`, Tabela 18).
    Não os mudar depois de ver os resultados.
+9. **Medir sempre com o portátil ligado à tomada e no modo de energia «Melhor desempenho»**, e registar isso com os
+   resultados (regra acrescentada a 2026-11-25). A base de 18/11 foi medida na bateria e saiu ~2× mais lenta (ver
+   «Resultados após o RNF2»). Mesmo assim, comparar tempos só entre medições do **mesmo dia**: no dia da `apos-rnf1`,
+   correr antes o isolado com o código da `apos-rnf2` como sentinela (deve dar ~5,9 s); se não der, repetir a carga
+   da `apos-rnf2` nesse dia.
 
 Scripts e resultados das medições dos dois RNF. Os scripts são os mesmos em todos os momentos de medição
 (base, após RNF2, após RNF1); só muda a etiqueta da pasta de resultados.
@@ -57,6 +63,7 @@ Comandos exatos no cabeçalho de cada script. Resultados em `resultados/<etiquet
 | Máquina | AMD Ryzen 5 5600H, 15,9 GB RAM, Windows 11 Home |
 | Docker | Docker Desktop, Engine 29.8.0, Compose 5.5.1, WSL2 (kernel 6.18.58.1) |
 | Recursos dados ao Docker | 12 CPUs, 7,7 GiB de RAM |
+| Alimentação | Bateria, na aula; provavelmente em modo de poupança de energia (registado a 2026-11-25, de memória) |
 | Arranque | `docker compose up -d --build` (ver nota abaixo) |
 
 > **Nota sobre o arranque.** Na primeira tentativa, `docker compose up -d` (sem `--build`) reaproveitou imagens
@@ -161,8 +168,8 @@ Os tempos de `apos-rnf2` saíram muito abaixo da base (e.g., isolado p95 5,9 s c
 explica: cada edição curta demorava ~10,5 s a 18/11 e ~5,4 s a 25/11, com saídas iguais (*hashes*). Para separar o
 efeito do código do efeito da máquina, a aplicação da base (`0523102`) foi reconstruída e medida de novo a 25/11, logo
 a seguir, com o mesmo *script*, aquecimento e parâmetros: `resultados/controlo-base-2026-11-25/` (isolado e M6 às
-12:04–12:11 UTC; M1 e M2 às 12:24–12:55 UTC, com aquecimento isolado ×1 e M1 ×1, como na `apos-rnf2`). A base de 25/11 faz o isolado em 6,4 s: **a diferença era da máquina** (causa não identificada;
-hipóteses: modo de energia ou carga de fundo a 18/11). Os tempos de `apos-rnf2` comparam-se, por isso, com a base do
+12:04–12:11 UTC; M1 e M2 às 12:24–12:55 UTC, com aquecimento isolado ×1 e M1 ×1, como na `apos-rnf2`). A base de 25/11 faz o isolado em 6,4 s: **a diferença era da máquina**. Causa: a 18/11 o portátil
+estava na bateria (na aula, provavelmente em poupança de energia); a 25/11 estava ligado à tomada (em casa). Os tempos de `apos-rnf2` comparam-se, por isso, com a base do
 **mesmo dia**; os valores de `base/` (18/11) não servem para tempos (as métricas estáticas, o N3 e os *hashes* não
 dependem da velocidade da máquina).
 

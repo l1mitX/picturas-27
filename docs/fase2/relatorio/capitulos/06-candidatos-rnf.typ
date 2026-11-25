@@ -61,7 +61,7 @@ CAND-1, o utilizador obtém os mesmos resultados, apenas mais depressa; com o CA
 *Nota sobre os valores da base (25/11).* Os valores medidos na base e os valores-alvo desta tabela foram fixados com as
 medições de 18/11 e não se alteram. Ao medir após o CAND-2 verificou-se que a máquina estava mais rápida: a base, medida
 de novo a 25/11 com o mesmo método, fez o trabalho isolado em 6,4 s (contra 17,8 s) e o M6 em 24,2 s (contra 44,0 s).
-Por isso, os ganhos de tempo avaliam-se sempre contra uma medição feita no mesmo dia (capítulo 10, «Ameaças à
+A 18/11 o portátil estava na bateria (provavelmente em modo de poupança de energia); a 25/11, ligado à tomada. Por isso, os ganhos de tempo avaliam-se sempre contra uma medição feita no mesmo dia (capítulo 10, «Ameaças à
 validade»).
 // [PROPOSTA] da pessoa E, a validar pela equipa: critério de avaliação do M6 e meta equivalente (≤ 11 s).
 Com a máquina mais rápida, o M6 já fica abaixo dos 30 s antes de haver réplicas (21,8 s após o CAND-2, com os trabalhos
