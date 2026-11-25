@@ -25,4 +25,11 @@ Uma linha JSON por decisão no *log* do contentor (formato em `data-model.md`, �
   seu estágio mais longo.
 - **Ligação ao RabbitMQ**: *heartbeat* ativo (valor por omissão do broker); `prefetch_count=1`; `ack` manual no fim do
   estágio, publicado a partir da *thread* da ligação (R5).
-- **Registo**: uma linha com data e hora quando consome a primeira mensagem depois de arrancar (R10).
+- **Registo**: uma linha com data e hora quando consome a primeira mensagem depois de arrancar (R10). Formato (fixado
+  a 2026-11-25 para o `elasticidade_m4.py`, T021; a T007 escreve-o): uma linha JSON só com este objeto, impressa uma
+  vez por processo, com `flush`:
+
+  `{"ts": "<ISO 8601, UTC>", "event": "first_message", "queue": "video_edit_queue"}`
+
+  A réplica identifica-se pelo nome do contentor, que o `docker compose logs` põe no início de cada linha. O
+  `elasticidade_m4.py` usa a hora do próprio Docker (`docker compose logs -t`), não o campo `ts`.
