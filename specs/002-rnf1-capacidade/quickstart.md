@@ -58,6 +58,11 @@ Cenários para provar que a *spec* está cumprida. Mesma máquina e mesmos parâ
   persistiu após reconstruir `video_subtitles`; não foi possível atribuí-la com segurança a uma alteração de código
   ou a diferenças de ambiente. T008 permanece pendente e não se deve iniciar a medição final `apos-rnf1` até a
   discrepância ser esclarecida.
+- **2026-11-25 (atualização)**: um colega repetiu a T008 com `rnf1-fase2` na máquina usada para a baseline e obteve
+  9/9 hashes iguais. A evidência `dev-rnf1-maquina-e/regressao_video.json` está noutro *worktree* e ainda não foi
+  commitada. A execução Linux acima continua a divergir em cinco casos; a explicação provável é a diferença de
+  ambiente (número de CPUs/threads do `libx264` ou versão do FFmpeg), ainda não confirmada. T008 concluída com a
+  execução na máquina de referência; as medições finais `apos-rnf1` também devem usar essa máquina e configuração.
 
 Resultados em `docs/fase2/medicoes/resultados/apos-rnf1/`. O ganho do RNF1 é a diferença entre `apos-rnf2` e
 `apos-rnf1`. Hipóteses H-01 a H-05 e H-10 atualizam o Exercício 6, Bloco 1; desvios face à DA-1 vão para o relatório
