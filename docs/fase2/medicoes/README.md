@@ -43,6 +43,20 @@
    «Resultados após o RNF2»). Mesmo assim, comparar tempos só entre medições do **mesmo dia**: no dia da `apos-rnf1`,
    correr antes o isolado com o código da `apos-rnf2` como sentinela (deve dar ~5,9 s); se não der, repetir a carga
    da `apos-rnf2` nesse dia.
+10. **Parâmetros do RNF1 (T003), decididos a 2026-11-25 pela pessoa E** a partir da proposta da IA (ficha e razões em
+    `docs/fase2/T003-decisao-equipa.md`). Não os mudar depois de ver os resultados da `apos-rnf1`:
+
+    | Serviço | Réplicas mín–máx | Trabalhos por réplica | Limite de memória por réplica |
+    |---|---|---|---|
+    | `video_edit` | 1–4 | 1 | 2,1 GiB |
+    | `video_subtitles` | 1–1 | 1 | 1,6 GiB |
+    | `video_frames` | 1–2 | 1 | 512 MiB (a confirmar com uma extração de 100 fotogramas antes da T013) |
+
+    Autoscaler: consulta a cada 5 s; espera de 60 s antes de descer. **M6 oficial com cópias frias** (cada repetição
+    começa com 1 cópia de edição; o `carga_rnf1.py` precisa de uma pausa entre repetições maior do que a espera mais a
+    paragem ordenada, e.g. 120 s). **Quentes** (cópias já subidas) mede-se à parte, em pasta separada, para separar o
+    ganho de capacidade do custo de arrancar cópias. **Alvo do M6:** p95 ≤ 11 s (meta equivalente do cap. 6 do
+    relatório).
 
 Scripts e resultados das medições dos dois RNF. Os scripts são os mesmos em todos os momentos de medição
 (base, após RNF2, após RNF1); só muda a etiqueta da pasta de resultados.
