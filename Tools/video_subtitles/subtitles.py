@@ -3,6 +3,7 @@
 The model is loaded once per worker, lazily, and cached on a Docker volume.
 No speech/audio is a successful no-op; model or encoder failures are errors.
 """
+import fcntl
 import math
 import os
 from pathlib import Path
@@ -15,11 +16,20 @@ from functools import lru_cache
 @lru_cache(maxsize=1)
 def speech_model():
     from faster_whisper import WhisperModel
-    return WhisperModel(
-        os.getenv("WHISPER_MODEL", "small"), device="cpu", compute_type="int8",
-        cpu_threads=int(os.getenv("WHISPER_CPU_THREADS", "2")),
-        download_root=os.getenv("WHISPER_CACHE_DIR", "/models/whisper"),
-    )
+    cache_dir = os.getenv("WHISPER_CACHE_DIR", "/models/whisper")
+    os.makedirs(cache_dir, exist_ok=True)
+    # RNF1 T012 (R8, H-03): the cache is a volume shared by every replica; a file lock makes the
+    # first replica download the model while the others wait and then load it from the cache.
+    with open(os.path.join(cache_dir, ".download.lock"), "w") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        try:
+            return WhisperModel(
+                os.getenv("WHISPER_MODEL", "small"), device="cpu", compute_type="int8",
+                cpu_threads=int(os.getenv("WHISPER_CPU_THREADS", "2")),
+                download_root=cache_dir,
+            )
+        finally:
+            fcntl.flock(lock, fcntl.LOCK_UN)
 
 
 def timestamp(seconds):
