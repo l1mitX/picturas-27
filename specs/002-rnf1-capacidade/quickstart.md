@@ -79,6 +79,26 @@ Cenários para provar que a *spec* está cumprida. Mesma máquina e mesmos parâ
     `docker compose ps` dentro do contentor demorou mais de 30 s, e ficou registada como `{"event": "error"}` por tempo
     esgotado. O ciclo seguinte já correu bem (`hold` nos três serviços), e as chamadas seguintes demoram ~0,2 s. Ou
     seja, um atraso apenas no primeiro ciclo, recuperado sem intervenção.
+- **2026-11-26**: T023, primeira parte (secção 2, passo 3), em Linux, com `video_subtitles=2` e o autoscaler parado.
+  - **H-10 confirmada**: com uma legendagem do vídeo de 177 s em curso na réplica 2, `docker stop` às 01:03:20. A
+    réplica deixou logo de consumir (a fila passou a ter só o consumidor da réplica 1). O vídeo terminou na própria
+    réplica 2 e o resultado chegou ao utilizador às 01:09:36. A réplica saiu com código 0, sem ser morta pelo Docker. A
+    mensagem aparece uma só vez nos registos e a fila tem 0 reentregas: 0 vídeos recomeçados.
+  - **Observação (não reproduzida)**: depois de entregar o vídeo, a réplica ficou ~6,5 min ligada antes de sair. O
+    `docker stop` demorou 767 s, abaixo dos 15 min do `stop_grace_period`. Nesse intervalo, o processo estava no ciclo
+    de rede do `pika`, já sem consumidor no broker. Repetimos o cenário à parte, numa fila própria e com o worker real:
+    um estágio falso de 5 s e de 150 s, o modelo Whisper descarregado no próprio processo, e a legendagem real do
+    vídeo de 177 s (com e sem publicação real do progresso e da resposta). Em todos os casos o processo saiu menos de
+    1 s depois da resposta. Causa não identificada. Impacto se se repetir: uma redução de réplicas demora mais, sem
+    perder nem repetir trabalho; o pior caso é o Docker matar a réplica no fim do `stop_grace_period`, já depois do
+    `ack`. A medição final (T027) e o M4 mostram se volta a acontecer.
+- **2026-11-26**: T023, segunda parte: paragem durante uma redução feita pelo `video_autoscaler`. Uma legendagem do
+  vídeo de 177 s começou na réplica 2 às 01:33:25. Ligámos a réplica 1 e o autoscaler, este com o máximo de 1 réplica
+  de legendagem (T003). Às 01:34:35, passado o `COOLDOWN_SECONDS` (60 s), registou
+  `{"service": "video_subtitles", "pending": 1, "current": 2, "target": 1, "action": "down"}`. O Compose escolheu
+  remover a réplica 2, a que estava ocupada. Esta acabou o vídeo e saiu às 01:36:38, no mesmo segundo em que o
+  resultado chegou ao utilizador (`status=success`). A réplica 1 não recebeu a mensagem, a fila tem 0 reentregas e o
+  autoscaler não registou erros: 0 vídeos recomeçados. Desta vez a réplica saiu logo, sem o atraso da primeira parte.
 
 Resultados em `docs/fase2/medicoes/resultados/apos-rnf1/`. O ganho do RNF1 é a diferença entre `apos-rnf2` e
 `apos-rnf1`. Hipóteses H-01 a H-05 e H-10 atualizam o Exercício 6, Bloco 1; desvios face à DA-1 vão para o relatório

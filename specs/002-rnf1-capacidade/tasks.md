@@ -102,7 +102,7 @@ simultâneo e p95 abaixo de `apos-rnf2`.
 **Teste independente**: `quickstart.md`, secção 2, passos 3 a 6 → SC-006.
 
 - [ ] T022 [US3] Medir a legendagem do vídeo Premium mais longo permitido (600 s, EV-35), sozinha e com 2 legendagens em paralelo; em `rabbitMQ/rabbitmq.conf`, fixar `consumer_timeout` acima da maior duração medida, com margem (e.g., o dobro), ou registar que o valor por omissão (30 min) já tem essa margem (R6, H-04)
-- [ ] T023 [US3] Verificar a H-10 (`docker stop` de uma réplica a meio de uma legendagem: o vídeo termina nessa réplica) e a paragem durante uma redução feita pelo `video_autoscaler`; contar vídeos recomeçados nos registos (SC-006)
+- [X] T023 [US3] Verificar a H-10 (`docker stop` de uma réplica a meio de uma legendagem: o vídeo termina nessa réplica) e a paragem durante uma redução feita pelo `video_autoscaler`; contar vídeos recomeçados nos registos (SC-006)
 - [ ] T024 [US3] Verificar o bloqueio (`docker pause` de uma réplica a meio de um estágio: a mensagem passa para outra réplica depois de o broker detetar a falta de *heartbeat* — intervalo por omissão de 60 s, deteção ao fim de ~2 intervalos, ~2 min); contar mensagens presas (SC-006)
 - [ ] T025 [US3] Verificar a H-05 (cancelar um pipeline com várias réplicas ativas: nada é registado) e a H-04 (a legendagem de T022 termina sem reentrega)
 
