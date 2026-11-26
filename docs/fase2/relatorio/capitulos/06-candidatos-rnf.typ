@@ -63,13 +63,15 @@ medições de 18/11 e não se alteram. Ao medir após o CAND-2 verificou-se que 
 de novo a 25/11 com o mesmo método, fez o trabalho isolado em 6,4 s (contra 17,8 s) e o M6 em 24,2 s (contra 44,0 s).
 A 18/11 o portátil estava na bateria (provavelmente em modo de poupança de energia); a 25/11, ligado à tomada. Por isso, os ganhos de tempo avaliam-se sempre contra uma medição feita no mesmo dia (capítulo 10, «Ameaças à
 validade»).
-// [PROPOSTA] da pessoa E, a validar pela equipa: critério de avaliação do M6 e meta equivalente (≤ 11 s).
 Com a máquina mais rápida, o M6 já fica abaixo dos 30 s antes de haver réplicas (21,8 s após o CAND-2, com os trabalhos
 ainda um de cada vez), por isso essa meta deixa de distinguir o efeito das réplicas. Fixa-se uma *meta equivalente*, a
 25/11 e antes de medir o CAND-1, com a mesma regra da meta original (4 trabalhos em simultâneo demoram cerca de 1,7 vezes
 um trabalho sozinho: 30 s ≈ 1,7 × 17,8 s): com o trabalho isolado da base medido a 25/11 (6,4 s), *M6 p95 ≤ 11 s*. A
 meta de 30 s mantém-se na tabela. O CAND-1 avalia-se pela meta equivalente, pelo valor mínimo (pelo menos 2 trabalhos
-em simultâneo) e pela comparação com a `apos-rnf2` medida no mesmo dia.
+em simultâneo) e pela comparação com a `apos-rnf2` medida no mesmo dia. As outras metas não se ajustam, porque
+continuam a distinguir o efeito do CAND-1: após o CAND-2, o M1 ficava em 108,9 s, longe dos 36 s, e o M4 e o trabalho
+isolado não dependem de comparar com a base (o M4 não existe antes das réplicas; o isolado só não pode piorar). Os
+resultados estão no capítulo 10.
 
 == Relação entre os dois candidatos
 
