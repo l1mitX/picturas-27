@@ -63,6 +63,22 @@ Cenários para provar que a *spec* está cumprida. Mesma máquina e mesmos parâ
   commitada. A execução Linux acima continua a divergir em cinco casos; a explicação provável é a diferença de
   ambiente (número de CPUs/threads do `libx264` ou versão do FFmpeg), ainda não confirmada. T008 concluída com a
   execução na máquina de referência; as medições finais `apos-rnf1` também devem usar essa máquina e configuração.
+- **2026-11-26**: T014 executada (secção 2, passos 1 e 2) em Linux, com o autoscaler parado. É uma verificação de
+  funcionamento, não uma medição, e por isso não precisa da máquina de referência.
+  - **H-01 confirmada**: com `video_edit=2`, dois vídeos do mesmo projeto (`sample_10s_720p.mp4` e `sample_6s.mov`,
+    brilho) foram consumidos um por cada réplica, no mesmo segundo. Os dois resultados chegaram em 34,6 s, com
+    `status=success` e sem erros nos registos.
+  - **H-02 confirmada**: duas pré-visualizações do mesmo vídeo, pedidas em simultâneo, foram processadas por réplicas
+    diferentes ao mesmo tempo e escreveram o mesmo ficheiro (mesma chave de saída). O ficheiro final é um MP4 válido
+    (h264 1280x720 + aac, 3 s) e não ficou nenhum `.part` na pasta do projeto (correção da T011).
+  - **H-03 confirmada**: com o volume `whisper_models` apagado e `video_subtitles=2`, duas legendagens em simultâneo
+    (uma por réplica) terminaram em 255,8 s e 257,8 s, com `status=success`. Só uma réplica descarregou o modelo; a
+    outra esperou pelo cadeado `.download.lock` (correção da T012). A cache ficou com um único modelo
+    (`faster-whisper-small`, 464 MB).
+  - **Autoscaler (T020)**: arrancou e registou a linha `start` com as três políticas. A primeira chamada a
+    `docker compose ps` dentro do contentor demorou mais de 30 s, e ficou registada como `{"event": "error"}` por tempo
+    esgotado. O ciclo seguinte já correu bem (`hold` nos três serviços), e as chamadas seguintes demoram ~0,2 s. Ou
+    seja, um atraso apenas no primeiro ciclo, recuperado sem intervenção.
 
 Resultados em `docs/fase2/medicoes/resultados/apos-rnf1/`. O ganho do RNF1 é a diferença entre `apos-rnf2` e
 `apos-rnf1`. Hipóteses H-01 a H-05 e H-10 atualizam o Exercício 6, Bloco 1; desvios face à DA-1 vão para o relatório
