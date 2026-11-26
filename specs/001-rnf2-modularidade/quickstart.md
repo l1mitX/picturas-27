@@ -54,8 +54,13 @@ Exercício 6, Bloco 1; desvios face à DA-2 vão para o relatório (cap. 8, «De
   - **INV-005**: `frontend/`, `apiGateway/` e `wsGateway/` têm 0 linhas alteradas face a `0523102`; a lista de rotas
     de `projects/routes/projects.js` é igual à da base (mudou só o tratamento interno dos estágios de vídeo).
   - **Observações (comportamento da base, não corrigido)**: (1) o botão de criar projeto não fica bloqueado enquanto os
-    ficheiros carregam, e cliques repetidos criaram 3 projetos iguais; (2) um Apply feito 2 s depois de adicionar uma
-    ferramenta recebeu 409 (`Project version conflict`): adicionar a ferramenta subiu a versão do projeto, mas o
-    browser enviou o Apply com a versão anterior. O Apply não recupera do 409 (mostra «Falha no processamento») e só
-    funcionou depois de recarregar a página; a barra de ferramentas já recarrega o projeto num 409. A lógica de versões do `projects` e o frontend
+    ficheiros carregam, e cliques repetidos criaram 3 projetos iguais; (2) condição de corrida no frontend depois de
+    guardar uma ferramenta: o browser lança em simultâneo `GET` do projeto e `POST /dirty`. O `/dirty` sobe a versão e
+    devolve-a em `X-Project-Version`, que o frontend guarda na cópia do projeto (`bumpProjectVersion`,
+    `frontend/lib/mutations/projects.ts`); se a resposta do `GET`, lida antes dessa escrita, chegar depois, substitui
+    a cópia com a versão anterior. O Apply seguinte recebe 409 (`Project version conflict`, «Falha no
+    processamento»), mesmo esperando, e só funciona depois de recarregar a página; o Apply não recupera do 409, ao
+    contrário da barra de ferramentas. Confirmado na consola do browser às 21:33 (`/dirty` devolveu versão 18; o 409
+    respondeu `serverVersion: 18`) e nos registos: falhou quando o `GET` acabou depois do `/dirty` (21:27:25, 21:33) e
+    funcionou quando acabou antes (21:30:33). Processar duas vezes seguidas sem mexer nas ferramentas funciona. A lógica de versões do `projects` e o frontend
     são os da base. Ficam como trabalho futuro.
