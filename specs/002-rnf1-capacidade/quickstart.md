@@ -93,6 +93,46 @@ Cenários para provar que a *spec* está cumprida. Mesma máquina e mesmos parâ
   remover a réplica 2, a que estava ocupada. Esta acabou o vídeo e saiu às 01:36:38, no mesmo segundo em que o
   resultado chegou ao utilizador (`status=success`). A réplica 1 não recebeu a mensagem, a fila tem 0 reentregas e o
   autoscaler não registou erros: 0 vídeos recomeçados.
+- **2026-11-26**: T022, T024, T025 e uma T028 não oficial, noutra máquina (Intel i7-1165G7, 15,7 GB de RAM,
+  Windows 11 com Docker Desktop/WSL2: 8 CPUs e 7,6 GiB para o Docker), ligada à tomada, depois de
+  `docker compose up -d --build`. São verificações de funcionamento, não medições de referência; num CPU mais lento
+  que o de referência, as durações dão uma margem conservadora para o `consumer_timeout`. Autoscaler parado e réplicas
+  manuais, como na T014 e na T023.
+  - **T022 (H-04)**: legendagem do vídeo Premium de 599 s (`speech_mandela_177s_1080p.webm` repetido, 1080p). O plano
+    `[subtitles]` tem dois estágios, e o `consumer_timeout` conta cada mensagem por confirmar, por isso medimos os dois.
+    Sozinho (1 réplica de cada): edição (normalização) 421 s, legendagem ≤ 247 s, resultado com legendas
+    verificadas. Dois em paralelo (2 réplicas de edição e 2 de legendagem, ferramentas de IA de imagem paradas para
+    libertar memória): edição 860 s e 895 s, legendagem ≤ 871 s e ≤ 837 s; os dois terminaram (`status=ok`). Pior
+    estágio medido: **895 s (14,9 min)**. 0 reentregas e nenhum `OOMKilled` nos dois casos. Decisão (R6):
+    `consumer_timeout = 1800000` (30 min) fixado explicitamente em `rabbitMQ/rabbitmq.conf`, o dobro do pior caso
+    medido; é o valor por omissão, mas deixa de depender dele. Confirmado ativo no *broker*
+    (`application:get_env(rabbit, consumer_timeout)` → `1800000`).
+  - **Atenção (T013)**: o estágio de edição chegou a 895 s em paralelo, acima do `stop_grace_period` da edição
+    (10 min). Uma redução do autoscaler ou um `docker stop` durante uma normalização assim longa mataria o estágio, e o
+    vídeo recomeçaria noutra réplica. A legendagem (875 s) fica perto dos 15 min do seu `stop_grace_period`. Valores a
+    rever pela equipa, eventualmente com as durações da máquina de referência.
+  - **T024 (bloqueio)**: com `video_edit=2`, brilho no vídeo de 177 s. `docker pause` da réplica 2 às 14:21:39, 5 s
+    depois de receber o estágio. O *broker* registou `missed heartbeats from client, timeout: 60s` e fechou a ligação às
+    14:24:27 (**168 s**, ~2,8 intervalos); a mensagem passou logo para a réplica 1, que terminou o vídeo
+    (`status=ok`, 14:27:46). 1 reentrega, a esperada; **0 mensagens presas** até ao `consumer_timeout`. Ao retomar
+    (`docker unpause`), a réplica 2 encontrou a ligação fechada, saiu com erro e o Docker reiniciou-a
+    (`restart: on-failure`); não publicou nenhuma resposta duplicada.
+  - **T025 (H-05)**: pipeline brilho → legendas → contraste em 2 vídeos (177 s e 10 s) do mesmo projeto, com
+    `video_edit=2`. Cancelámos (`DELETE …/process` → 204) com os dois primeiros estágios a correr, um em cada réplica.
+    Os dois estágios acabaram nas suas réplicas, mas o `projects` não enviou a legendagem (0 mensagens na
+    `video_subtitles_queue`), não registou resultados (`GET …/process/url` vazio 20 s depois) e a pasta
+    `stages/<token>/` ficou vazia. 0 reentregas. **H-04** (com a T022): nenhuma legendagem foi reentregue.
+  - **T028, não oficial**: com o autoscaler ligado, `regressao_hashes.py imagem` deu 9/9 iguais à base;
+    `video` deu 4/9 iguais (V3–V6), com as mesmas cinco diferenças das outras máquinas (T008). Controlo no mesmo
+    ambiente: o código da base (`0523102`, num *worktree* temporário) com o mesmo *script* dá **9/9 iguais** ao código
+    atual, por isso as cinco diferenças vêm do ambiente (codificação H.264), não do RNF1. Resultados não guardados no
+    repositório; a T028 oficial fica para a máquina de referência.
+  - **Observações** (fora do âmbito do RNF1, registadas para a equipa): (1) na primeira tentativa da T022 em paralelo,
+    a VM do WSL do Docker Desktop foi abaixo 4,5 min depois de começar e o Docker reiniciou; na repetição, a memória
+    livre do Windows desceu a 333 MB, por isso a causa provável é falta de memória no anfitrião (15,7 GB), não o
+    código. As duas mensagens em curso perderam-se (não voltaram à fila depois do reinício do *broker*). (2) Depois de
+    o RabbitMQ reiniciar, o `projects` deixou de consumir a `project_queue` até ser reiniciado à mão:
+    `projects/utils/rabbit_mq.js` não volta a ligar-se (código da base, inalterado).
 
 Resultados em `docs/fase2/medicoes/resultados/apos-rnf1/`. O ganho do RNF1 é a diferença entre `apos-rnf2` e
 `apos-rnf1`. Hipóteses H-01 a H-05 e H-10 atualizam o Exercício 6, Bloco 1; desvios face à DA-1 vão para o relatório

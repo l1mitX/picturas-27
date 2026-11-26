@@ -101,10 +101,10 @@ simultâneo e p95 abaixo de `apos-rnf2`.
 
 **Teste independente**: `quickstart.md`, secção 2, passos 3 a 6 → SC-006.
 
-- [ ] T022 [US3] Medir a legendagem do vídeo Premium mais longo permitido (600 s, EV-35), sozinha e com 2 legendagens em paralelo; em `rabbitMQ/rabbitmq.conf`, fixar `consumer_timeout` acima da maior duração medida, com margem (e.g., o dobro), ou registar que o valor por omissão (30 min) já tem essa margem (R6, H-04)
+- [X] T022 [US3] Medir a legendagem do vídeo Premium mais longo permitido (600 s, EV-35), sozinha e com 2 legendagens em paralelo; em `rabbitMQ/rabbitmq.conf`, fixar `consumer_timeout` acima da maior duração medida, com margem (e.g., o dobro), ou registar que o valor por omissão (30 min) já tem essa margem (R6, H-04)
 - [X] T023 [US3] Verificar a H-10 (`docker stop` de uma réplica a meio de uma legendagem: o vídeo termina nessa réplica) e a paragem durante uma redução feita pelo `video_autoscaler`; contar vídeos recomeçados nos registos (SC-006)
-- [ ] T024 [US3] Verificar o bloqueio (`docker pause` de uma réplica a meio de um estágio: a mensagem passa para outra réplica depois de o broker detetar a falta de *heartbeat* — intervalo por omissão de 60 s, deteção ao fim de ~2 intervalos, ~2 min); contar mensagens presas (SC-006)
-- [ ] T025 [US3] Verificar a H-05 (cancelar um pipeline com várias réplicas ativas: nada é registado) e a H-04 (a legendagem de T022 termina sem reentrega)
+- [X] T024 [US3] Verificar o bloqueio (`docker pause` de uma réplica a meio de um estágio: a mensagem passa para outra réplica depois de o broker detetar a falta de *heartbeat* — intervalo por omissão de 60 s, deteção ao fim de ~2 intervalos, ~2 min); contar mensagens presas (SC-006)
+- [X] T025 [US3] Verificar a H-05 (cancelar um pipeline com várias réplicas ativas: nada é registado) e a H-04 (a legendagem de T022 termina sem reentrega)
 
 **Checkpoint**: 0 vídeos recomeçados e 0 mensagens presas; cancelamento correto com réplicas.
 
@@ -115,8 +115,8 @@ simultâneo e p95 abaixo de `apos-rnf2`.
 - [X] T026 [P] README curto em `Tools/video_autoscaler/` (o que faz, variáveis, risco do *socket* do Docker)
 - [ ] T027 Medição completa `apos-rnf1` (`quickstart.md`, secção 3): `carga_rnf1.py` (`paralelo`, `m1`, `isolado`, `m2`), `elasticidade_m4.py`, verificação de `OOMKilled` → `docs/fase2/medicoes/resultados/apos-rnf1/`
 - [ ] T028 `regressao_hashes.py imagem` e `video` com o ajuste automático ligado → *hashes* iguais à base (SC-005)
-- [ ] T029 Atualizar a vista «depois» (`docs/fase2/relatorio/images/vista_depois.puml`) se a implementação se afastou da DA-1, e regenerar o SVG
-- [ ] T030 Atualizar o estado de H-01 a H-05 e H-10 em `docs/fase2/exercicios/RAS-exercicio_6_bloco1_SWdesign_template_PT.md` (secção 2.6) e preencher «Implementação» e «Desvios face à decisão» da DA-1 no relatório (cap. 8)
+- [X] T029 Atualizar a vista «depois» (`docs/fase2/relatorio/images/vista_depois.puml`) se a implementação se afastou da DA-1, e regenerar o SVG
+- [X] T030 Atualizar o estado de H-01 a H-05 e H-10 em `docs/fase2/exercicios/RAS-exercicio_6_bloco1_SWdesign_template_PT.md` (secção 2.6) e preencher «Implementação» e «Desvios face à decisão» da DA-1 no relatório (cap. 8)
 
 ---
 
