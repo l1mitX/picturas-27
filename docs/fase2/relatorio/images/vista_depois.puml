@@ -16,9 +16,9 @@ package "RabbitMQ: filas de trabalho" {
 }
 
 package "Workers de vídeo  «tática: dividir o módulo» (DA-2)" {
-  component "video_edit  × N\nefeitos, corte, velocidade\nsem Faster-Whisper" as ve #DCFCE7
-  component "video_subtitles  × N\nFaster-Whisper + fontes" as vs #DCFCE7
-  component "video_frames  × N\nextração de fotogramas" as vf #DCFCE7
+  component "video_edit  × 1–4\nefeitos, corte, velocidade\nsem Faster-Whisper" as ve #DCFCE7
+  component "video_subtitles  × 1\nFaster-Whisper + fontes\n(máx. 1 réplica: memória, T003)" as vs #DCFCE7
+  component "video_frames  × 1–2\nextração de fotogramas" as vf #DCFCE7
 }
 
 package "Workers de imagem" {
@@ -49,13 +49,16 @@ it --> rq
 rq ..> projects : "resultado"
 ve ..> fx : "usa os 8"
 it ..> fx : "cada uma usa o seu"
-asc ..> eq : "lê o tamanho\ndas filas"
-asc --> ve : "acrescenta / retira réplicas\n(API do Docker)"
+asc ..> eq : "lê o tamanho\ndas filas\n(API de gestão)"
+asc --> ve : "acrescenta / retira réplicas\n(docker compose --scale,\nsocket do Docker)"
 
 note bottom of ve
-  O video_autoscaler ajusta as três filas e os três serviços; só retira
-  réplicas sem trabalho, e cada worker mantém o heartbeat numa thread
-  separada («tática: reintrodução ordenada e heartbeat», DA-1, TAT-13).
+  O video_autoscaler lê as três filas e ajusta os três serviços (mín.–máx. e
+  espera de 60 s antes de retirar, T003). Ao retirar, o Compose pode escolher
+  uma réplica ocupada: essa deixa de consumir, acaba o estágio, confirma-o e
+  só depois sai, dentro do stop_grace_period. O estágio corre numa thread
+  separada da ligação, que mantém o heartbeat («tática: reintrodução ordenada
+  e heartbeat», DA-1, TAT-13). Cada serviço tem um limite de memória.
   Todos os workers partilham o volume image_data (EV-08).
 end note
 legend right
