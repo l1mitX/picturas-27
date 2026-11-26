@@ -1,0 +1,26 @@
+[
+  {
+    "cgroup_memory_peak_mib": 218.0,
+    "video": "speech_mandela_177s_1080p.webm",
+    "submissao": 201,
+    "resultados": 100,
+    "duracao_s": 35.8,
+    "mem_max_mib_video_frames": 197.4,
+    "amostras": 16,
+    "oom_restarts": [
+      "/picturas-video_frames-1 false 0"
+    ]
+  },
+  {
+    "cgroup_memory_peak_mib": 224.9,
+    "video": "speech_599s_1080p.webm",
+    "submissao": 201,
+    "resultados": 100,
+    "duracao_s": 31.2,
+    "mem_max_mib_video_frames": 193.6,
+    "amostras": 14,
+    "oom_restarts": [
+      "/picturas-video_frames-1 false 0"
+    ]
+  }
+]

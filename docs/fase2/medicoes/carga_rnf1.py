@@ -24,7 +24,15 @@ Em paralelo amostra CPU e memória dos contentores de vídeo (`docker stats`).
 
 Uso (na raiz do repositório, com a aplicação a correr em https://localhost:8080):
 
-    python docs/fase2/medicoes/carga_rnf1.py <etiqueta> <cenario> [--reps R] [--n 4] [--timeout S]
+    python docs/fase2/medicoes/carga_rnf1.py <etiqueta> <cenario> [--reps R] [--n 4] [--timeout S] [--pausa S]
+
+--pausa S (acrescentado a 2026-11-26, T003): espera S segundos antes de cada repetição, para o `video_autoscaler`
+voltar ao mínimo de réplicas e cada repetição começar com cópias «frias» (decisão T003: M6 oficial com frias). Tem de
+ser maior do que a espera antes de descer (COOLDOWN_SECONDS = 60) mais a paragem das réplicas: usar --pausa 120 na
+`apos-rnf1`. Sem --pausa (0), o comportamento é o da base e da `apos-rnf2` (repetições seguidas); aí a pausa não muda
+nada, porque havia um único *worker*. O CSV regista as réplicas de vídeo no início de cada repetição
+(`replicas_inicio`), para confirmar que começou frio. Para medir «quentes» (complementar), subir as réplicas à mão
+antes (`--scale video_edit=4`), parar o autoscaler e não usar --pausa, com outra etiqueta (e.g., apos-rnf1-quentes).
 
 Comandos usados na baseline (sem --reps nem --n, o script usa estes mesmos valores):
     python docs/fase2/medicoes/carga_rnf1.py base isolado --reps 5
@@ -245,6 +253,8 @@ def main():
     ap.add_argument("--reps", type=int, default=None)
     ap.add_argument("--n", default="4")
     ap.add_argument("--timeout", type=int, default=1800)
+    ap.add_argument("--pausa", type=int, default=0,
+                    help="segundos de espera antes de cada repetição (cópias frias; 120 na apos-rnf1)")
     a = ap.parse_args()
     reps = a.reps or {"isolado": 5, "m1": 5, "m2": 3, "paralelo": 5}[a.cenario]
 
@@ -260,11 +270,15 @@ def main():
             spec = [(f"J{i}", "curto", SHORT_JOB, 0) for i in range(1, n + 1)]
         else:
             spec = [("J1", "legendagem", LONG_JOB, 0)] + [(f"J{i}", "curto", SHORT_JOB, 0) for i in range(2, n + 1)]
+        if a.pausa:
+            print(f"[{a.cenario}] pausa de {a.pausa} s antes da repetição {rep}", flush=True)
+            time.sleep(a.pausa)
+        replicas_inicio = " ".join(video_replicas())
         results, samples = run_round(spec, a.timeout)
         makespan = max((r.get("t_fim_rel_s") or 0) for r in results) - min(r["t_submit_rel_s"] for r in results)
         for r in results:
             rows.append({"cenario": a.cenario, "n": n or len(spec), "repeticao": rep, **r,
-                         "makespan_ronda_s": round(makespan, 3)})
+                         "makespan_ronda_s": round(makespan, 3), "replicas_inicio": replicas_inicio})
         for s in samples:
             res_rows.append({"cenario": a.cenario, "n": n or len(spec), "repeticao": rep, **s})
         print(f"[{a.cenario}] n={n or len(spec)} rep={rep}: " +
@@ -282,7 +296,7 @@ def main():
 
     ok = [r for r in rows if r["estado"] == "ok"]
     summary = {"etiqueta": a.etiqueta, "cenario": a.cenario, "data": datetime.now(timezone.utc).isoformat(),
-               "replicas_video": video_replicas(), "repeticoes": reps,
+               "replicas_video": video_replicas(), "repeticoes": reps, "pausa_s": a.pausa,
                "falhas": [{k: r.get(k) for k in ("n", "repeticao", "trabalho", "estado", "detalhe")}
                           for r in rows if r["estado"] != "ok"]}
     if a.cenario in ("isolado", "m1"):

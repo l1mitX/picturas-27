@@ -50,7 +50,7 @@
     |---|---|---|---|
     | `video_edit` | 1–4 | 1 | 2,1 GiB |
     | `video_subtitles` | 1–1 | 1 | 1,6 GiB |
-    | `video_frames` | 1–2 | 1 | 512 MiB (a confirmar com uma extração de 100 fotogramas antes da T013) |
+    | `video_frames` | 1–2 | 1 | 512 MiB (confirmado a 2026-11-26: 100 fotogramas PNG de 1080p, pico 225 MiB) |
 
     Autoscaler: consulta a cada 5 s; espera de 60 s antes de descer. **M6 oficial com cópias frias** (cada repetição
     começa com 1 cópia de edição; o `carga_rnf1.py` precisa de uma pausa entre repetições maior do que a espera mais a

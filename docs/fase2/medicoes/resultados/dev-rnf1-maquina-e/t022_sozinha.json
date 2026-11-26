@@ -1,0 +1,11 @@
+{
+  "etiqueta": "sozinha",
+  "n": 1,
+  "video": "speech_599s_1080p.webm (speech_mandela_177s_1080p.webm repetido, 599,04 s)",
+  "codigo": "rnf1-fase2 db5507b (serviços de vídeo iguais a 0c4396b); autoscaler ligado",
+  "fonte": "registos com hora dos workers (início de cada estágio) e fila video_subtitles_queue (fim: 0 mensagens por confirmar, consulta a cada 1 s); o script de latência ponta a ponta foi interrompido a meio, por isso não há latência total",
+  "estagio_edicao_s": {"inicio_utc": "2026-11-26T14:45:03.1Z", "fim_utc": "2026-11-26T14:51:40.9Z", "duracao_s": 397.8},
+  "estagio_legendagem_s": {"inicio_utc": "2026-11-26T14:51:40.9Z", "fim_utc": "2026-11-26T14:55:07Z", "duracao_s": 206},
+  "reentregas": 0,
+  "oom_killed": false
+}

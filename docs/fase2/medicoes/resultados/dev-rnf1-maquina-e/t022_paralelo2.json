@@ -1,0 +1,66 @@
+{
+  "etiqueta": "paralelo2",
+  "n": 2,
+  "video": "speech_599s_1080p.webm",
+  "inicio_utc": "2026-11-26T14:56:58+00:00",
+  "trabalhos": [
+    {
+      "trabalho": 1,
+      "estado": "ok",
+      "latencia_s": 880.3,
+      "fim_utc": "2026-11-26T15:11:38+00:00"
+    },
+    {
+      "trabalho": 2,
+      "estado": "ok",
+      "latencia_s": 901.9,
+      "fim_utc": "2026-11-26T15:12:00+00:00"
+    }
+  ],
+  "memoria_max_mib": {
+    "picturas-video_edit-2": 1752.1,
+    "picturas-video_subtitles-2": 1356.8,
+    "picturas-video_subtitles-1": 1498.1,
+    "picturas-video_frames-1": 15.9,
+    "picturas-video_edit-1": 1750.0
+  },
+  "filas_antes": {
+    "video_edit_queue": {
+      "consumers": 2,
+      "redeliver": 0,
+      "deliver": 0
+    },
+    "video_frames_queue": {
+      "consumers": 1,
+      "redeliver": 0,
+      "deliver": 0
+    },
+    "video_subtitles_queue": {
+      "consumers": 2,
+      "redeliver": 0,
+      "deliver": 0
+    }
+  },
+  "filas_depois": {
+    "video_edit_queue": {
+      "consumers": 2,
+      "redeliver": 0,
+      "deliver": 2
+    },
+    "video_frames_queue": {
+      "consumers": 1,
+      "redeliver": 0,
+      "deliver": 0
+    },
+    "video_subtitles_queue": {
+      "consumers": 2,
+      "redeliver": 0,
+      "deliver": 2
+    }
+  },
+  "reentregas": {
+    "video_edit_queue": 0,
+    "video_frames_queue": 0,
+    "video_subtitles_queue": 0
+  }
+}

@@ -304,7 +304,7 @@ services:
       context: ./Tools
       dockerfile: video_frames/Dockerfile
     restart: on-failure
-    # RNF1 T013 (R4, R9, T003): stops after the stage in progress; 512 MiB (to confirm with 100 frames of a 1080p video)
+    # RNF1 T013 (R4, R9, T003): stops after the stage in progress; 512 MiB (confirmed 2026-11-26: 100 PNG frames of a 1080p video, peak 225 MiB)
     stop_grace_period: 5m
     deploy:
       resources:

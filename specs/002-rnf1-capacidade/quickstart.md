@@ -133,6 +133,30 @@ Cenários para provar que a *spec* está cumprida. Mesma máquina e mesmos parâ
     código. As duas mensagens em curso perderam-se (não voltaram à fila depois do reinício do *broker*). (2) Depois de
     o RabbitMQ reiniciar, o `projects` deixou de consumir a `project_queue` até ser reiniciado à mão:
     `projects/utils/rabbit_mq.js` não volta a ligar-se (código da base, inalterado).
+- **2026-11-26**: validação da T022 e confirmação do limite de memória da extração na **máquina de referência**
+  (pessoa E: AMD Ryzen 5 5600H, 15,9 GB de RAM, Docker Desktop 29.8.0 com 12 CPUs e 7,7 GiB), ligada à tomada,
+  código `0c4396b` (o caso sozinho correu em `db5507b`, com os serviços de vídeo iguais). Resultados em
+  `docs/fase2/medicoes/resultados/dev-rnf1-maquina-e/` (`t022_*.json`, `extracao_memoria.json`), onde fica também a
+  prova da T008 (`regressao_video.json`, 9/9 iguais à base). Mesmo vídeo de 599 s da T022.
+  - **T022, sozinha** (autoscaler ligado): edição 398 s, legendagem ~206 s. 0 reentregas, nenhum `OOMKilled`.
+  - **T022, duas em paralelo** (como acima: autoscaler e ferramentas de IA de imagem parados, `video_edit=2`,
+    `video_subtitles=2`): edição 535 s nas duas réplicas, legendagem ≤ 344 s e ≤ 366 s; ponta a ponta 880 s e 902 s,
+    ambos `ok`. **0 reentregas** e nenhum `OOMKilled`. Pior estágio: **535 s (8,9 min)**, 3,4× abaixo do
+    `consumer_timeout` de 30 min: a decisão da T022 confirma-se. A memória livre do Windows desceu a ~1,8 GB, sem
+    falhas do Docker.
+  - **Memória** (pico do *cgroup*, `memory.peak`, inclui a *cache* de ficheiros): edição 1 790 MiB por réplica (limite
+    2 150 MiB, sem eventos `max`); legendagem **no limite** (1 638 MiB) nas duas réplicas, com 315 e 207 eventos `max`
+    (o *kernel* libertou *cache* para não passar o limite) e 0 `oom`; `docker stats`, que não conta essa *cache*,
+    mostrou no máximo 1 498 MiB. **Atenção (T003, linha 7):** o limite da legendagem está justo para o vídeo de 600 s;
+    não matou o serviço, mas a margem é pequena.
+  - **Extração (T003, linha 9)**: 100 fotogramas PNG de vídeos 1080p (177 s e 599 s): pico 218 MiB e 225 MiB, 36 s e
+    31 s, 100 resultados cada, sem eventos `max` nem `oom`. **O limite de 512 MiB confirma-se** (~2,3× o pico).
+  - **Atenção (T013, `stop_grace_period`)**: nesta máquina, o pior estágio de edição (535 s) fica abaixo dos 10 min
+    da edição, mas só com ~1 min de margem; na máquina da T022 (mais lenta) passou para 895 s. A legendagem (≤ 366 s)
+    fica longe dos 15 min. Continua a ser uma decisão da equipa subir o da edição antes da medição `apos-rnf1`.
+  - **`carga_rnf1.py --pausa S`** (decisão T003, M6 com cópias frias): espera S segundos antes de cada repetição e
+    regista as réplicas de vídeo no início de cada uma (`replicas_inicio` no CSV). Testado com `isolado --reps 2
+    --pausa 5` (pasta temporária, apagada). Na `apos-rnf1` usar `--pausa 120`.
 
 Resultados em `docs/fase2/medicoes/resultados/apos-rnf1/`. O ganho do RNF1 é a diferença entre `apos-rnf2` e
 `apos-rnf1`. Hipóteses H-01 a H-05 e H-10 atualizam o Exercício 6, Bloco 1; desvios face à DA-1 vão para o relatório

@@ -126,7 +126,7 @@ Decidido pela pessoa E a 2026-11-25, a partir da **[PROPOSTA da IA]** (sem reuni
 | 6 | Espera antes de descer | 60 s |
 | 7 | Memória da legendagem | 1,6 GiB |
 | 8 | Memória da edição | 2,1 GiB |
-| 9 | Memória da extração | 512 MiB (confirmar com uma extração de 100 fotogramas antes da T013; se passar de ~465 MiB, subir para o medido + ~10 % e registar porquê) |
+| 9 | Memória da extração | 512 MiB (confirmar com uma extração de 100 fotogramas antes da T013; se passar de ~465 MiB, subir para o medido + ~10 % e registar porquê). **Confirmado a 2026-11-26**: pico 225 MiB (`quickstart.md`, «Registo») |
 | — | Opção para a legendagem | (b), máximo 1 |
 | — | M6 oficial | Frias; quentes como medição complementar, em pasta separada, para saber o custo de arrancar cópias |
 | — | Alvo do M6 | p95 ≤ 11 s (meta equivalente do cap. 6); os 30 s ficam na tabela do relatório |
