@@ -183,6 +183,16 @@ Cenários para provar que a *spec* está cumprida. Mesma máquina e mesmos parâ
   campos `*_servidor*` do resumo), além da latência do cliente. Confirmado: aplicado aos registos da T015, reproduz
   p50 14,4 s e p95 20,3 s; num teste curto com o autoscaler ligado (M6 ×1 e isolado ×1, pasta apagada), encontrou
   todos os trabalhos e diferiu do cliente em 0,4–0,9 s (sem paragem da rede nesse teste).
+- **2026-11-26**: **T027 e T028 na máquina de referência** (pessoa E), código `dc37d4e`. Resultados e comparação em
+  `docs/fase2/medicoes/README.md`, «Resultados após o RNF1». Resumo (latência do lado da app): M6 frio p95 18,7 s
+  (`apos-rnf2` do mesmo dia: 23,9 s, −22 %; ≥ 2 em simultâneo ✅; meta de 11 s ❌), M6 quente 11,9 s, M1 p95 18,9 s
+  (116,3 s, −84 %, alvo ≤ 36 s ✅), M4 p50 11,4 s / máx. 12,0 s (alvo ≤ 30 s ✅), isolado 5,7 s (não piora ✅); M2
+  sem ganho de débito. Hashes 9/9 de imagem e 9/9 de vídeo (SC-005 ✅). 0 reentregas e nenhum `oom_kill`. A sentinela
+  deu 7,0 s, por isso a `apos-rnf2` foi repetida no mesmo dia (antes e depois). Antes da medição, o
+  `elasticidade_m4.py` foi corrigido: lia os registos das réplicas depois de o autoscaler as remover e esperava uma
+  linha JSON em vez da linha `[video] first_message_at=… queue=…` que o *worker* escreve (teste novo; 10 testes passam).
+  Nota para a equipa: o `projects` não volta a ligar-se ao RabbitMQ quando este é recriado (ao mudar entre `fase2` e
+  `rnf1-fase2` a imagem do RabbitMQ muda); foi preciso `docker compose restart projects` (problema da base).
 
 Resultados em `docs/fase2/medicoes/resultados/apos-rnf1/`. O ganho do RNF1 é a diferença entre `apos-rnf2` e
 `apos-rnf1`. Hipóteses H-01 a H-05 e H-10 atualizam o Exercício 6, Bloco 1; desvios face à DA-1 vão para o relatório

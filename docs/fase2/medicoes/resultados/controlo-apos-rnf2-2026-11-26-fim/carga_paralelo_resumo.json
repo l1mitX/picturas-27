@@ -1,0 +1,45 @@
+{
+  "etiqueta": "controlo-apos-rnf2-2026-11-26-fim",
+  "cenario": "paralelo",
+  "data": "2026-11-26T17:23:35.666234+00:00",
+  "replicas_video": [
+    "picturas-video_edit-1",
+    "picturas-video_frames-1",
+    "picturas-video_subtitles-1"
+  ],
+  "repeticoes": 5,
+  "pausa_s": 0,
+  "latencia_servidor_em_falta": 0,
+  "falhas": [],
+  "por_n": {
+    "4": {
+      "debito_videos_min_media": 9.78,
+      "makespan_s_p50": 24.346,
+      "latencia_s_p50": 15.42,
+      "latencia_s_p95": 24.443,
+      "latencia_curtos_s_p95": 24.443,
+      "debito_servidor_videos_min_media": 9.964,
+      "makespan_servidor_s_p50": 23.83,
+      "latencia_servidor_s_p50": 15.04,
+      "latencia_servidor_s_p95": 23.874,
+      "latencia_curtos_servidor_s_p95": 23.874
+    }
+  },
+  "recursos_video": {
+    "picturas-video_subtitles-1": {
+      "mem_mib_max": 16.9,
+      "cpu_pct_media": 0.0,
+      "cpu_pct_max": 0.02
+    },
+    "picturas-video_edit-1": {
+      "mem_mib_max": 759.5,
+      "cpu_pct_media": 240.5,
+      "cpu_pct_max": 293.5
+    },
+    "picturas-video_frames-1": {
+      "mem_mib_max": 23.3,
+      "cpu_pct_media": 0.0,
+      "cpu_pct_max": 0.02
+    }
+  }
+}

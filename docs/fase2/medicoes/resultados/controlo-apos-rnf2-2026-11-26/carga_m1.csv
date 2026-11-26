@@ -1,0 +1,11 @@
+cenario,n,repeticao,trabalho,papel,media,pipeline,projeto,t_submit_rel_s,estado,latencia_s,t_fim_rel_s,makespan_ronda_s,replicas_inicio,latencia_servidor_s,makespan_servidor_s
+m1,2,1,A,legendagem,speech_mandela_177s_1080p.webm,subtitles,6b08570b9bad5c5a48e4b089,0.0,ok,170.962,170.962,170.962,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,170.812,170.812
+m1,2,1,B,curto,sample_10s_720p.mp4,brightness,6b08570c9bad5c5a48e4b0a5,5.0,ok,103.316,108.317,170.962,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,102.971,170.812
+m1,2,2,A,legendagem,speech_mandela_177s_1080p.webm,subtitles,6b0857b99bad5c5a48e4b926,0.0,ok,178.729,178.729,178.729,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,178.284,178.284
+m1,2,2,B,curto,sample_10s_720p.mp4,brightness,6b0857bb9bad5c5a48e4b942,5.0,ok,118.98,123.98,178.729,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,118.336,178.284
+m1,2,3,A,legendagem,speech_mandela_177s_1080p.webm,subtitles,6b0858719bad5c5a48e4c27b,0.0,ok,155.025,155.025,155.025,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,154.631,154.631
+m1,2,3,B,curto,sample_10s_720p.mp4,brightness,6b0858729bad5c5a48e4c297,5.0,ok,97.218,102.218,155.025,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,96.972,154.631
+m1,2,4,A,legendagem,speech_mandela_177s_1080p.webm,subtitles,6b08590f9bad5c5a48e4ca78,0.0,ok,165.722,165.723,165.723,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,165.408,165.408
+m1,2,4,B,curto,sample_10s_720p.mp4,brightness,6b0859109bad5c5a48e4ca94,5.0,ok,108.293,113.293,165.723,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,107.95,165.408
+m1,2,5,A,legendagem,speech_mandela_177s_1080p.webm,subtitles,6b0859b89bad5c5a48e4d321,0.0,ok,166.189,166.189,166.189,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,165.71,165.71
+m1,2,5,B,curto,sample_10s_720p.mp4,brightness,6b0859b89bad5c5a48e4d33d,5.0,ok,107.84,112.841,166.189,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,107.273,165.71

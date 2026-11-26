@@ -1,0 +1,6 @@
+cenario,n,repeticao,trabalho,papel,media,pipeline,projeto,t_submit_rel_s,estado,latencia_s,t_fim_rel_s,makespan_ronda_s,replicas_inicio,latencia_servidor_s,makespan_servidor_s
+isolado,1,1,B,curto,sample_10s_720p.mp4,brightness,6b086a580b87f597268c2b2f,0.0,ok,6.434,6.434,6.434,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,6.307,6.307
+isolado,1,2,B,curto,sample_10s_720p.mp4,brightness,6b086a620b87f597268c2ba0,0.0,ok,6.362,6.362,6.362,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,6.184,6.184
+isolado,1,3,B,curto,sample_10s_720p.mp4,brightness,6b086a6c0b87f597268c2c11,0.0,ok,6.449,6.449,6.449,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,6.176,6.176
+isolado,1,4,B,curto,sample_10s_720p.mp4,brightness,6b086a750b87f597268c2c82,0.0,ok,6.428,6.428,6.428,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,6.148,6.148
+isolado,1,5,B,curto,sample_10s_720p.mp4,brightness,6b086a7e0b87f597268c2cf3,0.0,ok,6.39,6.391,6.391,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,6.057,6.057

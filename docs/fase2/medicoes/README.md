@@ -1,5 +1,8 @@
 # Medições da Fase 2
 
+> **Estado (2026-11-26):** RNF1 implementado (`rnf1-fase2`) e `apos-rnf1` medido (T027, T028), com a `apos-rnf2`
+> repetida no mesmo dia antes e depois (a sentinela não deu os 5,9 s de 25/11). Ver «Resultados após o RNF1», no fim.
+>
 > **Estado (2026-11-25):** RNF2 implementado (`fase2`, `a3dcdac`); `apos-rnf2` medido (estáticas, N3, *hashes* e
 > carga). **Atenção:** a máquina estava mais rápida a 25/11 do que a 18/11 — a base, medida de novo a 25/11, faz o
 > isolado em 6,4 s (contra 17,8 s). A 18/11 o portátil estava na bateria (na aula, provavelmente em poupança de
@@ -256,3 +259,49 @@ tamanho da imagem antiga.
 - Imagem: **9 de 9** iguais à base. Vídeo: **9 de 9** iguais à base (V1–V8 e V1p), corrido na imagem do
   `video_subtitles` com o repositório montado (R7 do RNF2). INV-001 e SC-007 ✅.
 - Testes (verificados a 2026-11-24 sobre o mesmo código): 68 do `projects` e 101 de vídeo (base: 8 e 74).
+
+## Resultados após o RNF1 (`resultados/apos-rnf1/`)
+
+Medido a 2026-11-26 na máquina de referência (pessoa E: Ryzen 5 5600H, Docker Desktop 29.8.0, 12 CPUs, 7,7 GiB),
+ligada à tomada, Windows em «Melhor desempenho» e plano da Lenovo «Legion Balance Mode» em toda a sessão. Código
+`rnf1-fase2` `dc37d4e` (autoscaler com os parâmetros da T003; `stop_grace_period` da edição a 20 min). Valores
+oficiais: **latência do lado da app** (ponto 11); a do cliente fica nos CSV e resumos.
+
+**Sentinela e controlo no mesmo dia.** A sentinela (`isolado` com o código da `apos-rnf2`) deu 7,0 s no cliente
+(25/11: 5,9 s), por isso a carga da `apos-rnf2` foi repetida no mesmo dia, com o mesmo código (`fase2` `e2c88b2`, a
+app igual à de `63ae616`) e o mesmo *script*: `controlo-apos-rnf2-2026-11-26` (15:50–16:20 UTC: isolado, M6, M1, M2)
+e, depois do RNF1, `controlo-apos-rnf2-2026-11-26-fim` (17:25 UTC: isolado e M6). O PC acelerou ao longo da tarde
+(isolado do lado da app: 6,78 → 5,46 (RNF1) → 6,18 s), por isso **o M6 compara-se com o controlo do fim**, o mais
+favorável à `apos-rnf2` (dá o ganho mais pequeno); o M1 e o M2 só têm o controlo do início.
+
+| Medida (latência do lado da app) | `apos-rnf2` hoje (início / fim) | `apos-rnf1` | Diferença | Alvo / mínimo (cap. 6) |
+|---|---|---|---|---|
+| **M6** frio (oficial): p50 / p95 | 16,0 / 26,6 s · 15,0 / **23,9 s** | 16,4 / **18,7 s** | **−22 % no p95** (fim) | p95 ≤ 11 s ❌ / ≥ 2 em simultâneo ✅ |
+| M6 débito | 9,4 · 10,0 vídeos/min | 13,1 vídeos/min | +31 % | — |
+| M6 quente (complementar, `apos-rnf1-quentes`): p50 / p95 | — | 11,1 / 11,9 s; 20,8 vídeos/min | −50 % no p95 | p95 ≤ 11 s ❌ (por 0,9 s) |
+| **M1** (curto 5 s depois de uma legendagem): p50 / p95 | 107,3 / 116,3 s | 16,5 / **18,9 s** | **−84 % no p95** | p95 ≤ 36 s ✅ / ≤ 50 s ✅ |
+| M1: legendagem, p50 | 165,7 s | 168,3 s | igual | — |
+| M2: débito / p95 dos curtos | 1,34 vídeos/min / 16,3 s | 1,37 vídeos/min / 19,3 s | +2 % / +19 % | — |
+| Isolado: p50 / p95 | 6,78 / 7,99 · 6,18 / 6,28 s | 5,46 / 5,67 s | não piora ✅ | p95 ≤ 19,6 s ✅ |
+| **M4** (`elasticidade_m4.json`): p50 / máximo | — | **11,4 / 12,0 s** (decisão 10,1 s + arranque 1,3 s) | — | ≤ 30 s ✅ / ≤ 60 s ✅ |
+| M4: volta ao mínimo, p50 / máximo | — | 62,6 / 65,5 s (espera de 60 s) | — | — |
+
+- **M6:** todas as rondas começaram frias (1 réplica de edição, coluna `replicas_inicio`). A réplica que já existe faz
+  2 dos 4 trabalhos; o autoscaler sobe ~5–10 s depois do *Apply* e as réplicas novas consomem ~1,3 s depois, por isso
+  os 4 acabam em ~6, ~13 e ~18 s, em vez da escada de ~6/12/18/24 s da `apos-rnf2`. Pelo menos 3 trabalhos correram ao
+  mesmo tempo (mínimo ✅). A meta equivalente (11 s) não se cumpre, nem com quentes (11,9 s): com 4 réplicas, cada
+  trabalho demora ~2× o isolado (disputam os 12 CPUs). Com frias, soma-se o tempo de reação do autoscaler.
+- **M1:** é o maior ganho. O curto deixa de esperar na fila da edição atrás do estágio de edição da legendagem (o
+  autoscaler sobe uma segunda réplica de edição). Atribuível ao RNF1 (CAND-1), porque a comparação é com a `apos-rnf2`.
+- **M2:** o débito não muda (é limitado pela legendagem, ~170 s). O p95 dos curtos sobe 3 s: os 3 curtos e o estágio
+  de edição da legendagem chegam ao mesmo tempo e esperam pela subida das réplicas; a variação também inclui o PC.
+- **Latência do cliente:** no M6 frio, 3 dos 20 trabalhos foram vistos pelo cliente ~41 s (paragem da rede Windows →
+  Docker, como na T015), contra 12–18 s do lado da app; o p95 do cliente (41,5 s) não é válido.
+- **Preservação (T028, `regressao_imagem.json`, `regressao_video.json`):** imagem **9/9** e vídeo **9/9** iguais à
+  base. SC-005 ✅.
+- **Memória e falhas:** 0 reentregas nas filas de vídeo (107 mensagens da edição, 8 da legendagem) e nenhum
+  `oom_kill` nos contadores do *cgroup* das réplicas que ficaram ligadas toda a medição. Pico da edição 1 793 MiB
+  (limite 2 150); a legendagem chegou ao limite (1 638 MiB, 557 eventos `max`, 0 `oom`) no M1/M2, como na T022.
+- **M4:** o *script* foi corrigido antes desta medição (registos das réplicas lidos antes de o autoscaler as remover;
+  formato real da linha `first_message_at` do *worker*); a primeira tentativa, sem a correção, não encontrou as
+  réplicas novas e foi descartada.

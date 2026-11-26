@@ -105,3 +105,12 @@ def test_summarize_gives_p50_and_max_and_counts_missing_rounds():
     assert s["m4_s"] == {"n": 4, "p50": pytest.approx(10.5), "max": 12.0}
     assert s["volta_ao_minimo_s"]["max"] == 35.0
     assert s["rondas_sem_replica_nova"] == 1
+
+
+def test_first_messages_reads_the_text_line_the_worker_writes():
+    # formato real de Tools/video_common/worker.py (T007): "[video] first_message_at=<hora> queue=<fila>"
+    logs = ("video_edit-2  | 2026-11-26T10:00:09.250000000Z [video] first_message_at=2026-11-26T10:00:09.249000+00:00 "
+            "queue=video_edit_queue\n"
+            "video_frames-1  | 2026-11-26T10:00:11.000000000Z [video] first_message_at=2026-11-26T10:00:11+00:00 "
+            "queue=video_frames_queue\n")
+    assert first_messages(parse_logs(logs), "video_edit_queue") == {"video_edit-2": at(9.25)}

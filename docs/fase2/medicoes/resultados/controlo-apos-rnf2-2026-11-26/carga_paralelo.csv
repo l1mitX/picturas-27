@@ -1,0 +1,21 @@
+cenario,n,repeticao,trabalho,papel,media,pipeline,projeto,t_submit_rel_s,estado,latencia_s,t_fim_rel_s,makespan_ronda_s,replicas_inicio,latencia_servidor_s,makespan_servidor_s
+paralelo,4,1,J1,curto,sample_10s_720p.mp4,brightness,6b0856639bad5c5a48e4a1ad,0.0,ok,20.717,20.717,27.108,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,20.136,26.619
+paralelo,4,1,J2,curto,sample_10s_720p.mp4,brightness,6b0856649bad5c5a48e4a1c9,0.0,ok,7.584,7.584,27.108,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,6.905,26.619
+paralelo,4,1,J3,curto,sample_10s_720p.mp4,brightness,6b0856649bad5c5a48e4a1e5,0.001,ok,14.329,14.33,27.108,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,13.664,26.619
+paralelo,4,1,J4,curto,sample_10s_720p.mp4,brightness,6b0856649bad5c5a48e4a201,0.001,ok,27.107,27.108,27.108,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,26.562,26.619
+paralelo,4,2,J1,curto,sample_10s_720p.mp4,brightness,6b0856829bad5c5a48e4a4bd,0.001,ok,20.673,20.674,27.015,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,20.059,26.781
+paralelo,4,2,J2,curto,sample_10s_720p.mp4,brightness,6b0856839bad5c5a48e4a4d9,0.001,ok,13.999,14.0,27.015,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,13.627,26.781
+paralelo,4,2,J3,curto,sample_10s_720p.mp4,brightness,6b0856839bad5c5a48e4a4f5,0.0,ok,7.52,7.52,27.015,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,6.851,26.781
+paralelo,4,2,J4,curto,sample_10s_720p.mp4,brightness,6b0856849bad5c5a48e4a511,0.001,ok,27.014,27.015,27.015,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,26.72,26.781
+paralelo,4,3,J1,curto,sample_10s_720p.mp4,brightness,6b0856a19bad5c5a48e4a7c9,0.0,ok,13.355,13.355,25.96,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,12.86,25.459
+paralelo,4,3,J2,curto,sample_10s_720p.mp4,brightness,6b0856a29bad5c5a48e4a7e5,0.001,ok,19.608,19.609,25.96,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,19.34,25.459
+paralelo,4,3,J3,curto,sample_10s_720p.mp4,brightness,6b0856a29bad5c5a48e4a801,0.0,ok,25.96,25.96,25.96,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,25.409,25.459
+paralelo,4,3,J4,curto,sample_10s_720p.mp4,brightness,6b0856a29bad5c5a48e4a81d,0.0,ok,6.485,6.485,25.96,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,6.315,25.459
+paralelo,4,4,J1,curto,sample_10s_720p.mp4,brightness,6b0856c09bad5c5a48e4aab9,0.001,ok,25.402,25.402,25.401,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,25.138,25.162
+paralelo,4,4,J2,curto,sample_10s_720p.mp4,brightness,6b0856c19bad5c5a48e4aad5,0.001,ok,7.029,7.03,25.401,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,6.444,25.162
+paralelo,4,4,J3,curto,sample_10s_720p.mp4,brightness,6b0856c19bad5c5a48e4aaf1,0.001,ok,13.395,13.396,25.401,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,12.761,25.162
+paralelo,4,4,J4,curto,sample_10s_720p.mp4,brightness,6b0856c19bad5c5a48e4ab0d,0.001,ok,19.632,19.633,25.401,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,18.924,25.162
+paralelo,4,5,J1,curto,sample_10s_720p.mp4,brightness,6b0856dd9bad5c5a48e4ada9,0.001,ok,24.878,24.878,24.878,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,24.188,24.222
+paralelo,4,5,J2,curto,sample_10s_720p.mp4,brightness,6b0856dd9bad5c5a48e4adc5,0.001,ok,6.448,6.449,24.878,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,6.306,24.222
+paralelo,4,5,J3,curto,sample_10s_720p.mp4,brightness,6b0856de9bad5c5a48e4ade1,0.001,ok,12.786,12.786,24.878,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,12.376,24.222
+paralelo,4,5,J4,curto,sample_10s_720p.mp4,brightness,6b0856de9bad5c5a48e4adfd,0.0,ok,18.979,18.98,24.878,picturas-video_edit-1 picturas-video_frames-1 picturas-video_subtitles-1,18.327,24.222

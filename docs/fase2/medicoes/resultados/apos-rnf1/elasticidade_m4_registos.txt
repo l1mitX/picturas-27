@@ -1,0 +1,84 @@
+===== repetição 1
+video_edit-4  | 2026-11-26T17:09:22.705035215Z [video] waiting for jobs on video_edit_queue
+video_edit-4  | 2026-11-26T17:09:22.705088901Z [video] first_message_at=2026-11-26T17:09:22.704915+00:00 queue=video_edit_queue
+video_edit-4  | 2026-11-26T17:09:22.705094893Z [video] msg=request-fdfcccff-f8f6-44aa-af09-0c4c810b3ed7 preview=False tools=['brightness']
+video_edit-2  | 2026-11-26T17:09:23.111417407Z [video] waiting for jobs on video_edit_queue
+video_edit-1  | 2026-11-26T17:09:15.075062856Z [video] msg=request-43a1637b-5ad2-4369-a8d7-ec5bf126530b preview=False tools=['brightness']
+video_edit-1  | 2026-11-26T17:09:20.474276306Z [video] msg=request-0dc8cc12-3962-4025-a5da-055f7abc3fd6 preview=False tools=['brightness']
+video_edit-3  | 2026-11-26T17:09:22.459008563Z [video] waiting for jobs on video_edit_queue
+video_edit-3  | 2026-11-26T17:09:22.459066668Z [video] first_message_at=2026-11-26T17:09:22.458883+00:00 queue=video_edit_queue
+video_edit-3  | 2026-11-26T17:09:22.459123650Z [video] msg=request-699937c1-a6c7-4938-a9c5-da15d8157e21 preview=False tools=['brightness']
+video_autoscaler-1  | 2026-11-26T17:09:21.247872587Z {"ts": "2026-11-26T17:09:21.247+00:00", "service": "video_edit", "pending": 4, "current": 1, "target": 4, "action": "up"}
+video_autoscaler-1  | 2026-11-26T17:09:26.411788287Z {"ts": "2026-11-26T17:09:26.410+00:00", "service": "video_edit", "pending": 4, "current": 4, "target": 4, "action": "hold"}
+video_autoscaler-1  | 2026-11-26T17:09:31.273363936Z {"ts": "2026-11-26T17:09:31.273+00:00", "service": "video_edit", "pending": 3, "current": 4, "target": 4, "action": "hold"}
+video_autoscaler-1  | 2026-11-26T17:09:36.229486137Z {"ts": "2026-11-26T17:09:36.229+00:00", "service": "video_edit", "pending": 0, "current": 4, "target": 4, "action": "hold"}
+video_autoscaler-1  | 2026-11-26T17:10:36.218680768Z {"ts": "2026-11-26T17:10:36.218+00:00", "service": "video_edit", "pending": 0, "current": 4, "target": 1, "action": "down"}
+
+===== repetição 2
+video_edit-2  | 2026-11-26T17:10:53.196070313Z [video] waiting for jobs on video_edit_queue
+video_edit-3  | 2026-11-26T17:10:52.546866876Z [video] waiting for jobs on video_edit_queue
+video_edit-1  | 2026-11-26T17:10:40.756964239Z [video] msg=request-45ec6e95-7045-465f-a350-595feddc379f preview=False tools=['brightness']
+video_edit-1  | 2026-11-26T17:10:46.409710762Z [video] msg=request-44d0ce62-034a-4f59-bc14-a278726e6d53 preview=False tools=['brightness']
+video_edit-3  | 2026-11-26T17:10:52.546935370Z [video] first_message_at=2026-11-26T17:10:52.546762+00:00 queue=video_edit_queue
+video_edit-3  | 2026-11-26T17:10:52.546972494Z [video] msg=request-06d6cb42-8b32-4e16-a637-60b97e977057 preview=False tools=['brightness']
+video_edit-1  | 2026-11-26T17:10:52.317869050Z [video] msg=request-3e4a469e-a70b-4565-8320-8c58a37ca8ea preview=False tools=['brightness']
+video_edit-4  | 2026-11-26T17:10:52.808047928Z [video] waiting for jobs on video_edit_queue
+video_autoscaler-1  | 2026-11-26T17:10:36.218680768Z {"ts": "2026-11-26T17:10:36.218+00:00", "service": "video_edit", "pending": 0, "current": 4, "target": 1, "action": "down"}
+video_autoscaler-1  | 2026-11-26T17:10:41.238410067Z {"ts": "2026-11-26T17:10:41.238+00:00", "service": "video_edit", "pending": 0, "current": 1, "target": 1, "action": "hold"}
+video_autoscaler-1  | 2026-11-26T17:10:51.276993376Z {"ts": "2026-11-26T17:10:51.276+00:00", "service": "video_edit", "pending": 4, "current": 1, "target": 4, "action": "up"}
+video_autoscaler-1  | 2026-11-26T17:10:56.312469625Z {"ts": "2026-11-26T17:10:56.312+00:00", "service": "video_edit", "pending": 3, "current": 4, "target": 4, "action": "hold"}
+video_autoscaler-1  | 2026-11-26T17:11:01.240265854Z {"ts": "2026-11-26T17:11:01.240+00:00", "service": "video_edit", "pending": 2, "current": 4, "target": 4, "action": "hold"}
+video_autoscaler-1  | 2026-11-26T17:11:06.239678982Z {"ts": "2026-11-26T17:11:06.239+00:00", "service": "video_edit", "pending": 0, "current": 4, "target": 4, "action": "hold"}
+video_autoscaler-1  | 2026-11-26T17:12:01.239673387Z {"ts": "2026-11-26T17:12:01.239+00:00", "service": "video_edit", "pending": 0, "current": 4, "target": 1, "action": "down"}
+
+===== repetição 3
+video_edit-1  | 2026-11-26T17:12:06.053183157Z [video] msg=request-3751f285-47ec-4ca9-b5ea-330940c5a2ab preview=False tools=['brightness']
+video_edit-1  | 2026-11-26T17:12:11.538344278Z [video] msg=request-be6359a8-d0e8-41c0-974c-d92281e53dc5 preview=False tools=['brightness']
+video_edit-4  | 2026-11-26T17:12:12.904525057Z [video] waiting for jobs on video_edit_queue
+video_edit-4  | 2026-11-26T17:12:12.904578051Z [video] first_message_at=2026-11-26T17:12:12.904410+00:00 queue=video_edit_queue
+video_edit-4  | 2026-11-26T17:12:12.904779216Z [video] msg=request-dffad4e0-186e-4206-b0d8-670d104591cf preview=False tools=['brightness']
+video_edit-2  | 2026-11-26T17:12:13.250874174Z [video] waiting for jobs on video_edit_queue
+video_edit-3  | 2026-11-26T17:12:12.607484093Z [video] waiting for jobs on video_edit_queue
+video_edit-3  | 2026-11-26T17:12:12.607532889Z [video] first_message_at=2026-11-26T17:12:12.607388+00:00 queue=video_edit_queue
+video_edit-3  | 2026-11-26T17:12:12.607604485Z [video] msg=request-7a129c78-8da4-4d4d-8525-f15a688b75df preview=False tools=['brightness']
+video_autoscaler-1  | 2026-11-26T17:12:01.239673387Z {"ts": "2026-11-26T17:12:01.239+00:00", "service": "video_edit", "pending": 0, "current": 4, "target": 1, "action": "down"}
+video_autoscaler-1  | 2026-11-26T17:12:06.211502111Z {"ts": "2026-11-26T17:12:06.211+00:00", "service": "video_edit", "pending": 0, "current": 1, "target": 1, "action": "hold"}
+video_autoscaler-1  | 2026-11-26T17:12:11.233520387Z {"ts": "2026-11-26T17:12:11.233+00:00", "service": "video_edit", "pending": 4, "current": 1, "target": 4, "action": "up"}
+video_autoscaler-1  | 2026-11-26T17:12:16.423455618Z {"ts": "2026-11-26T17:12:16.422+00:00", "service": "video_edit", "pending": 3, "current": 4, "target": 4, "action": "hold"}
+video_autoscaler-1  | 2026-11-26T17:12:31.226087311Z {"ts": "2026-11-26T17:12:31.225+00:00", "service": "video_edit", "pending": 0, "current": 4, "target": 4, "action": "hold"}
+video_autoscaler-1  | 2026-11-26T17:13:21.236607436Z {"ts": "2026-11-26T17:13:21.236+00:00", "service": "video_edit", "pending": 0, "current": 4, "target": 1, "action": "down"}
+
+===== repetição 4
+video_edit-3  | 2026-11-26T17:13:37.724406309Z [video] waiting for jobs on video_edit_queue
+video_edit-1  | 2026-11-26T17:13:26.216737676Z [video] msg=request-e9ecd02d-15ba-4003-aa71-bd83e3a31c79 preview=False tools=['brightness']
+video_edit-1  | 2026-11-26T17:13:31.655256348Z [video] msg=request-75578da4-6efa-4656-801c-750bfbdfea35 preview=False tools=['brightness']
+video_edit-1  | 2026-11-26T17:13:37.195971839Z [video] msg=request-25ad1286-919b-4ac9-af01-413e3c4f1286 preview=False tools=['brightness']
+video_edit-4  | 2026-11-26T17:13:38.005879293Z [video] waiting for jobs on video_edit_queue
+video_edit-2  | 2026-11-26T17:13:37.483306879Z [video] waiting for jobs on video_edit_queue
+video_edit-2  | 2026-11-26T17:13:37.483345603Z [video] first_message_at=2026-11-26T17:13:37.483189+00:00 queue=video_edit_queue
+video_edit-2  | 2026-11-26T17:13:37.483348889Z [video] msg=request-3db5213e-d8dc-4ab9-a40d-d6563c28cb18 preview=False tools=['brightness']
+video_autoscaler-1  | 2026-11-26T17:13:21.236607436Z {"ts": "2026-11-26T17:13:21.236+00:00", "service": "video_edit", "pending": 0, "current": 4, "target": 1, "action": "down"}
+video_autoscaler-1  | 2026-11-26T17:13:26.245585890Z {"ts": "2026-11-26T17:13:26.245+00:00", "service": "video_edit", "pending": 0, "current": 1, "target": 1, "action": "hold"}
+video_autoscaler-1  | 2026-11-26T17:13:36.257114123Z {"ts": "2026-11-26T17:13:36.256+00:00", "service": "video_edit", "pending": 4, "current": 1, "target": 4, "action": "up"}
+video_autoscaler-1  | 2026-11-26T17:13:41.286373353Z {"ts": "2026-11-26T17:13:41.286+00:00", "service": "video_edit", "pending": 3, "current": 4, "target": 4, "action": "hold"}
+video_autoscaler-1  | 2026-11-26T17:13:46.232751458Z {"ts": "2026-11-26T17:13:46.232+00:00", "service": "video_edit", "pending": 2, "current": 4, "target": 4, "action": "hold"}
+video_autoscaler-1  | 2026-11-26T17:13:51.232610879Z {"ts": "2026-11-26T17:13:51.232+00:00", "service": "video_edit", "pending": 0, "current": 4, "target": 4, "action": "hold"}
+video_autoscaler-1  | 2026-11-26T17:14:46.218882427Z {"ts": "2026-11-26T17:14:46.218+00:00", "service": "video_edit", "pending": 0, "current": 4, "target": 1, "action": "down"}
+
+===== repetição 5
+video_edit-3  | 2026-11-26T17:15:02.529631392Z [video] waiting for jobs on video_edit_queue
+video_edit-4  | 2026-11-26T17:15:02.757287203Z [video] waiting for jobs on video_edit_queue
+video_edit-3  | 2026-11-26T17:15:02.529943015Z [video] first_message_at=2026-11-26T17:15:02.529536+00:00 queue=video_edit_queue
+video_edit-3  | 2026-11-26T17:15:02.529953876Z [video] msg=request-c1750414-962f-4a00-bbea-dd2e05c4120c preview=False tools=['brightness']
+video_edit-1  | 2026-11-26T17:14:51.356286624Z [video] msg=request-1bd5775d-0ff5-410f-afb0-18306e214577 preview=False tools=['brightness']
+video_edit-1  | 2026-11-26T17:14:57.037243430Z [video] msg=request-43c7645b-4e8c-4520-9ed1-ee56ed9ab3e5 preview=False tools=['brightness']
+video_edit-4  | 2026-11-26T17:15:02.757335197Z [video] first_message_at=2026-11-26T17:15:02.757203+00:00 queue=video_edit_queue
+video_edit-4  | 2026-11-26T17:15:02.757449181Z [video] msg=request-8ae99435-d2d3-413b-83a2-ce19d2f313fc preview=False tools=['brightness']
+video_edit-2  | 2026-11-26T17:15:03.061469293Z [video] waiting for jobs on video_edit_queue
+video_autoscaler-1  | 2026-11-26T17:14:46.218882427Z {"ts": "2026-11-26T17:14:46.218+00:00", "service": "video_edit", "pending": 0, "current": 4, "target": 1, "action": "down"}
+video_autoscaler-1  | 2026-11-26T17:14:51.225431260Z {"ts": "2026-11-26T17:14:51.225+00:00", "service": "video_edit", "pending": 0, "current": 1, "target": 1, "action": "hold"}
+video_autoscaler-1  | 2026-11-26T17:15:01.229506291Z {"ts": "2026-11-26T17:15:01.228+00:00", "service": "video_edit", "pending": 4, "current": 1, "target": 4, "action": "up"}
+video_autoscaler-1  | 2026-11-26T17:15:06.312017460Z {"ts": "2026-11-26T17:15:06.311+00:00", "service": "video_edit", "pending": 3, "current": 4, "target": 4, "action": "hold"}
+video_autoscaler-1  | 2026-11-26T17:15:11.226478233Z {"ts": "2026-11-26T17:15:11.226+00:00", "service": "video_edit", "pending": 2, "current": 4, "target": 4, "action": "hold"}
+video_autoscaler-1  | 2026-11-26T17:15:16.213593701Z {"ts": "2026-11-26T17:15:16.213+00:00", "service": "video_edit", "pending": 0, "current": 4, "target": 4, "action": "hold"}
+video_autoscaler-1  | 2026-11-26T17:16:11.223435088Z {"ts": "2026-11-26T17:16:11.223+00:00", "service": "video_edit", "pending": 0, "current": 4, "target": 1, "action": "down"}

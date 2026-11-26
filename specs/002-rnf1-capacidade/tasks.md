@@ -113,8 +113,8 @@ simultâneo e p95 abaixo de `apos-rnf2`.
 ## Fase final: Acabamento e transversal
 
 - [X] T026 [P] README curto em `Tools/video_autoscaler/` (o que faz, variáveis, risco do *socket* do Docker)
-- [ ] T027 Medição completa `apos-rnf1` (`quickstart.md`, secção 3): `carga_rnf1.py` (`paralelo`, `m1`, `isolado`, `m2`), `elasticidade_m4.py`, verificação de `OOMKilled` → `docs/fase2/medicoes/resultados/apos-rnf1/`
-- [ ] T028 `regressao_hashes.py imagem` e `video` com o ajuste automático ligado → *hashes* iguais à base (SC-005)
+- [X] T027 Medição completa `apos-rnf1` (`quickstart.md`, secção 3): `carga_rnf1.py` (`paralelo`, `m1`, `isolado`, `m2`), `elasticidade_m4.py`, verificação de `OOMKilled` → `docs/fase2/medicoes/resultados/apos-rnf1/`
+- [X] T028 `regressao_hashes.py imagem` e `video` com o ajuste automático ligado → *hashes* iguais à base (SC-005)
 - [X] T029 Atualizar a vista «depois» (`docs/fase2/relatorio/images/vista_depois.puml`) se a implementação se afastou da DA-1, e regenerar o SVG
 - [X] T030 Atualizar o estado de H-01 a H-05 e H-10 em `docs/fase2/exercicios/RAS-exercicio_6_bloco1_SWdesign_template_PT.md` (secção 2.6) e preencher «Implementação» e «Desvios face à decisão» da DA-1 no relatório (cap. 8)
 

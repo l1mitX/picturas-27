@@ -67,12 +67,18 @@ def _json(msg):
     return obj if isinstance(obj, dict) else None
 
 
+# Formato que o worker (Tools/video_common/worker.py, T007) escreve de facto; o JSON acima fica aceite também.
+_FIRST_TEXT = re.compile(r"\[video\] first_message_at=\S+ queue=(?P<queue>\S+)")
+
+
 def first_messages(lines, queue):
     """{contentor: hora da primeira mensagem consumida} para os *workers* da fila `queue`."""
     firsts = {}
     for line in lines:
         obj = _json(line.msg)
-        if obj and obj.get("event") == "first_message" and obj.get("queue") == queue:
+        text = _FIRST_TEXT.search(line.msg)
+        if (obj and obj.get("event") == "first_message" and obj.get("queue") == queue) or \
+                (text and text["queue"] == queue):
             if line.container not in firsts or line.ts < firsts[line.container]:
                 firsts[line.container] = line.ts
     return firsts
@@ -200,8 +206,11 @@ def main():
         results, _ = carga.run_round(spec, a.timeout)
         t0 = datetime.fromtimestamp(wall0 + (carga.T_ZERO - perf0), timezone.utc)
         t_done = t0 + timedelta(seconds=max((r.get("t_fim_rel_s") or 0) for r in results))
+        # registos das réplicas lidos já, antes de o autoscaler as remover (com elas vão os registos delas);
+        # os do autoscaler, depois de voltar ao mínimo, para incluir a decisão "down"
+        worker_text = compose_logs([a.servico], to_docker(since))
         t_back = wait_for_minimum(a.servico, a.minimo, a.espera_max)
-        text = compose_logs(["video_autoscaler", a.servico], to_docker(since))
+        text = worker_text + compose_logs(["video_autoscaler"], to_docker(since))
         log_text.append(f"===== repetição {rep}\n{text}")
         lines = parse_logs(text)
         m = round_metrics(to_docker(t0), to_docker(t_done), start, first_messages(lines, a.fila),

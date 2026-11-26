@@ -1,0 +1,43 @@
+{
+  "etiqueta": "controlo-apos-rnf2-2026-11-26-fim",
+  "cenario": "isolado",
+  "data": "2026-11-26T17:21:12.745913+00:00",
+  "replicas_video": [
+    "picturas-video_edit-1",
+    "picturas-video_frames-1",
+    "picturas-video_subtitles-1"
+  ],
+  "repeticoes": 5,
+  "pausa_s": 0,
+  "latencia_servidor_em_falta": 0,
+  "falhas": [],
+  "curto_latencia_s": {
+    "n": 5,
+    "p50": 6.428,
+    "p95": 6.446,
+    "media": 6.413
+  },
+  "curto_latencia_servidor_s": {
+    "n": 5,
+    "p50": 6.176,
+    "p95": 6.282,
+    "media": 6.174
+  },
+  "recursos_video": {
+    "picturas-video_subtitles-1": {
+      "mem_mib_max": 17.0,
+      "cpu_pct_media": 0.0,
+      "cpu_pct_max": 0.01
+    },
+    "picturas-video_edit-1": {
+      "mem_mib_max": 702.5,
+      "cpu_pct_media": 175.9,
+      "cpu_pct_max": 284.1
+    },
+    "picturas-video_frames-1": {
+      "mem_mib_max": 23.6,
+      "cpu_pct_media": 0.0,
+      "cpu_pct_max": 0.02
+    }
+  }
+}

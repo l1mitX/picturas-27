@@ -1,0 +1,69 @@
+{
+  "etiqueta": "apos-rnf1",
+  "cenario": "paralelo",
+  "data": "2026-11-26T16:37:07.052773+00:00",
+  "replicas_video": [
+    "picturas-video_autoscaler-1",
+    "picturas-video_edit-1",
+    "picturas-video_edit-2",
+    "picturas-video_edit-3",
+    "picturas-video_edit-4",
+    "picturas-video_frames-1",
+    "picturas-video_subtitles-1"
+  ],
+  "repeticoes": 5,
+  "pausa_s": 120,
+  "latencia_servidor_em_falta": 0,
+  "falhas": [],
+  "por_n": {
+    "4": {
+      "debito_videos_min_media": 9.811,
+      "makespan_s_p50": 19.584,
+      "latencia_s_p50": 18.125,
+      "latencia_s_p95": 41.458,
+      "latencia_curtos_s_p95": 41.458,
+      "debito_servidor_videos_min_media": 13.115,
+      "makespan_servidor_s_p50": 18.275,
+      "latencia_servidor_s_p50": 16.399,
+      "latencia_servidor_s_p95": 18.708,
+      "latencia_curtos_servidor_s_p95": 18.708
+    }
+  },
+  "recursos_video": {
+    "picturas-video_subtitles-1": {
+      "mem_mib_max": 16.6,
+      "cpu_pct_media": 0.0,
+      "cpu_pct_max": 0.05
+    },
+    "picturas-video_edit-1": {
+      "mem_mib_max": 668.0,
+      "cpu_pct_media": 111.2,
+      "cpu_pct_max": 291.86
+    },
+    "picturas-video_frames-1": {
+      "mem_mib_max": 22.4,
+      "cpu_pct_media": 0.0,
+      "cpu_pct_max": 0.06
+    },
+    "picturas-video_autoscaler-1": {
+      "mem_mib_max": 128.8,
+      "cpu_pct_media": 9.1,
+      "cpu_pct_max": 50.47
+    },
+    "picturas-video_edit-3": {
+      "mem_mib_max": 496.4,
+      "cpu_pct_media": 84.0,
+      "cpu_pct_max": 280.85
+    },
+    "picturas-video_edit-4": {
+      "mem_mib_max": 496.3,
+      "cpu_pct_media": 85.3,
+      "cpu_pct_max": 272.24
+    },
+    "picturas-video_edit-2": {
+      "mem_mib_max": 481.5,
+      "cpu_pct_media": 40.3,
+      "cpu_pct_max": 274.3
+    }
+  }
+}

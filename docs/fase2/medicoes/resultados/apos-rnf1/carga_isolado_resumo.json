@@ -1,0 +1,49 @@
+{
+  "etiqueta": "apos-rnf1",
+  "cenario": "isolado",
+  "data": "2026-11-26T16:52:16.134372+00:00",
+  "replicas_video": [
+    "picturas-video_autoscaler-1",
+    "picturas-video_edit-1",
+    "picturas-video_frames-1",
+    "picturas-video_subtitles-1"
+  ],
+  "repeticoes": 5,
+  "pausa_s": 0,
+  "latencia_servidor_em_falta": 0,
+  "falhas": [],
+  "curto_latencia_s": {
+    "n": 5,
+    "p50": 5.93,
+    "p95": 6.037,
+    "media": 5.952
+  },
+  "curto_latencia_servidor_s": {
+    "n": 5,
+    "p50": 5.459,
+    "p95": 5.669,
+    "media": 5.514
+  },
+  "recursos_video": {
+    "picturas-video_subtitles-1": {
+      "mem_mib_max": 709.9,
+      "cpu_pct_media": 0.0,
+      "cpu_pct_max": 0.07
+    },
+    "picturas-video_edit-1": {
+      "mem_mib_max": 559.3,
+      "cpu_pct_media": 197.9,
+      "cpu_pct_max": 298.09
+    },
+    "picturas-video_frames-1": {
+      "mem_mib_max": 15.5,
+      "cpu_pct_media": 0.0,
+      "cpu_pct_max": 0.0
+    },
+    "picturas-video_autoscaler-1": {
+      "mem_mib_max": 108.2,
+      "cpu_pct_media": 2.9,
+      "cpu_pct_max": 19.16
+    }
+  }
+}

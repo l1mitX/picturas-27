@@ -1,0 +1,205 @@
+{
+  "etiqueta": "apos-rnf1",
+  "data": "2026-11-26T17:16:13.463415+00:00",
+  "servico": "video_edit",
+  "fila": "video_edit_queue",
+  "n": 4,
+  "minimo": 1,
+  "repeticoes": 5,
+  "desfasamento_docker_host_s": -0.001,
+  "resumo": {
+    "m4_s": {
+      "n": 5,
+      "p50": 11.444,
+      "max": 12.016
+    },
+    "reacao_ajuste_s": {
+      "n": 5,
+      "p50": 10.144,
+      "max": 10.746
+    },
+    "arranque_s": {
+      "n": 5,
+      "p50": 1.27,
+      "max": 1.374
+    },
+    "volta_ao_minimo_s": {
+      "n": 5,
+      "p50": 62.584,
+      "max": 65.502
+    },
+    "rondas_sem_replica_nova": 0
+  },
+  "rondas": [
+    {
+      "m4_s": 7.571,
+      "reacao_ajuste_s": 6.36,
+      "arranque_s": 1.211,
+      "volta_ao_minimo_s": 65.502,
+      "replicas_novas": 2,
+      "replicas_max": 4,
+      "repeticao": 1,
+      "replicas_no_inicio": [
+        "video_edit-1"
+      ],
+      "trabalhos": [
+        {
+          "trabalho": "J1",
+          "estado": "ok",
+          "latencia_s": 16.779
+        },
+        {
+          "trabalho": "J2",
+          "estado": "ok",
+          "latencia_s": 13.56
+        },
+        {
+          "trabalho": "J3",
+          "estado": "ok",
+          "latencia_s": 16.29
+        },
+        {
+          "trabalho": "J4",
+          "estado": "ok",
+          "latencia_s": 5.871
+        }
+      ]
+    },
+    {
+      "m4_s": 12.016,
+      "reacao_ajuste_s": 10.746,
+      "arranque_s": 1.27,
+      "volta_ao_minimo_s": 62.584,
+      "replicas_novas": 1,
+      "replicas_max": 4,
+      "repeticao": 2,
+      "replicas_no_inicio": [
+        "video_edit-1"
+      ],
+      "trabalhos": [
+        {
+          "trabalho": "J1",
+          "estado": "ok",
+          "latencia_s": 18.865
+        },
+        {
+          "trabalho": "J2",
+          "estado": "ok",
+          "latencia_s": 11.95
+        },
+        {
+          "trabalho": "J3",
+          "estado": "ok",
+          "latencia_s": 6.461
+        },
+        {
+          "trabalho": "J4",
+          "estado": "ok",
+          "latencia_s": 19.401
+        }
+      ]
+    },
+    {
+      "m4_s": 6.742,
+      "reacao_ajuste_s": 5.368,
+      "arranque_s": 1.374,
+      "volta_ao_minimo_s": 59.774,
+      "replicas_novas": 2,
+      "replicas_max": 4,
+      "repeticao": 3,
+      "replicas_no_inicio": [
+        "video_edit-1"
+      ],
+      "trabalhos": [
+        {
+          "trabalho": "J1",
+          "estado": "ok",
+          "latencia_s": 15.186
+        },
+        {
+          "trabalho": "J2",
+          "estado": "ok",
+          "latencia_s": 5.939
+        },
+        {
+          "trabalho": "J3",
+          "estado": "ok",
+          "latencia_s": 16.799
+        },
+        {
+          "trabalho": "J4",
+          "estado": "ok",
+          "latencia_s": 16.864
+        }
+      ]
+    },
+    {
+      "m4_s": 11.461,
+      "reacao_ajuste_s": 10.235,
+      "arranque_s": 1.226,
+      "volta_ao_minimo_s": 62.597,
+      "replicas_novas": 1,
+      "replicas_max": 4,
+      "repeticao": 4,
+      "replicas_no_inicio": [
+        "video_edit-1"
+      ],
+      "trabalhos": [
+        {
+          "trabalho": "J1",
+          "estado": "ok",
+          "latencia_s": 5.921
+        },
+        {
+          "trabalho": "J2",
+          "estado": "ok",
+          "latencia_s": 18.177
+        },
+        {
+          "trabalho": "J3",
+          "estado": "ok",
+          "latencia_s": 19.12
+        },
+        {
+          "trabalho": "J4",
+          "estado": "ok",
+          "latencia_s": 11.777
+        }
+      ]
+    },
+    {
+      "m4_s": 11.444,
+      "reacao_ajuste_s": 10.144,
+      "arranque_s": 1.3,
+      "volta_ao_minimo_s": 62.022,
+      "replicas_novas": 2,
+      "replicas_max": 4,
+      "repeticao": 5,
+      "replicas_no_inicio": [
+        "video_edit-1"
+      ],
+      "trabalhos": [
+        {
+          "trabalho": "J1",
+          "estado": "ok",
+          "latencia_s": 19.877
+        },
+        {
+          "trabalho": "J2",
+          "estado": "ok",
+          "latencia_s": 6.525
+        },
+        {
+          "trabalho": "J3",
+          "estado": "ok",
+          "latencia_s": 11.891
+        },
+        {
+          "trabalho": "J4",
+          "estado": "ok",
+          "latencia_s": 19.333
+        }
+      ]
+    }
+  ]
+}
