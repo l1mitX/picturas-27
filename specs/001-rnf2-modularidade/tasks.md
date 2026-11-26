@@ -135,7 +135,7 @@ repartido (INV-001 a INV-005, H-08).
 ### Implementação
 
 - [x] T039 [US3] Em `projects/routes/projects.js`, apagar `…/stages/<token>/` no fim do pipeline (sucesso, erro e cancelamento) (R3). T037 e T038 passam (feito por vídeo e também no cancelamento: ver o desvio registado na R3)
-- [ ] T040 [US3] Verificação manual do `quickstart.md`, secção 1, passo 4 (projeto com 2 imagens e 2 vídeos; brilho; legendas + brilho; corte + extração; pré-visualizações; cancelamento a meio), confirmando também que as interfaces HTTP e a interface do utilizador não mudaram (INV-005); registar o resultado
+- [X] T040 [US3] Verificação manual do `quickstart.md`, secção 1, passo 4 (projeto com 2 imagens e 2 vídeos; brilho; legendas + brilho; corte + extração; pré-visualizações; cancelamento a meio), confirmando também que as interfaces HTTP e a interface do utilizador não mudaram (INV-005); registar o resultado
 
 **Checkpoint**: preservação funcional provada; pipeline repartido robusto a erros e cancelamento.
 
