@@ -153,10 +153,30 @@ Cenários para provar que a *spec* está cumprida. Mesma máquina e mesmos parâ
     31 s, 100 resultados cada, sem eventos `max` nem `oom`. **O limite de 512 MiB confirma-se** (~2,3× o pico).
   - **Atenção (T013, `stop_grace_period`)**: nesta máquina, o pior estágio de edição (535 s) fica abaixo dos 10 min
     da edição, mas só com ~1 min de margem; na máquina da T022 (mais lenta) passou para 895 s. A legendagem (≤ 366 s)
-    fica longe dos 15 min. Continua a ser uma decisão da equipa subir o da edição antes da medição `apos-rnf1`.
+    fica longe dos 15 min. **Decidido (pessoa E, 2026-11-26): `stop_grace_period` da edição sobe para 20 min**
+    (`research.md`, R4), antes da medição `apos-rnf1`; não muda os cenários medidos, só protege vídeos longos.
   - **`carga_rnf1.py --pausa S`** (decisão T003, M6 com cópias frias): espera S segundos antes de cada repetição e
     regista as réplicas de vídeo no início de cada uma (`replicas_inicio` no CSV). Testado com `isolado --reps 2
     --pausa 5` (pasta temporária, apagada). Na `apos-rnf1` usar `--pausa 120`.
+- **2026-11-26**: T015 na máquina de referência (pessoa E), código `0c4396b` com o `stop_grace_period` da edição a
+  20 min (decisão acima). Autoscaler parado e `--scale video_edit=4` à mão; PC ligado à tomada, mas no plano de energia
+  «Legion Balance Mode» (não «Melhor desempenho»): é exploratória. `carga_rnf1.py apos-rnf1-manual paralelo` (M6,
+  4 edições, ×5) → `docs/fase2/medicoes/resultados/apos-rnf1-manual/`. Sem falhas.
+  - **Tempo dentro da app** (`latencia_servidor.json`: do `POST …/process` ao `[COMMIT]` nos registos do `projects`):
+    **p50 14,4 s, p95 20,3 s**. A 1.ª ronda deu ~20 s (as 3 réplicas novas faziam o primeiro trabalho); as rondas 2–5,
+    12,5–14,7 s. Os 4 trabalhos de cada ronda acabam juntos (as 4 réplicas consomem no mesmo segundo), em vez da escada
+    da `apos-rnf2` (p95 21,8 s). Controlo no mesmo dia e nas mesmas condições: trabalho isolado 7,0 s (média de 3),
+    contra 5,9 s a 25/11 — o PC estava um pouco mais lento. **O ganho das réplicas confirma-se**, mas com 4 em paralelo
+    cada trabalho demora ~2× o isolado (disputam os 12 CPUs), por isso a meta equivalente de 11 s é difícil.
+  - **Tempo visto pelo `carga_rnf1.py`: p50 33,0 s, p95 36,8 s — não é válido.** Em cada ronda, ~6 s depois do
+    *Apply*, os pedidos do *script* (no Windows) deixaram de chegar ao nginx durante ~30 s (registos do nginx) e alguns
+    acabaram em `ConnectionResetError` no *handshake* TLS; os resultados já estavam gravados há ~19 s quando o *script*
+    os viu. Sem carga, 4 *threads* × 60 s de consultas não pararam nenhuma vez (pedido mais lento 0,04 s). Causa
+    provável: com as 4 edições a ocupar os 12 CPUs (todos os do PC estão dados ao Docker), o reencaminhamento de portas
+    do Docker Desktop no Windows fica sem CPU. Na `apos-rnf2` (uma edição de cada vez, ~3 CPUs) não aconteceu.
+  - **Atenção (T027)**: com réplicas a correr em paralelo, o M6 medido pelo `carga_rnf1.py` nesta máquina fica
+    estragado por esta paragem da rede. **Por decidir antes da T027** como medir (e.g., correr o cliente dentro da rede
+    do Docker, ou usar a latência do lado do servidor, como acima).
 
 Resultados em `docs/fase2/medicoes/resultados/apos-rnf1/`. O ganho do RNF1 é a diferença entre `apos-rnf2` e
 `apos-rnf1`. Hipóteses H-01 a H-05 e H-10 atualizam o Exercício 6, Bloco 1; desvios face à DA-1 vão para o relatório

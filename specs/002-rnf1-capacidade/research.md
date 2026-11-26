@@ -63,6 +63,10 @@ RNF2). Cada uma indica a decisão, a razão e as alternativas.
   leva ~100 s na edição e ~60 s na legendagem; o mais longo permitido (600 s, EV-35) dá ~6 min e ~3,5 min. A margem cobre
   uma máquina mais lenta e duas legendagens em paralelo; a T022 confirma o valor da legendagem. Uma réplica sem estágio em
   curso sai logo, por isso o valor só atrasa a paragem de uma réplica que esteja a trabalhar.
+- **Revisão (2026-11-26, pessoa E)**: edição sobe de 10 para **20 min**. A T022 mediu o estágio de edição do vídeo de
+  600 s, com 2 em paralelo, em 535 s na máquina de referência (só ~1 min abaixo dos 10 min) e em 895 s numa máquina mais
+  lenta (acima). Com 20 min cabe nas duas com margem; a app também corre fora da máquina de referência (demonstração).
+  Legendagem (≤ 875 s) e extração ficam como estavam.
 
 ## R5. *Heartbeat* ativo com processamento longo (TAT-13, EV-33, EV-34)
 

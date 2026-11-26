@@ -1,0 +1,109 @@
+{
+  "descricao": "T015: latência de cada trabalho medida dentro da app, nos registos do projects: do POST .../process (Apply) ao [COMMIT] do resultado. Exclui a rede entre o Windows e o Docker, que parou ~30 s por ronda com as 4 edições a ocupar o CPU (ver quickstart, Registo, 2026-11-26).",
+  "trabalhos": [
+    {
+      "submissao_utc": "2026-11-26T15:23:19.745",
+      "latencia_s": 20.42,
+      "projeto": "6b084ee4fadd71fce6db1ace"
+    },
+    {
+      "submissao_utc": "2026-11-26T15:23:19.828",
+      "latencia_s": 20.1,
+      "projeto": "6b084ee5fadd71fce6db1b06"
+    },
+    {
+      "submissao_utc": "2026-11-26T15:23:19.829",
+      "latencia_s": 20.1,
+      "projeto": "6b084ee5fadd71fce6db1aea"
+    },
+    {
+      "submissao_utc": "2026-11-26T15:23:19.830",
+      "latencia_s": 20.33,
+      "projeto": "6b084ee3fadd71fce6db1ab2"
+    },
+    {
+      "submissao_utc": "2026-11-26T15:24:02.268",
+      "latencia_s": 12.52,
+      "projeto": "6b084f0ffadd71fce6db1db2"
+    },
+    {
+      "submissao_utc": "2026-11-26T15:24:02.271",
+      "latencia_s": 12.51,
+      "projeto": "6b084f10fadd71fce6db1dce"
+    },
+    {
+      "submissao_utc": "2026-11-26T15:24:02.280",
+      "latencia_s": 12.57,
+      "projeto": "6b084f0ffadd71fce6db1d96"
+    },
+    {
+      "submissao_utc": "2026-11-26T15:24:02.294",
+      "latencia_s": 12.5,
+      "projeto": "6b084f10fadd71fce6db1dea"
+    },
+    {
+      "submissao_utc": "2026-11-26T15:24:38.654",
+      "latencia_s": 14.56,
+      "projeto": "6b084f34fadd71fce6db1eee"
+    },
+    {
+      "submissao_utc": "2026-11-26T15:24:38.692",
+      "latencia_s": 14.68,
+      "projeto": "6b084f35fadd71fce6db1f26"
+    },
+    {
+      "submissao_utc": "2026-11-26T15:24:38.703",
+      "latencia_s": 14.41,
+      "projeto": "6b084f34fadd71fce6db1f0a"
+    },
+    {
+      "submissao_utc": "2026-11-26T15:24:38.717",
+      "latencia_s": 14.59,
+      "projeto": "6b084f33fadd71fce6db1ed2"
+    },
+    {
+      "submissao_utc": "2026-11-26T15:25:16.496",
+      "latencia_s": 13.82,
+      "projeto": "6b084f59fadd71fce6db2016"
+    },
+    {
+      "submissao_utc": "2026-11-26T15:25:16.544",
+      "latencia_s": 13.9,
+      "projeto": "6b084f5afadd71fce6db2032"
+    },
+    {
+      "submissao_utc": "2026-11-26T15:25:16.545",
+      "latencia_s": 14.19,
+      "projeto": "6b084f5afadd71fce6db204e"
+    },
+    {
+      "submissao_utc": "2026-11-26T15:25:16.550",
+      "latencia_s": 14.13,
+      "projeto": "6b084f5bfadd71fce6db206a"
+    },
+    {
+      "submissao_utc": "2026-11-26T15:25:56.555",
+      "latencia_s": 14.49,
+      "projeto": "6b084f83fadd71fce6db2212"
+    },
+    {
+      "submissao_utc": "2026-11-26T15:25:56.559",
+      "latencia_s": 14.3,
+      "projeto": "6b084f82fadd71fce6db21da"
+    },
+    {
+      "submissao_utc": "2026-11-26T15:25:56.587",
+      "latencia_s": 14.49,
+      "projeto": "6b084f81fadd71fce6db21be"
+    },
+    {
+      "submissao_utc": "2026-11-26T15:25:56.594",
+      "latencia_s": 14.47,
+      "projeto": "6b084f82fadd71fce6db21f6"
+    }
+  ],
+  "n": 20,
+  "p50_s": 14.44,
+  "p95_s": 20.34,
+  "max_s": 20.42
+}
