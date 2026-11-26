@@ -31,7 +31,8 @@ Cenários para provar que a *spec* está cumprida. Mesma máquina e mesmos parâ
 
 ## 3. Capacidade e elasticidade (SC-001 a SC-004, SC-007)
 
-1. `carga_rnf1.py apos-rnf1 paralelo` → M6 (p95 ≤ 30 s alvo; ≥ 2 em simultâneo mínimo).
+1. `carga_rnf1.py apos-rnf1 paralelo --pausa 120` → M6 (p95 ≤ 11 s alvo, meta equivalente decidida na T003;
+   ≥ 2 em simultâneo mínimo), com a latência do lado da app como valor oficial (`medicoes/README.md`, ponto 11).
 2. `carga_rnf1.py apos-rnf1 m1`, `isolado` e `m2` → M1 não pior do que `apos-rnf2`; isolado ≤ 19,6 s.
 3. `elasticidade_m4.py apos-rnf1` → M4 (≤ 30 s alvo; ≤ 60 s mínimo) e regresso ao mínimo.
 4. Durante 1–3: `docker inspect` de cada contentor de vídeo → nenhum com `OOMKilled: true`.
@@ -177,6 +178,11 @@ Cenários para provar que a *spec* está cumprida. Mesma máquina e mesmos parâ
   - **Atenção (T027)**: com réplicas a correr em paralelo, o M6 medido pelo `carga_rnf1.py` nesta máquina fica
     estragado por esta paragem da rede. **Por decidir antes da T027** como medir (e.g., correr o cliente dentro da rede
     do Docker, ou usar a latência do lado do servidor, como acima).
+- **2026-11-26**: **decidido (pessoa E): na `apos-rnf1` a latência oficial é a do lado da app.** O `carga_rnf1.py`
+  passa a calculá-la sozinho a partir dos registos do `projects` (`latencia_servidor_s`, `makespan_servidor_s` e os
+  campos `*_servidor*` do resumo), além da latência do cliente. Confirmado: aplicado aos registos da T015, reproduz
+  p50 14,4 s e p95 20,3 s; num teste curto com o autoscaler ligado (M6 ×1 e isolado ×1, pasta apagada), encontrou
+  todos os trabalhos e diferiu do cliente em 0,4–0,9 s (sem paragem da rede nesse teste).
 
 Resultados em `docs/fase2/medicoes/resultados/apos-rnf1/`. O ganho do RNF1 é a diferença entre `apos-rnf2` e
 `apos-rnf1`. Hipóteses H-01 a H-05 e H-10 atualizam o Exercício 6, Bloco 1; desvios face à DA-1 vão para o relatório

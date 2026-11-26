@@ -57,6 +57,14 @@
     paragem ordenada, e.g. 120 s). **Quentes** (cópias já subidas) mede-se à parte, em pasta separada, para separar o
     ganho de capacidade do custo de arrancar cópias. **Alvo do M6:** p95 ≤ 11 s (meta equivalente do cap. 6 do
     relatório).
+11. **Na `apos-rnf1`, a latência oficial é a do lado da app** (decisão da pessoa E, 2026-11-26, depois da T015):
+    `latencia_servidor_s` no CSV e `*_servidor*` no resumo, calculada pelo `carga_rnf1.py` a partir dos registos do
+    `projects` (do `POST …/process` ao `[COMMIT]`). A latência vista pelo cliente (`latencia_s`) continua a ser
+    registada, para transparência. Razão: com réplicas em paralelo a ocupar os 12 CPUs, a rede entre o Windows e o
+    Docker Desktop parou ~30 s por ronda e estragou a latência do cliente (p95 36,8 s contra 20,3 s do lado da app);
+    sem essa paragem, as duas diferem em menos de 1 s. A base e a `apos-rnf2` foram medidas do lado do cliente (sem
+    paragens, porque havia uma só edição de cada vez); no dia da `apos-rnf1`, a sentinela (`isolado` com o código da
+    `apos-rnf2`) dá os dois valores e serve também para confirmar essa diferença.
 
 Scripts e resultados das medições dos dois RNF. Os scripts são os mesmos em todos os momentos de medição
 (base, após RNF2, após RNF1); só muda a etiqueta da pasta de resultados.

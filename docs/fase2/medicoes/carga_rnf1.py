@@ -34,6 +34,16 @@ nada, porque havia um único *worker*. O CSV regista as réplicas de vídeo no i
 (`replicas_inicio`), para confirmar que começou frio. Para medir «quentes» (complementar), subir as réplicas à mão
 antes (`--scale video_edit=4`), parar o autoscaler e não usar --pausa, com outra etiqueta (e.g., apos-rnf1-quentes).
 
+Latência do lado da app (acrescentada a 2026-11-26, decisão da pessoa E depois da T015): no fim, o script lê os
+registos do `projects` (`docker compose logs -t projects`) e calcula, para cada trabalho, o tempo entre o
+`POST .../process` (linha do morgan, escrita quando o `projects` responde ao Apply) e o `[COMMIT] project=<id>`
+(execução confirmada, o que torna os resultados visíveis). Fica em `latencia_servidor_s` no CSV e em `*_servidor*` no
+resumo, ao lado da latência vista pelo cliente (`latencia_s`), que se mantém. Razão: na máquina de referência, com
+réplicas em paralelo a ocupar os 12 CPUs, a rede entre o Windows e o Docker Desktop parou ~30 s por ronda e estragou
+a latência do cliente (T015, `specs/002-rnf1-capacidade/quickstart.md`, «Registo»). Na `apos-rnf1` o valor oficial é o
+do lado da app; o do cliente fica para transparência. A diferença entre os dois, sem essa paragem, é de décimas de
+segundo (a consulta é a cada 0,5 s). Os registos do `projects` têm estas duas linhas desde a base (`0523102`).
+
 Comandos usados na baseline (sem --reps nem --n, o script usa estes mesmos valores):
     python docs/fase2/medicoes/carga_rnf1.py base isolado --reps 5
     python docs/fase2/medicoes/carga_rnf1.py base m1 --reps 5
@@ -52,13 +62,14 @@ import csv
 import http.client
 import json
 import os
+import re
 import ssl
 import statistics
 import subprocess
 import threading
 import time
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 HOST, PORT = "localhost", 8080
@@ -157,6 +168,7 @@ class Job(threading.Thread):
                        "pipeline": "+".join(t["procedure"] for t in self.tools)}
         # preparação fora da medição: utilizador, projeto, upload e pipeline
         self.client = Client(name)
+        self.result["projeto"] = self.client.pid
         self.client.upload_video(SAMPLES / self.media)
         for t in self.tools:
             self.client.add_tool(t)
@@ -237,6 +249,34 @@ def run_round(jobs_spec, timeout):
     return [j.result for j, _ in prepared], sampler.rows
 
 
+ANSI = re.compile(r"\x1b\[[0-9;]*m")
+SUBMIT_RE = re.compile(r"^(\S+) POST /\w+/(\w+)/process 2\d\d ")
+COMMIT_RE = re.compile(r"^(\S+) \[COMMIT\] project=(\w+)")
+
+
+def log_time(stamp):
+    """Hora de uma linha de `docker logs -t` (RFC 3339 com nanossegundos) -> datetime UTC."""
+    m = re.match(r"(\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d)(?:\.(\d+))?Z$", stamp)
+    if not m:
+        return None
+    return datetime.fromisoformat(f"{m.group(1)}.{(m.group(2) or '0')[:6].ljust(6, '0')}+00:00")
+
+
+def server_times(since):
+    """{projeto: (hora do POST .../process, hora do [COMMIT])} a partir dos registos do `projects`."""
+    out = subprocess.run(["docker", "compose", "-p", "picturas", "logs", "-t", "--no-log-prefix", "--since",
+                          since.isoformat(timespec="seconds"), "projects"],
+                         cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace").stdout
+    submit, commit = {}, {}
+    for line in out.splitlines():
+        line = ANSI.sub("", line)
+        for rx, dest in ((SUBMIT_RE, submit), (COMMIT_RE, commit)):
+            m = rx.match(line)
+            if m and (t := log_time(m.group(1))):
+                dest.setdefault(m.group(2), t)
+    return {p: (submit[p], commit[p]) for p in submit if p in commit and commit[p] >= submit[p]}
+
+
 def pct(values, p):
     v = sorted(values)
     if not v:
@@ -259,7 +299,8 @@ def main():
     reps = a.reps or {"isolado": 5, "m1": 5, "m2": 3, "paralelo": 5}[a.cenario]
 
     rows, res_rows = [], []
-    rounds = [(n, r) for n in ([int(x) for x in a.n.split(",")] if a.cenario in ("m2", "paralelo") else [None])
+    since = datetime.now(timezone.utc) - timedelta(seconds=5)
+    rounds =[(n, r) for n in ([int(x) for x in a.n.split(",")] if a.cenario in ("m2", "paralelo") else [None])
               for r in range(1, reps + 1)]
     for n, rep in rounds:
         if a.cenario == "isolado":
@@ -284,6 +325,20 @@ def main():
         print(f"[{a.cenario}] n={n or len(spec)} rep={rep}: " +
               ", ".join(f"{r['trabalho']}={r['estado']}:{r.get('latencia_s')}" for r in results), flush=True)
 
+    # latência do lado da app (registos do projects), por trabalho e por ronda
+    times = server_times(since)
+    for r in rows:
+        st = times.get(r["projeto"]) if r["estado"] == "ok" else None
+        r["latencia_servidor_s"] = round((st[1] - st[0]).total_seconds(), 3) if st else None
+    for rep_key in {(r["n"], r["repeticao"]) for r in rows}:
+        rr = [r for r in rows if (r["n"], r["repeticao"]) == rep_key]
+        st = [times[r["projeto"]] for r in rr if r["latencia_servidor_s"] is not None]
+        ms = round((max(c for _, c in st) - min(s for s, _ in st)).total_seconds(), 3) if len(st) == len(rr) else None
+        for r in rr:
+            r["makespan_servidor_s"] = ms
+    print(f"latência do lado da app: {sum(r['latencia_servidor_s'] is not None for r in rows)}/{len(rows)} "
+          "trabalhos encontrados nos registos do projects", flush=True)
+
     dest = ROOT / "docs" / "fase2" / "medicoes" / "resultados" / a.etiqueta
     dest.mkdir(parents=True, exist_ok=True)
     for fname, data in ((f"carga_{a.cenario}.csv", rows), (f"carga_{a.cenario}_recursos.csv", res_rows)):
@@ -297,26 +352,46 @@ def main():
     ok = [r for r in rows if r["estado"] == "ok"]
     summary = {"etiqueta": a.etiqueta, "cenario": a.cenario, "data": datetime.now(timezone.utc).isoformat(),
                "replicas_video": video_replicas(), "repeticoes": reps, "pausa_s": a.pausa,
+               "latencia_servidor_em_falta": sum(r["latencia_servidor_s"] is None for r in ok),
                "falhas": [{k: r.get(k) for k in ("n", "repeticao", "trabalho", "estado", "detalhe")}
                           for r in rows if r["estado"] != "ok"]}
+
+    def stats(values, media=False):
+        v = [x for x in values if x is not None]
+        s = {"n": len(v), "p50": pct(v, 50), "p95": pct(v, 95)}
+        if media:
+            s["media"] = round(statistics.mean(v), 3) if v else None
+        return s
+
     if a.cenario in ("isolado", "m1"):
-        lat = [r["latencia_s"] for r in ok if r["papel"] == "curto"]
-        summary["curto_latencia_s"] = {"n": len(lat), "p50": pct(lat, 50), "p95": pct(lat, 95),
-                                       "media": round(statistics.mean(lat), 3) if lat else None}
+        curtos = [r for r in ok if r["papel"] == "curto"]
+        summary["curto_latencia_s"] = stats([r["latencia_s"] for r in curtos], media=True)
+        summary["curto_latencia_servidor_s"] = stats([r["latencia_servidor_s"] for r in curtos], media=True)
         if a.cenario == "m1":
-            leg = [r["latencia_s"] for r in ok if r["papel"] == "legendagem"]
-            summary["legendagem_latencia_s"] = {"p50": pct(leg, 50), "p95": pct(leg, 95)}
+            leg = [r for r in ok if r["papel"] == "legendagem"]
+            summary["legendagem_latencia_s"] = {k: v for k, v in stats([r["latencia_s"] for r in leg]).items()
+                                                if k != "n"}
+            summary["legendagem_latencia_servidor_s"] = stats([r["latencia_servidor_s"] for r in leg])
     else:
         per_n = {}
         for n in sorted({r["n"] for r in rows}):
             rr = [r for r in rows if r["n"] == n]
             ms = sorted({(r["repeticao"], r["makespan_ronda_s"]) for r in rr})
+            mss = sorted({(r["repeticao"], r["makespan_servidor_s"]) for r in rr if r["makespan_servidor_s"]})
             lat = [r["latencia_s"] for r in rr if r["estado"] == "ok"]
+            lats = [r["latencia_servidor_s"] for r in rr if r["estado"] == "ok" and r["latencia_servidor_s"] is not None]
             per_n[str(n)] = {"debito_videos_min_media": round(statistics.mean(n * 60 / m for _, m in ms if m), 3),
                              "makespan_s_p50": pct([m for _, m in ms], 50),
                              "latencia_s_p50": pct(lat, 50), "latencia_s_p95": pct(lat, 95),
                              "latencia_curtos_s_p95": pct([r["latencia_s"] for r in rr
-                                                           if r["estado"] == "ok" and r["papel"] == "curto"], 95)}
+                                                           if r["estado"] == "ok" and r["papel"] == "curto"], 95),
+                             "debito_servidor_videos_min_media":
+                                 round(statistics.mean(n * 60 / m for _, m in mss), 3) if mss else None,
+                             "makespan_servidor_s_p50": pct([m for _, m in mss], 50),
+                             "latencia_servidor_s_p50": pct(lats, 50), "latencia_servidor_s_p95": pct(lats, 95),
+                             "latencia_curtos_servidor_s_p95":
+                                 pct([r["latencia_servidor_s"] for r in rr if r["estado"] == "ok"
+                                      and r["papel"] == "curto" and r["latencia_servidor_s"] is not None], 95)}
         summary["por_n"] = per_n
     if res_rows:
         by_c = {}
