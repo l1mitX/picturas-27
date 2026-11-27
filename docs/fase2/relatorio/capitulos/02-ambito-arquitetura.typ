@@ -73,6 +73,7 @@ resultado, desde que o utilizador não tenha cancelado entretanto.
   ),
 )
 
+#paisagem[
 == Vista da arquitetura global
 
 #orientacao[
@@ -90,9 +91,8 @@ resultado, desde que o utilizador não tenha cancelado entretanto.
 // Socket.IO, wsGateway/index.js); (2) nota: a pré-visualização também usa a video_queue (projects/routes/projects.js,
 // procedure "video" com preview: true); (3) commit no título; (4) 17 filas de imagem (rabbitMQ/definitions.json), não 16.
 // Página na horizontal para o diagrama ficar legível impresso.
-#paisagem[
 #figure(
-  image("../images/arquitetura_global.svg", width: 100%, height: 15.5cm, fit: "contain"),
+  image("../images/arquitetura_global.svg", width: 100%, height: 14.5cm, fit: "contain"),
   caption: [Vista da arquitetura global com o caminho do vídeo destacado],
 )
 ]
@@ -145,6 +145,7 @@ resultado, desde que o utilizador não tenha cancelado entretanto.
   caption: [Sequência do processamento em lote de um projeto com vídeos (2/2: processamento, progresso e resultado)],
 )
 
+#pagebreak(weak: true)
 #tab([Passos do pedido completo],
   tabela(
     colunas: (2.6cm, 3.4cm, 1fr, 4.6cm),

@@ -76,6 +76,7 @@ Evidências usadas pela primeira vez neste capítulo:
   [Custo e risco de migração], [Baixo. É quase só configuração (`--scale video_tool=N`) e reorganização interna do código, que já está repartido por ficheiros (EV-11). O risco está na concorrência entre réplicas no volume partilhado e na _cache_ do Whisper (H-01 a H-03).],
 )
 
+#paisagem[
 == Matriz de comparação de padrões
 
 #orientacao[
@@ -88,7 +89,6 @@ Evidências usadas pela primeira vez neste capítulo:
   acrescentar linhas para outros atributos relevantes.
 ]
 
-#paisagem[
 #tab([Matriz de comparação de padrões (escala: Alto / Médio / Baixo)],
   tabela(
     colunas: (4cm, 4cm, 4cm, 4cm, 4cm, 4cm),

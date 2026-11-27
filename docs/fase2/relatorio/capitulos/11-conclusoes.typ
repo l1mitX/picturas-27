@@ -52,6 +52,7 @@ equivalente do M6 (capítulo 10).
 - *A `scale_queue`.* Esta fila está declarada no RabbitMQ, mas nenhum serviço a consome. Convém retirá-la ou criar o
   serviço que lhe corresponde.
 
+#pagebreak(weak: true)
 == Trabalho futuro
 
 Ficou por fazer o seguinte.

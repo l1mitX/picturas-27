@@ -1,5 +1,6 @@
 #import "../template.typ": *
 
+#paisagem[
 = Trade-offs, Medição e Preservação Funcional
 
 #orientacao[
@@ -22,7 +23,6 @@
   gerir esse custo.
 ]
 
-#paisagem[
 #tab([Matriz de efeitos das decisões],
   tabela(
     colunas: (1.4cm, 3.2cm, 3.4cm, 2.4cm, 2.4cm, 3.6cm, 1fr),
