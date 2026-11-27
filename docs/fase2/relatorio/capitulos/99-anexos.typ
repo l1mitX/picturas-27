@@ -54,9 +54,13 @@ python docs/fase2/medicoes/carga_rnf1.py <etiqueta> paralelo [--pausa 120]
 python docs/fase2/medicoes/elasticidade_m4.py apos-rnf1
 ```
 
-A opção `--pausa 120` usa-se só na `apos-rnf1`, para cada repetição começar com as réplicas no mínimo. As medidas
-estáticas (`rnf2_estaticas.py`) e a regressão por _hash_ (`regressao_hashes.py`, de imagem e de vídeo) correm em
-contentores, com os comandos indicados no cabeçalho de cada _script_.
+A `<etiqueta>` é o momento da medição: `base`, `apos-rnf2` ou `apos-rnf1` (secção 10.3). Cada momento mede o código
+de um _commit_ diferente, que é o `0523102` na base, o `a3dcdac` depois do RNF2 e o `dc37d4e` depois do RNF1. Para
+repetir a base ou a `apos-rnf2`, repõe-se o código desse _commit_ numa cópia do repositório, copia-se para lá a pasta
+`docs/fase2/medicoes/` do ramo `main` e corre-se tudo na raiz dessa cópia. A opção `--pausa 120` usa-se só na
+`apos-rnf1`, porque só aí as réplicas sobem e descem. A pausa dá tempo ao `video_autoscaler` para voltar ao mínimo
+antes de cada repetição. As medidas estáticas (`rnf2_estaticas.py`) e a regressão por _hash_ (`regressao_hashes.py`,
+de imagem e de vídeo) correm em contentores, com os comandos indicados no cabeçalho de cada _script_.
 
 = Glossário
 
