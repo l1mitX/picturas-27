@@ -12,7 +12,7 @@
   usados no relatório.
 ]
 
-Todos os comandos correm na raiz do repositório, no ramo `fase2`.
+Todos os comandos correm na raiz do repositório, no ramo `main`.
 
 *Pré-requisitos.* Docker e Docker Compose. A máquina de referência tinha 12 CPUs e 7,7 GiB atribuídos ao Docker. As
 portas expostas no `docker-compose.yaml` têm de estar livres, entre elas a 8080 (aplicação) e a 9090 (SeaweedFS), que
