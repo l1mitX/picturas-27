@@ -48,7 +48,7 @@ vf --> rq
 it --> rq
 rq ..> projects : "resultado"
 ve ..> fx : "usa os 8"
-it ..> fx : "cada uma usa o seu"
+it ..> fx : "as 8 com efeitos\nusam o seu"
 asc ..> eq : "lê o tamanho\ndas filas\n(API de gestão)"
 asc --> ve : "acrescenta / retira réplicas\n(docker compose --scale,\nsocket do Docker)"
 

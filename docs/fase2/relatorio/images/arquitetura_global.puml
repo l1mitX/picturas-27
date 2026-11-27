@@ -55,7 +55,7 @@ package "RabbitMQ · exchange direto «picturas» · filas duráveis" as rmq #FF
 }
 
 package "Workers (consomem filas)" as workers {
-  component "16 ferramentas de imagem\n1 contentor por fila · auto-ack\nPIL / IA" as img_tools
+  component "16 ferramentas de imagem\n1 contentor cada · auto-ack\nPIL / IA\n(a scale_queue não tem consumidor)" as img_tools
   component "video_tool (1 contentor, sem réplicas)\nffmpeg + PIL por frame + Faster-Whisper\nprefetch = 1 · ack no fim" as video_tool #FDE7D3
 }
 
