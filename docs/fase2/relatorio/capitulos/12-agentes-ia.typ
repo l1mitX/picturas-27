@@ -147,13 +147,3 @@ duas listas de tarefas foram seguidas até ao fim e estão todas marcadas como f
   resultados, e cada capítulo foi revisto pela equipa antes da entrega.
 - *Decisões:* as decisões de fundo, como a escolha dos requisitos, a medida principal e os valores-alvo, foram sempre
   da equipa.
-
-=== Limitações e melhorias
-
-- *Cobertura dos testes.* O _frontend_ continua sem testes automáticos: o encadeamento dos estágios, as
-  pré-visualizações e o cancelamento foram verificados manualmente na interface (T040). Uma regressão na interface tem
-  mais probabilidade de passar despercebida.
-- *Limitações da validação funcional.* Os testes e a regressão por _hashes_ provam que o comportamento se mantém, mas
-  não avaliam a segurança nem a facilidade de manutenção do código gerado. As medições foram feitas numa única máquina
-  de referência e cobrem apenas parte dos riscos de desempenho (capítulo 10). Propõe-se complementar estas
-  verificações com revisão de código nos _pull requests_.
