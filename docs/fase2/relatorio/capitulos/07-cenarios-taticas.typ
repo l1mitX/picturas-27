@@ -29,8 +29,9 @@
 
 == Alterações feitas ao capítulo 5 (se existirem)
 
-Nenhuma feita durante este exercício. Os cenários entram tal como estão no capítulo 5, onde a equipa já tinha passado o
-QS-03 a prioridade 1 e o M6 a escala principal do CAND-1 (secções 5.1 e 6.2).
+Antes de escolher as táticas, a equipa alterou a priorização no capítulo 5. O QS-03 passou de prioridade 3 para 1 e o
+QS-01 de 1 para 3, porque o QS-01 se resolve sobretudo com a divisão do QS-02 (secção 5.1). Por isso, o M6 passou a
+escala principal do CAND-1 (secção 6.2). Os cenários (estímulo, resposta e medida) não mudaram.
 
 == Táticas candidatas
 
