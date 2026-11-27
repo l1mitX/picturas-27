@@ -192,11 +192,9 @@ trabalho, um novo tipo de trabalho de vídeo na Fase 3 passa a ser um serviço n
 
 ## 7. Utilização de IA
 
-> [PROPOSTA] A completar pela equipa com os restantes usos.
-
 | **Ferramenta / skill** | **Tarefa apoiada** | **Validação feita pela equipa** | **Onde está documentado** |
 |------------------------|--------------------|----------------------------------|---------------------------|
 | Claude Code (Claude Opus 5.5) | Rascunho do registo de evidências e hipóteses e da matriz (Bloco 1); unificação dos IDs dos planos iniciais, que colidiam (E1–E7 nos dois planos) | Cada evidência citada foi conferida no *commit* `0523102` (leitura do ficheiro e das linhas) | Bloco 1, secção 2.6; `docs/fase2/` |
 | Claude Code (Claude Opus 5.5) | Escolha da medida principal do CAND-1 | A IA sugeriu primeiro o M6 e depois recuou para o M1, por ser o cenário de exemplo do enunciado e dos slides. A equipa decidiu manter o **M6** como principal (o ganho do M1 vem sobretudo do CAND-2, a medir em três momentos) e o M1 como complementar | Secções 4.2 e 5 |
-| Claude Code (Claude Opus 5.5) | Rascunho dos cenários QS-01 a QS-05 e dos candidatos | {aceite / alterado: preencher}; os valores de base foram copiados de `resultados/base/*_resumo.json`; a interpretação do REQ-VID-EDIT-009 foi corrigida depois de confrontada com `doc-ext-requisitos-2627.pdf` | Secções 4 e 5 |
-| {outros usos da equipa} | {…} | {…} | {…} |
+| Claude Code (Claude Opus 5.5) | Rascunho dos cenários QS-01 a QS-05 e dos candidatos | Aceites os cenários e a quantificação, depois de revistos pela equipa; os valores de base foram copiados de `resultados/base/*_resumo.json`; a interpretação do REQ-VID-EDIT-009 foi corrigida depois de confrontada com `doc-ext-requisitos-2627.pdf` | Secções 4 e 5 |
+| GitHub Copilot com o Spec Kit 1.2.0 (`speckit-constitution`) | Constituição da Fase 2 (`.specify/memory/constitution.md`), com os princípios só *refactoring*, preservação funcional, decisões primeiro, medição e coerência com o padrão global | Lida e aceite pela equipa antes de gerar as especificações | `3dde194` |

@@ -22,8 +22,9 @@
 
 ### 1.2 Alterações feitas ao Bloco 2 (se existirem)
 
-Nenhuma feita durante este exercício. Os cenários entram tal como estão no Bloco 2 v1.1, onde a equipa já tinha passado o
-QS-03 a prioridade 1 e o M6 a escala principal do CAND-1 (Bloco 2, secções 4.2 e 5.2).
+Antes de escolher as táticas, a equipa alterou a priorização no Bloco 2. O QS-03 passou de prioridade 3 para 1 e o
+QS-01 de 1 para 3, porque o QS-01 se resolve sobretudo com a divisão do QS-02 (Bloco 2, secção 4.2). Por isso, o M6 passou a
+escala principal do CAND-1 (Bloco 2, secção 5.2). Os cenários (estímulo, resposta e medida) não mudaram.
 
 ---
 
@@ -160,9 +161,7 @@ estão em cima e as de resposta em baixo, com os *workers* no meio.
 
 ## 6. Utilização de IA
 
-> [PROPOSTA] A completar pela equipa com os restantes usos.
-
 | **Ferramenta / modelo** | **Tarefa apoiada** | **O que foi aceite** | **O que foi rejeitado e porquê** | **Como foi validado pela equipa** |
 |-------------------------|--------------------|----------------------|----------------------------------|-----------------------------------|
-| Claude Code (Claude Opus 5.5) | Rascunho das táticas candidatas (secção 2), das decisões DA-1 e DA-2 (secção 3), das vistas antes/depois (secção 4) e do plano de medição (secção 5) | {preencher} | {preencher}; e.g., a primeira proposta de pôr o módulo de efeitos em `Tools/utils` foi revista por causa da EV-28 (16 serviços reconstruídos a cada mudança) | Evidências conferidas no *commit* `0523102`; DA-01, DA-06 e DA-08 do PL1-G4 conferidas em `doc-ext-requisitos-2627.pdf`, secção 8.2 |
-| {outros usos da equipa} | {…} | {…} | {…} | {…} |
+| Claude Code (Claude Opus 5.5) | Rascunho das táticas candidatas (secção 2), das decisões DA-1 e DA-2 (secção 3), das vistas antes/depois (secção 4) e do plano de medição (secção 5) | As táticas e as duas decisões, depois de revistas pela equipa | A primeira proposta de pôr o módulo de efeitos em `Tools/utils` foi revista por causa da EV-28 (16 serviços reconstruídos a cada mudança) | Evidências conferidas no *commit* `0523102`; DA-01, DA-06 e DA-08 do PL1-G4 conferidas em `doc-ext-requisitos-2627.pdf`, secção 8.2 |
+| GitHub Copilot com o Spec Kit 1.2.0 (`speckit-specify`, `speckit-checklist`, `speckit-plan`, `speckit-tasks`, `speckit-analyze`) | Especificação, plano e tarefas de cada decisão (`specs/001-rnf2-modularidade/` para a DA-2 e `specs/002-rnf1-capacidade/` para a DA-1) | Os artefactos, depois de corrigidos | As inconsistências apontadas pelo `speckit-analyze`, corrigidas antes da implementação | Revisão contra as decisões da secção 3 (`b78db27`, `cf95814`) |

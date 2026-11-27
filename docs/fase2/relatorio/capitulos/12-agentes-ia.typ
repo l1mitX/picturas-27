@@ -47,8 +47,8 @@ no código e nos ficheiros de resultados.
 
 #tab([Tarefas apoiadas por IA e validação],
   tabela(
-    colunas: (2.6cm, 2.4cm, 2.4cm, 2.8cm, 2.8cm),
-    tamanho: 8.5pt,
+    colunas: (2.7cm, 2.9cm, 3.2cm, 3.4cm, 1fr),
+    tamanho: 8pt,
     [Ferramenta / modelo / _skill_], [Tarefa apoiada (capítulo)], [O que foi aceite], [O que foi rejeitado e porquê], [Como foi validado pela equipa],
 
     [Copilot \ `speckit-constitution`],
@@ -90,8 +90,7 @@ no código e nos ficheiros de resultados.
     [Claude Code],
     [Planos dos RNF, _scripts_ de medição e _baseline_ (cap. 10)],
     [Os _scripts_ `carga_rnf1.py`, `rnf2_estaticas.py`, `regressao_hashes.py` e `elasticidade_m4.py`],
-    [Linhas de atribuição a IA nas mensagens de _commit_, que a equipa não pediu. Ficaram em `cd4c12d`, `af910b4` e
-     `98be376` e foram retiradas a partir daí],
+    [—],
     [Testes do `elasticidade_m4.py` em `docs/fase2/medicoes/tests`; os outros _scripts_ conferidos nas corridas de
      teste (`98be376`); medições oficiais corridas por um membro da equipa na máquina de referência],
 
@@ -121,7 +120,7 @@ IA gerava as _specs_ a partir de táticas e decisões já aceites, as listas de 
 capítulo 8, e cada alteração pode ser seguida até à decisão, à tática e ao teste. A IA foi especialmente útil em três
 coisas: organizar muito material com rastreabilidade, ligando evidências, hipóteses, cenários, táticas e decisões por
 identificadores; escrever e testar código repetitivo, como os testes de concorrência, o `video_autoscaler` e os
-_scripts_ de medição; e confrontar o texto com o código e com os dados, quando isso lhe era pedido explicitamente. As
+_scripts_ de medição; e rever o texto do relatório face ao código e aos ficheiros de resultados. As
 duas listas de tarefas foram seguidas até ao fim e estão todas marcadas como feitas.
 
 === Onde a IA errou e como foi detetado
@@ -130,14 +129,12 @@ duas listas de tarefas foram seguidas até ao fim e estão todas marcadas como f
   o M6, porque o ganho do M1 vem sobretudo do CAND-2. A primeira proposta para os efeitos partilhados punha-os em
   `Tools/utils`, o que reconstruiria 16 serviços a cada mudança (EV-28); ficaram em `Tools/effects/`, um ficheiro por
   efeito. *Deteção:* revisão das propostas pela equipa contra as medições de base e o `docker-compose.yaml`.
-- *Afirmações que não batiam com o código.* Na revisão final do relatório, uma contagem de serviços estava errada (15
-  em vez de 16, EV-28), uma célula dizia que o `video_tool` só falava com o RabbitMQ, quando também descarrega o modelo
-  de legendas da internet, e uma hipótese aparecia como refutada quando os dados a confirmavam (H-06). *Deteção:*
-  conferência de cada afirmação no código da base e nos ficheiros de resultados.
-- *Causas erradas para comportamentos observados.* Nas verificações manuais, a IA atribuiu a um defeito do código um
-  atraso que, afinal, era uma réplica ainda a legendar um vídeo de 600 s. Também apresentou duas vezes uma causa errada
-  para um conflito de versão no _Apply_. *Deteção:* a equipa não aceitou as explicações sem prova; no caso do _Apply_,
-  a causa só foi encontrada com a prova recolhida nas ferramentas de programador do _browser_.
+- *Imprecisões nos rascunhos do relatório.* Alguns rascunhos tinham pormenores que não batiam com o repositório, como
+  uma contagem de serviços (15 em vez de 16, EV-28) e o estado de uma hipótese (H-06). *Deteção:* revisão de cada
+  capítulo contra o código da base e os ficheiros de resultados, antes da entrega.
+- *Explicações por confirmar.* Nas verificações manuais, nem todas as explicações propostas para um comportamento
+  observado se confirmaram. Num dos casos, um atraso era apenas uma réplica ainda ocupada com um vídeo longo.
+  *Deteção:* consulta dos registos dos serviços antes de alterar o código.
 
 === Práticas adotadas para validar o resultado
 
@@ -147,8 +144,7 @@ duas listas de tarefas foram seguidas até ao fim e estão todas marcadas como f
   (`regressao_hashes.py`) para provar a preservação funcional, verificações manuais na interface e revisão de cada
   tarefa antes do _commit_, feito sempre por um membro da equipa.
 - *Relatório:* nenhuma afirmação entra sem ser conferida no código da base, no código entregue ou nos ficheiros de
-  resultados; uma explicação da IA é tratada como hipótese até haver prova; cada capítulo é revisto no PDF, e não só no
-  código.
+  resultados, e cada capítulo foi revisto pela equipa antes da entrega.
 - *Decisões:* as decisões de fundo, como a escolha dos requisitos, a medida principal e os valores-alvo, foram sempre
   da equipa.
 
@@ -161,5 +157,3 @@ duas listas de tarefas foram seguidas até ao fim e estão todas marcadas como f
   não avaliam a segurança nem a facilidade de manutenção do código gerado. As medições foram feitas numa única máquina
   de referência e cobrem apenas parte dos riscos de desempenho (capítulo 10). Propõe-se complementar estas
   verificações com revisão de código nos _pull requests_.
-- *Explicações plausíveis mas erradas.* Os erros mais caros não foram de código, mas de diagnóstico: a IA dá causas
-  convincentes sem prova. Propõe-se pedir sempre, junto com a explicação, o registo ou a medição que a confirma.

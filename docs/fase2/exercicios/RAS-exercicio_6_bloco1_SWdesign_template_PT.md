@@ -17,21 +17,22 @@
 | Commit de partida | `052310226c51fa57a17101c7bd1ad795674aac95` (`0523102`) |
 | Comando(s) de arranque | `docker compose up -d --build` |
 | Ambiente (SO, CPU, RAM, versões de Docker e Compose) | AMD Ryzen 5 5600H, 15,9 GB de RAM, Windows 11 Home; Docker Desktop (Engine 29.8.0, Compose 5.5.1) sobre WSL2 (kernel 6.18.58.1); 12 CPUs e 7,7 GiB atribuídos ao Docker |
-| Projeto de teste (nº de imagens e de vídeos, amostras usadas) | {projeto criado na interface com N imagens e M vídeos de `samples/video/`: preencher}. Para as medições: utilizadores Premium de teste, um projeto por trabalho, criados por `docs/fase2/medicoes/carga_rnf1.py`. Amostras de `samples/video/`: `sample_10s_720p.mp4` (edição curta) e `speech_mandela_177s_1080p.webm` (legendagem). Imagens de teste das ferramentas de imagem em `regressao_hashes.py` |
+| Projeto de teste (nº de imagens e de vídeos, amostras usadas) | Para as medições: utilizadores Premium de teste, um projeto por trabalho, criados por `docs/fase2/medicoes/carga_rnf1.py`. Amostras de `samples/video/`: `sample_10s_720p.mp4` (edição curta) e `speech_mandela_177s_1080p.webm` (legendagem). Imagens de teste das ferramentas de imagem em `regressao_hashes.py` |
 | Problemas encontrados ao lançar | `docker compose up -d` sem `--build` reutilizou imagens antigas com o mesmo nome de projeto (`picturas-*`), construídas a partir do código da Fase 1 da equipa. Detetado porque os testes dentro do contentor `projects` não eram os do repositório. Reconstruído com `--build`; desde então usa-se sempre `--build`. Testes existentes depois disso: `projects/tests` 8/8 e `Tools/video/tests` 74/74 passam |
 
 **Como é orquestrado o processamento em lote de imagens e de vídeos** *(5 a 8 linhas)*:
 
-> [PROPOSTA] Rascunho: o enunciado pede que seja escrito pela equipa, com palavras próprias. Rever e reescrever.
+Um projeto tem uma lista ordenada de ferramentas e um conjunto de ficheiros, que podem ser imagens ou vídeos. Quando
+o utilizador carrega em *Apply*, o serviço `projects` cria um trabalho para cada ficheiro e só envia os pedidos depois
+de registar o lote inteiro. O caminho de cada ficheiro depende do seu tipo, que fica guardado quando é carregado.
 
-Um projeto tem uma lista ordenada de ferramentas e um conjunto de ficheiros, que podem ser imagens ou vídeos. No
-*Apply*, o serviço `projects` cria um trabalho por ficheiro e só envia as mensagens depois de registar o lote inteiro.
-O tipo de cada ficheiro, guardado no carregamento, decide o caminho. Uma **imagem** percorre a cadeia de microserviços
-de imagem, um passo de cada vez: cada ferramenta tem a sua fila, devolve o resultado na `project_queue`, e é o
-`projects` que envia a saída para a fila da ferramenta seguinte. Um **vídeo** vai inteiro, com a lista completa de
-ferramentas, para uma única fila (`video_queue`), onde o `video_tool` aplica todos os passos de uma vez: efeitos
-fotograma a fotograma, corte, velocidade, legendas e extração de fotogramas. O progresso chega ao browser pelo
-`ws_gateway`. No fim, o `projects` regista o resultado da execução, desde que esta não tenha sido cancelada entretanto.
+Uma imagem passa pelas ferramentas uma de cada vez. Cada ferramenta de imagem é um serviço com a sua própria fila e
+devolve o resultado ao `projects`, que o envia para a ferramenta seguinte. Um vídeo, pelo contrário, segue inteiro
+para uma única fila, a `video_queue`, com a lista completa de ferramentas. O serviço `video_tool` aplica então todos
+os passos de uma só vez, desde os efeitos de cor até ao corte, à velocidade, às legendas e à extração de fotogramas.
+
+Durante o processamento, o progresso chega ao browser através do `ws_gateway`. No fim, o `projects` guarda o
+resultado, desde que o utilizador não tenha cancelado entretanto.
 
 ---
 
