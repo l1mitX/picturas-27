@@ -48,7 +48,7 @@ serviço próprio que recebe trabalho através de uma fila de mensagens.
     [Documento de requisitos de base], [doc-ext-requisitos-2627.pdf],
     [Documento de solução arquitetural de base], [doc-sol-arquitetural.pdf],
     [Repositório de partida], [`https://github.com/picturas-um/picturas-27`, ramo `main`, _commit_ `0523102` (`052310226c51fa57a17101c7bd1ad795674aac95`)],
-    [Repositório entregue], [`https://github.com/l1mitX/picturas-27`, ramo `fase2`, _commit_ #preencher[último _commit_ antes da entrega]],
+    [Repositório entregue], [`https://github.com/l1mitX/picturas-27`, ramo `main`, _commit_ #preencher[último _commit_ antes da entrega]],
     [Diretrizes da Fase 2], [Versão 1, de 4 de novembro de 2026],
   ),
 )
