@@ -66,7 +66,7 @@ Evidência usada pela primeira vez neste capítulo:
     [QS-01], [Alta — o utilizador espera mais de 5 min por um efeito que demora 15 s (EV-18); o REQ-VID-EDIT-011 pede, no MVP, pelo menos 2 vídeos em paralelo], [Média — resolvido sobretudo pela divisão em serviços por tipo de trabalho do QS-02 (pré-requisito, Tabela 15): a legendagem passa a ter a sua fila e deixa de bloquear a edição, sem tática própria], [3],
     [QS-02], [Média-alta — para a equipa, cada mudança nas legendas reconstrói uma imagem de 1,69 GB e reimplanta todo o vídeo (EV-14, EV-17); REQ-VID-EDIT-013], [Média — divisão do serviço; o cancelamento passa a atravessar vários serviços (H-08)], [2],
     [QS-03], [Alta — é o caso mais comum (vários utilizadores a editar ao mesmo tempo): com 4 edições curtas em simultâneo, o p95 passa de 17,8 s para 44,0 s (EV-26)], [Alta — réplicas por serviço de vídeo e ajuste automático pelo tamanho da fila; hipóteses H-01 a H-05], [1],
-    [QS-04], [Média — risco de imagem e vídeo divergirem (regra sem requisito explícito, hoje garantida por cópia) e REQ-VID-EDIT-013 (acrescentar um efeito sem alterar os existentes)], [Média — extrair um módulo comum mexe também nas 8 ferramentas de imagem (regressão por _hash_, H-07); se o módulo ficar em `Tools/utils`, passa a reconstruir 15 serviços (EV-28)], [4],
+    [QS-04], [Média — risco de imagem e vídeo divergirem (regra sem requisito explícito, hoje garantida por cópia) e REQ-VID-EDIT-013 (acrescentar um efeito sem alterar os existentes)], [Média — extrair um módulo comum mexe também nas 8 ferramentas de imagem (regressão por _hash_, H-07); se o módulo ficar em `Tools/utils`, passa a reconstruir 16 serviços (EV-28)], [4],
     [QS-05], [Média — só afeta carregamentos grandes e simultâneos: cada ficheiro, até 1100 MB, fica inteiro em memória em cada salto (EV-01), e o Docker da máquina de medição tem 7,7 GiB], [Alta — mexe no carregamento de imagens e vídeos, em três serviços; risco de regressão alto], [5],
   ),
 )
@@ -107,7 +107,7 @@ do capítulo 6 são o *QS-03* (capacidade: vários pedidos curtos em simultâneo
     tamanho: 8.5pt,
     [Recomendação], [Atributo(s)], [Padrão a que se refere (global / vídeo)], [Esforço], [Risco de regressão],
     [Dividir o `video_tool` em serviços por tipo de trabalho (edição, legendagem, extração), cada um com a sua fila, encadeados pelo `projects` (ALT-2, etapa 1)], [Modularidade; modificabilidade], [Vídeo (aproxima-o do global)], [Médio], [Médio],
-    [Extrair os 8 efeitos para um módulo partilhado entre imagem e vídeo, fora de `Tools/utils` para não reconstruir 15 serviços a cada mudança (EV-28)], [Modificabilidade], [Vídeo e global], [Médio], [Médio: mexe também nas 8 ferramentas de imagem (verificável por _hash_, H-07)],
+    [Extrair os 8 efeitos para um módulo partilhado entre imagem e vídeo, fora de `Tools/utils` para não reconstruir 16 serviços a cada mudança (EV-28)], [Modificabilidade], [Vídeo e global], [Médio], [Médio: mexe também nas 8 ferramentas de imagem (verificável por _hash_, H-07)],
     [Réplicas por serviço de vídeo, com ajuste automático pelo tamanho da fila (ALT-2, etapa 2)], [Capacidade; elasticidade], [Vídeo], [Médio], [Médio (H-01 a H-05)],
     [Configurar o `consumer_timeout` do RabbitMQ para a duração máxima de uma legendagem Premium], [Fiabilidade], [Global], [Baixo], [Baixo (H-04)],
     [Receber os carregamentos em disco ou em _stream_ em vez de memória (registado; fora do âmbito desta fase)], [Utilização de recursos], [Global], [Alto], [Alto],
