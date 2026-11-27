@@ -83,6 +83,7 @@ resolvem, e o *QS-02*, de modularidade. O QS-01 continua a ser medido, como efei
 + *Manutenibilidade → modularidade e modificabilidade* — QS-02 e QS-04. Afeta a equipa em cada mudança e é condição para resolver a capacidade por tipo de trabalho (secção 5.3).
 + *Eficiência de desempenho → utilização de recursos* — QS-05. É um risco real, mas limitado aos carregamentos grandes e fora do processamento do vídeo.
 
+#pagebreak(weak: true)
 == Pré-requisitos e efeitos colaterais entre atributos
 
 #tab([Pré-requisitos e efeitos colaterais entre atributos],
