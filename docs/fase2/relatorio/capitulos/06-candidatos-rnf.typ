@@ -16,20 +16,21 @@
 ]
 
 - *CAND-1* — o processamento de vídeo atende vários pedidos em paralelo, com capacidade ajustada à carga (REQ-VID-EDIT-011).
-- *CAND-2* — os tipos de trabalho de vídeo mudam e implantam-se de forma independente (REQ-VID-EDIT-013; mantém o REQ-VID-EDIT-014).
+- *CAND-2* — os tipos de trabalho de vídeo mudam e implantam-se de forma independente (REQ-VID-EDIT-013), mantendo o REQ-VID-EDIT-014.
 
 #tab([Candidatos a requisitos não funcionais da Fase 2],
   tabela(
     colunas: (1.6cm, 2.6cm, 3cm, 2.4cm, 2.8cm, 2.6cm, 2cm, 3cm, 2.8cm),
     tamanho: 7.5pt,
     [\#], [Característica / subcaracterística (ISO/IEC 25010)], [Fragilidade na base (evidência)], [Origem (padrão global / vídeo / interação)], [Impacto nos stakeholders (pertinência)], [Exigência técnica (complexidade)], [Cenário (`QS-nn`, cap. 5)], [Escala e método de medição (esboço)], [Pré-requisitos / efeitos colaterais],
-    [CAND-1], [Eficiência de desempenho → capacidade], [Um único _worker_ de vídeo processa os pedidos um a um: 4 edições curtas em simultâneo demoram p95 44,0 s, contra 17,8 s de uma sozinha (EV-04, EV-07, EV-26)], [Interação: padrão do vídeo (_worker_ único) sobre a restrição global de um consumidor por fila], [Utilizadores: com vários a editar ao mesmo tempo, cada um espera pelos outros; o critério do REQ-VID-EDIT-011 (≥ 2 vídeos em paralelo no MVP) não se cumpre], [Alta: réplicas por serviço de vídeo e componente de ajuste automático], [QS-03 (principal); QS-01 (complementar, resolvido sobretudo pelo CAND-2)], [Segundos por trabalho (p95) e vídeos/min com 4 edições em paralelo, com `carga_rnf1.py`], [Pré-requisito: CAND-2. Efeitos: mais memória e CPU; acesso à API do Docker (segurança)],
-    [CAND-2], [Manutenibilidade → modularidade (e modificabilidade)], [Três tipos de trabalho num serviço e numa imagem; efeitos duplicados (EV-11, EV-12, EV-14, EV-17)], [Padrão do vídeo (_pipeline monolith_)], [Equipa: uma mudança nas legendas reconstrói 1,69 GB e reimplanta todo o vídeo; risco de imagem e vídeo divergirem], [Média: divisão do serviço; cancelamento entre serviços (H-08)], [QS-02 (principal); QS-04 (complementar)], [Contagens de tipos de trabalho reimplantados e de serviços reconstruídos por cenário de mudança, com `rnf2_estaticas.py`], [É pré-requisito do CAND-1. Efeito: possível aumento do tempo por vídeo (H-06) e do orquestrador (H-09)],
+    [CAND-1], [Eficiência de desempenho → capacidade], [Um único _worker_ de vídeo processa os pedidos um a um, e 4 edições curtas em simultâneo demoram p95 44,0 s, contra 17,8 s de uma sozinha (EV-04, EV-07, EV-26)], [Interação entre o padrão do vídeo (_worker_ único) e a restrição global de um consumidor por fila], [Utilizadores. Com vários a editar ao mesmo tempo, cada um espera pelos outros, e o critério do REQ-VID-EDIT-011 (≥ 2 vídeos em paralelo no MVP) não se cumpre], [Alta, porque exige réplicas por serviço de vídeo e um componente de ajuste automático], [QS-03 (principal); QS-01 (complementar, resolvido sobretudo pelo CAND-2)], [Segundos por trabalho (p95) e vídeos/min com 4 edições em paralelo, com `carga_rnf1.py`], [Tem o CAND-2 como pré-requisito. Gasta mais memória e CPU e precisa de acesso à API do Docker (segurança)],
+    [CAND-2], [Manutenibilidade → modularidade (e modificabilidade)], [Três tipos de trabalho num serviço e numa imagem, e efeitos duplicados (EV-11, EV-12, EV-14, EV-17)], [Padrão do vídeo (_pipeline monolith_)], [Equipa. Uma mudança nas legendas reconstrói 1,69 GB e reimplanta todo o vídeo, e há risco de imagem e vídeo divergirem], [Média, porque exige dividir o serviço e levar o cancelamento a vários serviços (H-08)], [QS-02 (principal); QS-04 (complementar)], [Contagens de tipos de trabalho reimplantados e de serviços reconstruídos por cenário de mudança, com `rnf2_estaticas.py`], [É pré-requisito do CAND-1. Pode aumentar o tempo por vídeo (H-06) e o tamanho do orquestrador (H-09)],
   ),
 )
 
-Os dois candidatos são *distintos* (características ISO/IEC 25010 diferentes) e nenhum acrescenta funcionalidade: com o
-CAND-1, o utilizador obtém os mesmos resultados, apenas mais depressa; com o CAND-2, não vê diferença nenhuma.
+Os dois candidatos são *distintos*, porque têm características ISO/IEC 25010 diferentes, e nenhum acrescenta
+funcionalidade. Com o CAND-1, o utilizador obtém os mesmos resultados, apenas mais depressa. Com o CAND-2, não vê
+diferença nenhuma.
 
 == Quantificação
 
@@ -48,46 +49,55 @@ CAND-1, o utilizador obtém os mesmos resultados, apenas mais depressa; com o CA
     tamanho: 8.5pt,
     [], [CAND-1], [CAND-2],
     [Escala (o que se mede e em que unidade)], [*M6* (principal): tempo por trabalho, desde o _Apply_ até o resultado estar disponível, com 4 edições curtas em paralelo, em segundos (p50 e p95), e débito (vídeos/min). *M1* (complementar, efeito sobretudo do CAND-2): tempo do trabalho curto submetido durante uma legendagem, em segundos (p50 e p95). *M4* (elasticidade): segundos até o sistema acrescentar réplicas quando a fila cresce, e até as retirar quando esvazia.], [*N2* (principal): por cenário de mudança, número de tipos de trabalho de vídeo reimplantados, de ficheiros alterados e de serviços reconstruídos. Complementares: *N1* (efeitos com duas implementações), *N3* (tamanho, em GB, e tempo de _build_, em s, de cada imagem de vídeo), *N4* (SLOC, complexidade ciclomática máxima, linhas do orquestrador).],
-    [Cenário de medição], [M6: cenário do QS-03 (4 utilizadores aplicam brilho a `sample_10s_720p.mp4` ao mesmo tempo, sem legendagem). M1: cenário do QS-01 (legendagem de `speech_mandela_177s_1080p.webm`; 5 s depois, brilho em `sample_10s_720p.mp4`).], [N2: três cenários de mudança fixos — C1 (filtro de brilho, imagem e vídeo), C2 (versão do `faster-whisper`; é o QS-02), C3 (escolha dos instantes na extração de fotogramas).],
+    [Cenário de medição], [M6: cenário do QS-03 (4 utilizadores aplicam brilho a `sample_10s_720p.mp4` ao mesmo tempo, sem legendagem). M1: cenário do QS-01 (legendagem de `speech_mandela_177s_1080p.webm` e, 5 s depois, brilho em `sample_10s_720p.mp4`).], [N2: três cenários de mudança fixos — C1 (filtro de brilho, imagem e vídeo), C2 (versão do `faster-whisper`, que é o QS-02), C3 (escolha dos instantes na extração de fotogramas).],
     [Carga], [M6: 4 edições curtas simultâneas, 5 repetições. M1: 1 legendagem + 1 edição curta, 5 repetições. Utilizadores Premium de teste, um projeto por trabalho.], [n/a (análise estática do repositório e das imagens Docker).],
-    [Ambiente], [A mesma máquina em todas as medições (cap. 2.1), aplicação arrancada com `--build`, sem outra carga.], [O mesmo _commit_ em análise; _build_ sem _cache_ para N3. Como o Dockerfile não fixa as versões dos pacotes do sistema, o tamanho da mesma imagem varia entre dias (1,692 GB e 1,708 GB): a imagem de base e a nova constroem-se no mesmo dia antes de serem comparadas.],
-    [Instrumento], [`docs/fase2/medicoes/carga_rnf1.py` (cliente HTTP que imita o utilizador; consulta a cada 0,5 s; recolhe `docker stats`). M4: _logs_ do componente de ajuste e API de gestão do RabbitMQ.], [`docs/fase2/medicoes/rnf2_estaticas.py` (encontra os ficheiros pelo conteúdo e os serviços pelos `COPY` dos Dockerfiles; `radon` 6.0.1 para N4); `docker compose build --no-cache` e `docker image inspect` para N3.],
+    [Ambiente], [A mesma máquina em todas as medições (cap. 2.1), aplicação arrancada com `--build`, sem outra carga.], [O mesmo _commit_ em análise, com construção sem _cache_ para N3. Como o Dockerfile não fixa as versões dos pacotes do sistema, o tamanho da mesma imagem varia entre dias (1,692 GB e 1,708 GB). Por isso, a imagem da base e a nova constroem-se no mesmo dia antes de serem comparadas.],
+    [Instrumento], [`docs/fase2/medicoes/carga_rnf1.py` (cliente HTTP que imita o utilizador, consulta o resultado a cada 0,5 s e recolhe o `docker stats`). M4: `docs/fase2/medicoes/elasticidade_m4.py`, que junta os registos do `video_autoscaler` e dos _workers_.], [`docs/fase2/medicoes/rnf2_estaticas.py` (encontra os ficheiros pelo conteúdo e os serviços pelos `COPY` dos Dockerfiles, e usa o `radon` 6.0.1 para N4); `docker compose build --no-cache` e `docker image inspect` para N3.],
     [Valor medido na base], [M6: p95 *44,0 s* (p50 28,8 s), *5,54 vídeos/min* (EV-26). M1: p95 *322,6 s* (p50 307,6 s) (EV-18). M4: n/a (não há ajuste). Referência: trabalho isolado p95 17,8 s.], [N2 (C2): *3* tipos reimplantados, 2 ficheiros, 1 serviço reconstruído. C1 e C3: 3 tipos reimplantados. N1: *8* efeitos. N3: *1,69 GB*, 240 s. N4: 601 SLOC, CC máx. 22, orquestrador 2733 linhas (EV-14, EV-17).],
-    [Valor-alvo (e origem)], [*M6* p95 ≤ *30 s* com 4 edições em paralelo (estimativa da equipa: se os 4 trabalhos correrem em simultâneo, cada um demora perto dos 17,8 s de um trabalho sozinho; os 30 s deixam margem para disputarem os 12 CPUs da máquina). *M1* (complementar) p95 ≤ *36 s* (2× o trabalho isolado, p95 17,8 s): um efeito curto não deve demorar mais do dobro por haver uma legendagem em curso (necessidade do utilizador). *M4*: réplicas acrescentadas ≤ *30 s* depois de a fila passar o limiar (período de consulta do ajuste + arranque do contentor). *Isolado* (efeito colateral): não piorar, p95 ≤ 17,8 s], [*N2*: C2 reimplanta *1* tipo de trabalho (só a legendagem); C1 reimplanta *1* tipo de vídeo (a edição) e a ferramenta de imagem; C3 reimplanta *1* (só a extração) (objetivo do QS-02). *N1*: *0* efeitos com duas implementações. *N3*: imagem da edição ≤ *1,23 GB* (1,69 GB sem os 457 MB do `faster-whisper`)],
-    [Valor mínimo aceitável (e origem)], [*M6*: pelo menos *2* trabalhos processados em simultâneo (critério de aceitação do REQ-VID-EDIT-011 no MVP). *M1* (complementar) p95 ≤ *50 s* (critério de aceitação do REQ-VID-EDIT-010 no MVP: editar em até 5× a duração do vídeo, 5 × 10 s). *M4*: ≤ *60 s*. *Isolado*: p95 ≤ *19,6 s* (base + 10 %, margem para o ruído da medição)], [*N2*: C2 reimplanta *1* tipo de trabalho — sem isto o QS-02 não é cumprido. *N1*: *0* (uma única implementação por efeito). *N3*: imagem da edição menor que a imagem atual do vídeo, construída no mesmo dia. *N4* (efeito colateral, H-09): orquestrador com ≤ 2733 + 10 % linhas],
+    [Valor-alvo (e origem)], [*M6* p95 ≤ *30 s* com 4 edições em paralelo (estimativa da equipa. Se os 4 trabalhos correrem em simultâneo, cada um demora perto dos 17,8 s de um trabalho sozinho, e os 30 s deixam margem para disputarem os 12 CPUs da máquina). *M1* (complementar) p95 ≤ *36 s* (2× o trabalho isolado, p95 17,8 s). Um efeito curto não deve demorar mais do dobro por haver uma legendagem em curso (necessidade do utilizador). *M4*: réplicas acrescentadas ≤ *30 s* depois de a fila passar o limiar (período de consulta do ajuste + arranque do contentor). *Isolado* (efeito colateral): não piorar, p95 ≤ 17,8 s], [*N2*: C2 reimplanta *1* tipo de trabalho (só a legendagem), C1 reimplanta *1* tipo de vídeo (a edição) e a ferramenta de imagem, e C3 reimplanta *1* (só a extração) (objetivo do QS-02). *N1*: *0* efeitos com duas implementações (objetivo do QS-04: a alteração é feita num só sítio). *N3*: imagem da edição ≤ *1,23 GB* (1,69 GB sem os 457 MB do `faster-whisper`)],
+    [Valor mínimo aceitável (e origem)], [*M6*: pelo menos *2* trabalhos processados em simultâneo (critério de aceitação do REQ-VID-EDIT-011 no MVP). *M1* (complementar) p95 ≤ *50 s* (critério de aceitação do REQ-VID-EDIT-010 no MVP: editar em até 5× a duração do vídeo, 5 × 10 s). *M4*: ≤ *60 s* (margem da equipa: o dobro do alvo). *Isolado*: p95 ≤ *19,6 s* (base + 10 %, margem para o ruído da medição)], [*N2*: C2 reimplanta *1* tipo de trabalho — sem isto o QS-02 não é cumprido. *N1*: *0* (uma única implementação por efeito). *N3*: imagem da edição menor que a imagem atual do vídeo, construída no mesmo dia. *N4* (efeito colateral, H-09): orquestrador com ≤ 2733 + 10 % linhas],
   ),
 )
 
 *Nota sobre os valores da base (25/11).* Os valores medidos na base e os valores-alvo desta tabela foram fixados com as
-medições de 18/11 e não se alteram. Ao medir após o CAND-2 verificou-se que a máquina estava mais rápida: a base, medida
-de novo a 25/11 com o mesmo método, fez o trabalho isolado em 6,4 s (contra 17,8 s) e o M6 em 24,2 s (contra 44,0 s).
-A 18/11 o portátil estava na bateria (provavelmente em modo de poupança de energia); a 25/11, ligado à tomada. Por isso, os ganhos de tempo avaliam-se sempre contra uma medição feita no mesmo dia (capítulo 10, «Ameaças à
+medições de 18/11 e não se alteram.
+
+Ao medir após o CAND-2, verificou-se que a máquina estava mais rápida. A base, medida de novo a 25/11 com o mesmo
+método, fez o trabalho isolado em 6,4 s (contra 17,8 s) e o M6 em 24,2 s (contra 44,0 s). A diferença deve-se ao
+portátil, que a 18/11 estava na bateria, provavelmente em modo de poupança de energia, e a 25/11 estava ligado à
+tomada. Por isso, os ganhos de tempo avaliam-se sempre contra uma medição feita no mesmo dia (capítulo 10, «Ameaças à
 validade»).
-Com a máquina mais rápida, o M6 já fica abaixo dos 30 s antes de haver réplicas (21,8 s após o CAND-2, com os trabalhos
-ainda um de cada vez), por isso essa meta deixa de distinguir o efeito das réplicas. Fixa-se uma *meta equivalente*, a
-25/11 e antes de medir o CAND-1, com a mesma regra da meta original (4 trabalhos em simultâneo demoram cerca de 1,7 vezes
-um trabalho sozinho: 30 s ≈ 1,7 × 17,8 s): com o trabalho isolado da base medido a 25/11 (6,4 s), *M6 p95 ≤ 11 s*. A
-meta de 30 s mantém-se na tabela. O CAND-1 avalia-se pela meta equivalente, pelo valor mínimo (pelo menos 2 trabalhos
+
+Com a máquina mais rápida, o M6 já fica abaixo dos 30 s antes de haver réplicas (21,8 s após o CAND-2, ainda com os
+trabalhos um de cada vez). Assim, essa meta deixa de distinguir o efeito das réplicas. Fixa-se então uma *meta
+equivalente*, a 25/11 e antes de medir o CAND-1, com a mesma regra da meta original. Nessa regra, 4 trabalhos em
+simultâneo demoram cerca de 1,7 vezes um trabalho sozinho (30 s ≈ 1,7 × 17,8 s). Aplicada ao trabalho isolado da base
+medido a 25/11 (6,4 s), dá *M6 p95 ≤ 11 s*.
+
+A meta de 30 s mantém-se na tabela. O CAND-1 avalia-se pela meta equivalente, pelo valor mínimo (pelo menos 2 trabalhos
 em simultâneo) e pela comparação com a `apos-rnf2` medida no mesmo dia. As outras metas não se ajustam, porque
-continuam a distinguir o efeito do CAND-1: após o CAND-2, o M1 ficava em 108,9 s, longe dos 36 s, e o M4 e o trabalho
-isolado não dependem de comparar com a base (o M4 não existe antes das réplicas; o isolado só não pode piorar). Os
-resultados estão no capítulo 10.
+continuam a distinguir o efeito do CAND-1. Após o CAND-2, o M1 ficava em 108,9 s, longe dos 36 s. O M4 não existe
+antes das réplicas, e o trabalho isolado só não pode piorar. Os resultados estão no capítulo 10.
 
 == Relação entre os dois candidatos
 
-O CAND-2 é *pré-requisito* do CAND-1: o CAND-1 escala cada serviço criado pelo CAND-2, com réplicas ajustadas à fila de
-cada tipo de trabalho (ALT-2). A própria divisão do CAND-2 já dá à legendagem a sua fila e deixa de a pôr à frente das
-edições curtas, por isso resolve a maior parte do QS-01 (M1) antes de haver réplicas. Por esta razão, a escala principal
-do CAND-1 é o *M6* (QS-03), que mede o que só as réplicas melhoram, e o M1 fica como medida complementar, cujo ganho se
-atribui sobretudo ao CAND-2. Para que cada candidato seja avaliado por si, as medições fazem-se em *três momentos*, com o
-mesmo método: na base, após o CAND-2 e após o CAND-1. O ganho atribuído ao CAND-2 é o que muda entre a base e o segundo
-momento; o atribuído ao CAND-1 é o que muda entre o segundo e o terceiro. (Medido após o CAND-2, a previsão sobre o M1
-cumpriu-se só em parte: o trabalho curto melhora 36 %, mas continua à espera do estágio de edição com que a legendagem
-começa; ver o capítulo 10.) Há também *sinergia*: as imagens de edição e de extração ficam sem
-`faster-whisper`, mais pequenas e mais rápidas a arrancar, o que ajuda a elasticidade (M4). Há um *conflito potencial*
-no comportamento temporal: o CAND-2 acrescenta um salto entre serviços e um MP4 intermédio por estágio (H-06), que se
-vigia medindo o trabalho isolado após cada etapa. Outros RNF afetados: utilização de recursos (mais contentores),
-segurança (o ajuste automático acede à API do Docker) e testabilidade (mais caminhos concorrentes a testar).
+O CAND-2 é *pré-requisito* do CAND-1, porque o CAND-1 escala cada serviço criado pelo CAND-2, com réplicas ajustadas à
+fila de cada tipo de trabalho (ALT-2). A própria divisão do CAND-2 já dá à legendagem a sua fila e deixa de a pôr à
+frente das edições curtas. Por isso, resolve a maior parte do QS-01 (M1) antes de haver réplicas. Pela mesma razão, a
+escala principal do CAND-1 é o *M6* (QS-03), que mede o que só as réplicas melhoram, e o M1 fica como medida
+complementar, cujo ganho se atribui sobretudo ao CAND-2.
+
+Para que cada candidato seja avaliado por si, as medições fazem-se em *três momentos*, com o mesmo método, na base,
+após o CAND-2 e após o CAND-1. O ganho atribuído ao CAND-2 é o que muda entre a base e o segundo momento, e o atribuído
+ao CAND-1 é o que muda entre o segundo e o terceiro. Medido após o CAND-2, a previsão sobre o M1 cumpriu-se só em
+parte. O trabalho curto melhora 36 % no p50 (43 % no p95), mas continua à espera do estágio de edição com que a
+legendagem começa (capítulo 10).
+
+Há também *sinergia*, porque as imagens de edição e de extração ficam sem `faster-whisper`, mais pequenas e mais
+rápidas a arrancar, o que ajuda a elasticidade (M4). Há ainda um *conflito potencial* no comportamento temporal. O
+CAND-2 acrescenta um salto entre serviços e um MP4 intermédio por estágio (H-06), que se vigia medindo o trabalho
+isolado após cada etapa. Outros RNF afetados são a utilização de recursos (mais contentores), a segurança (o ajuste
+automático acede à API do Docker) e a testabilidade (mais caminhos concorrentes a testar).
 
 == Evidência exploratória (se existir)
 
