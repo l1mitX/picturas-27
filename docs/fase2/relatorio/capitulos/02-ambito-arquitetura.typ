@@ -38,16 +38,17 @@
 
 *Como é orquestrado o processamento em lote de imagens e de vídeos:*
 
-// [PROPOSTA] Rascunho: o template pede que este parágrafo seja escrito pela equipa, com palavras próprias. Rever e reescrever.
-Um projeto tem uma lista ordenada de ferramentas e um conjunto de ficheiros, que podem ser imagens ou vídeos. Quando o
-utilizador carrega em _Apply_, o serviço `projects` cria um trabalho por ficheiro e só envia as mensagens depois de
-registar o lote inteiro. O tipo de cada ficheiro (guardado no carregamento) decide o caminho. Uma *imagem* percorre a
-cadeia de microserviços de imagem um passo de cada vez: cada ferramenta tem a sua fila, devolve o resultado na
-`project_queue`, e é o `projects` que envia a saída para a fila da ferramenta seguinte. Um *vídeo* vai inteiro, com a
-lista completa de ferramentas, para uma única fila, a `video_queue`. Aí, o serviço `video_tool` aplica todos os passos
-de uma só vez: efeitos fotograma a fotograma, corte, velocidade, legendas e extração de fotogramas. Durante o
-processamento, o progresso chega ao browser pelo `ws_gateway`. No fim, o `projects` regista o resultado da execução,
-desde que esta não tenha sido cancelada entretanto.
+Um projeto tem uma lista ordenada de ferramentas e um conjunto de ficheiros, que podem ser imagens ou vídeos. Quando
+o utilizador carrega em _Apply_, o serviço `projects` cria um trabalho para cada ficheiro e só envia os pedidos depois
+de registar o lote inteiro. O caminho de cada ficheiro depende do seu tipo, que fica guardado quando é carregado.
+
+Uma imagem passa pelas ferramentas uma de cada vez. Cada ferramenta de imagem é um serviço com a sua própria fila e
+devolve o resultado ao `projects`, que o envia para a ferramenta seguinte. Um vídeo, pelo contrário, segue inteiro
+para uma única fila, a `video_queue`, com a lista completa de ferramentas. O serviço `video_tool` aplica então todos
+os passos de uma só vez, desde os efeitos de cor até ao corte, à velocidade, às legendas e à extração de fotogramas.
+
+Durante o processamento, o progresso chega ao browser através do `ws_gateway`. No fim, o `projects` guarda o
+resultado, desde que o utilizador não tenha cancelado entretanto.
 
 == Fontes consultadas
 
@@ -63,7 +64,6 @@ desde que esta não tenha sido cancelada entretanto.
     [Fonte], [Versão / data], [Usada para],
     [`README.md`, `AGENTS.md`], [_commit_ `0523102`], [Arranque, organização dos serviços e convenções do repositório],
     [`doc-ext-requisitos-2627.pdf` (extensão de vídeo do PL1-G4)], [versão distribuída com a Fase 2], [Requisitos de origem dos RNF (REQ-VID-EDIT-009 a -014), decisões de qualidade DQ-01 a DQ-07 e decisões arquiteturais do PL1-G4 (secção 8.2, Tabela 37, DA-01 a DA-10)],
-    [`doc-sol-arquitetural.pdf` (solução da base anterior)], [#preencher[versão]], [#preencher[confirmar se foi consultado e para quê; as decisões do PL1-G4 estão no documento de extensão]],
     [Código e configuração: `docker-compose.yaml`, `nginx/nginx.conf`, `apiGateway/`, `rabbitMQ/definitions.json`, `projects/`, `Tools/video/`, `Tools/utils/`, `imageStorageService/`, `wsGateway/`], [_commit_ `0523102`], [Evidências `EV-nn`],
     [Hohpe & Woolf, _Enterprise Integration Patterns_ (2003); Richards & Ford, _Fundamentals of Software Architecture_ (2020)], [—], [_Competing Consumers_; _pipeline_ e monólito modular],
     [Bass, Clements & Kazman, _Software Architecture in Practice_, 4.ª ed. (2021)], [—], [Modelo de seis elementos dos cenários de qualidade (cap. 5)],

@@ -14,7 +14,7 @@
 #cover(
   title: "Fase 2 — Melhoria de Requisitos Não Funcionais",
   subtitle: "Diagnóstico, decisões arquiteturais e avaliação",
-  group: "Grupo PL?-G?",   // e.g., "Grupo PL3-G2"
+  group: "Grupo PL1-G1",   // e.g., "Grupo PL3-G2"
   authors: (
     (name: "Beatriz Miranda", number: "pg63924"),
     (name: "Diogo Machado", number: "pg63944"),
@@ -28,8 +28,6 @@
 // --- Elementos iniciais (numeração romana) -----------------------------------
 #set page(numbering: "i", number-align: center)
 #counter(page).update(1)
-
-#include "capitulos/00-historico-versoes.typ"
 
 #outline(title: [Índice], indent: auto, depth: 3)
 #pagebreak()
